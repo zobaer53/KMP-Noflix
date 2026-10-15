@@ -35,8 +35,13 @@ jobs:
           cmake=$(sed -n 's/^cmake = "\(.*\)"/\1/p' gradle/libs.versions.toml)
           sdk=$(sed -n 's/^compileSdk = "\(.*\)"/\1/p' gradle/libs.versions.toml)
           sdkmanager="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
-          yes | "$sdkmanager" --licenses > /dev/null
-          "$sdkmanager" --install "platforms;android-$sdk.0" "ndk;$ndk" "cmake;$cmake" > /dev/null
+          yes | "$sdkmanager" --licenses > /dev/null || true
+          # Google's download servers sometimes return a broken archive ("Error on ZipFile"): retry.
+          for attempt in 1 2 3; do
+            "$sdkmanager" --install "platforms;android-$sdk.0" "ndk;$ndk" "cmake;$cmake" > /dev/null && break
+            [ $attempt = 3 ] && exit 1
+            echo "::warning::SDK install failed (attempt $attempt), retrying"; sleep 15
+          done
 
       - name: Write local.properties
         env:
