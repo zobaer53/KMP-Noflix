@@ -56,7 +56,8 @@ fun RatingItem(
             if(rating == 0.0){
                 zedMoviesIcon(
                     modifier = Modifier.size(RatingIconSize)
-                        .clickable {
+                        // Placeholders and feed cards have no TMDB id: the tap goes to the card instead.
+                        .clickable(enabled = tmdbId > 0) {
                             mediaLauncher.play(
                                 PlayRequest(tmdbId = tmdbId, type = type, name = title, year = releaseDate)
                             )

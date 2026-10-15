@@ -29,27 +29,19 @@ class WebViewActivity : ComponentActivity()  {
                 systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             }
             val filter = AdFilter.create(this)
-            val movieName = intent.getStringExtra("movieName") ?: ""
-            val movieYear = intent.getStringExtra("movieYear") ?: ""
             val type = intent.getStringExtra("type") ?: ""
             val tmdbId = intent.getIntExtra("tmdbId", 0)
-            val replacedString = movieName.replace(" ", "-").lowercase()
+            // The stream URL is keyed by TMDB id; without one there is nothing to play.
+            if (tmdbId <= 0) {
+                finish()
+                return
+            }
         setContent {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    if (tmdbId > 0) {
-                        VideoWebView(url = buildStreamUrl(tmdbId, type), lifecycleOwner = this)
-                    } else {
-                        val websiteUrl = "https://sflix.to/search/"
-                        backgroundTaskScreen(websiteUrl,replacedString,movieYear,type,this).apply {
-                            if(this.isNotEmpty()){
-                                VideoWebView(url = this, lifecycleOwner = this@WebViewActivity)
-                            }
-                        }
-                    }
-
+                    VideoWebView(url = buildStreamUrl(tmdbId, type), lifecycleOwner = this)
                 }
         }
     }

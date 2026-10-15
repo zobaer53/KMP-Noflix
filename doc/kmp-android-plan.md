@@ -750,7 +750,7 @@ Claim a row ("In progress") in the first commit of the package's branch. Edit on
 
 ## Open decisions (Android)
 
-1. **Scraping fallback** (Jsoup + Lottie): delete it in Phase 0 (recommended), or keep it in `:app`?
+1. **Scraping fallback** (Jsoup + Lottie): delete it in Phase 0 (recommended), or keep it in `:app`? **Decided: deleted in B2.**
 2. **`values-night/strings.xml`:** delete it, or move it to `values-dark`?
 3. **Driver switch** (3.3b): do it right after Phase 3 (recommended), or leave Android on the compatibility path?
 4. **R8:** enable it in Phase 5, or leave it for later?
