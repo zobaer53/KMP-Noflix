@@ -23,8 +23,7 @@ serialization = "1.11.0"
 datetime = "0.8.0"
 kotlinxIo = "0.9.1"
 koin = "4.2.2"
-retrofit = "3.0.0"
-okhttp = "5.5.0"
+ktor = "3.6.0"
 coil = "3.6.3"
 timber = "5.0.1"
 youtubePlayer = "13.0.0"
@@ -83,12 +82,15 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "datetime" }
 kotlinx-io-core = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "kotlinxIo" }
 
-retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
-retrofit-kotlinx-serialization = { module = "com.squareup.retrofit2:converter-kotlinx-serialization", version.ref = "retrofit" }
-okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+# HTTP: Ktor on the OkHttp engine (the engine pulls OkHttp in; it moves to androidMain in Phase 3).
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 # Coil 3 needs a network fetcher on the classpath (registers itself) or remote images never load.
-coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
+coil-network-ktor3 = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 # Trailers: wraps YouTube's official IFrame embed player in a WebView (no native code).
 youtube-player-core = { module = "com.pierfrancescosoffritti.androidyoutubeplayer:core", version.ref = "youtubePlayer" }

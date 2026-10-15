@@ -120,11 +120,12 @@ dependencies {
     implementation libs.kotlinx.datetime
     implementation libs.kotlinx.io.core
 
-    implementation libs.retrofit
-    implementation libs.retrofit.kotlinx.serialization
-    implementation libs.okhttp
+    implementation libs.ktor.client.core
+    implementation libs.ktor.client.okhttp
+    implementation libs.ktor.client.content.negotiation
+    implementation libs.ktor.serialization.kotlinx.json
     implementation libs.coil.compose
-    implementation libs.coil.network.okhttp
+    implementation libs.coil.network.ktor3
     implementation libs.youtube.player.core
 
     // Ad blocker
@@ -133,6 +134,7 @@ dependencies {
     testImplementation libs.junit
     testImplementation libs.kotlinx.coroutines.test
     testImplementation libs.koin.test
+    testImplementation libs.ktor.client.mock
     testImplementation platform(libs.androidx.compose.bom)
     testImplementation libs.androidx.compose.ui.test.junit4
     testImplementation libs.robolectric

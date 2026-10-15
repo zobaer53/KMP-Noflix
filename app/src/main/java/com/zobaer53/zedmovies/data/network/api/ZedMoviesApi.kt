@@ -4,11 +4,14 @@ package com.zobaer53.zedmovies.data.network.api
 import com.zobaer53.zedmovies.data.network.api.service.FilterOptionsService
 import com.zobaer53.zedmovies.data.network.api.service.MovieService
 import com.zobaer53.zedmovies.data.network.api.service.TvShowService
-import com.zobaer53.zedmovies.data.network.util.retrofit
-import retrofit2.create
+import com.zobaer53.zedmovies.data.network.util.zedMoviesHttpClient
+import io.ktor.client.HttpClient
 
-class zedMoviesApi(private val apiKeyProvider: zedMoviesApiKeyProvider) {
-    val movieService: MovieService by lazy { retrofit(apiKeyProvider).create() }
-    val tvShowService: TvShowService by lazy { retrofit(apiKeyProvider).create() }
-    val filterOptionsService: FilterOptionsService by lazy { retrofit(apiKeyProvider).create() }
+/** One HTTP client for TMDB and the three services on top of it. */
+class zedMoviesApi internal constructor(private val client: HttpClient) {
+    constructor(apiKeyProvider: zedMoviesApiKeyProvider) : this(zedMoviesHttpClient(apiKeyProvider))
+
+    val movieService: MovieService by lazy { MovieService(client) }
+    val tvShowService: TvShowService by lazy { TvShowService(client) }
+    val filterOptionsService: FilterOptionsService by lazy { FilterOptionsService(client) }
 }
