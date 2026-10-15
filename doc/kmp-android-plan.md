@@ -716,7 +716,7 @@ Claim a row ("In progress") in the first commit of the package's branch. Edit on
 | ID | Stream | Status | PR | Gates |
 | --- | --- | --- | --- | --- |
 | Setup | — | Done (2026-10-15): repository, `main`/`dev`, worktrees, device lock, pre-push hook, PR checks | — | Lock tested: concurrent, stale, nested and killed runs |
-| A1 | A | In progress | | |
+| A1 | A | In review | #6 | test-merge --maestro green on the Pixel 6a (7/7 flows); unit tests green; Timber kept (used by `:ad-filter`/`:adblock-client`) |
 | A2 | A | Not started | | |
 | A3 | A | Not started | | |
 | A4 | A | Not started | | |
