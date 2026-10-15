@@ -66,14 +66,15 @@ Rules that keep parallel PRs from conflicting:
 - **Claim before you start.** Set your package's row in the plan to "In progress" and push that row with your first commit.
 - **On conflict, merge `origin/dev` into the branch (`scripts/stream.sh sync`). Never rebase or force-push a pushed branch.** The `pre-push` hook (`scripts/git-hooks/`, active in every worktree through `core.hooksPath`) blocks force pushes and direct pushes to `main`/`dev`. GitHub doesn't run PR checks on a conflicting head.
 - **Test-merge before merging a PR:** `scripts/stream.sh test-merge [--maestro]` merges the latest `origin/dev`, then runs unit tests + debug build (+ the Maestro suite). The other stream may have merged while the PR was in review. Push the merge commit, wait for green checks, then merge the PR.
-- **Devices are shared.** 16 GB of RAM fits one emulator plus two Gradle builds, not two emulators. Both streams use the same emulator (`Pixel_9_Pro_16k`, `emulator -avd Pixel_9_Pro_16k -gpu host`, serial `emulator-5554`). `.maestro/run.sh` and `upgrade.sh` take a per-device lock in `$(git rev-parse --git-common-dir)/stream-locks/<serial>` (`mkdir` is atomic; a dead PID frees it), so a run waits while the other stream's run holds the device. Wrap any other command that installs or drives the app with `scripts/stream.sh with-device -- <cmd>`. Never call `maestro`/`adb install` directly.
+- **Devices are shared.** Both streams test on the **one device named in `.stream.env`** (`ANDROID_SERIAL`). That is currently a real Pixel 6a over USB (`2B171JEGR11436`, Android 17). **Don't start an emulator** unless the user asks for one: 16 GB of RAM doesn't fit an emulator plus two Gradle builds. `.maestro/run.sh` and `upgrade.sh` take a per-device lock in `$(git rev-parse --git-common-dir)/stream-locks/<serial>` (`mkdir` is atomic; a dead PID frees it), so a run waits while the other stream's run holds the device. Wrap any other command that installs or drives the app with `scripts/stream.sh with-device -- <cmd>`. Never call `maestro`/`adb install` directly, and always target the serial from `.stream.env` (other devices may be attached).
 - **Avoid building both streams at the same moment** when you can: each Gradle daemon takes up to 4 GB (`org.gradle.jvmargs`).
 
 Setup (once; both done by `scripts/stream.sh`):
 
 ```bash
-scripts/stream.sh init A emulator-5554                                  # main checkout = stream A
-scripts/stream.sh worktree ../NoFlix_KMP-b feat/b-baseline B emulator-5554   # second folder = stream B
+scripts/stream.sh init A <adb-serial>                                  # main checkout = stream A
+scripts/stream.sh worktree ../NoFlix_KMP-b feat/b-baseline B <adb-serial>   # second folder = stream B
+scripts/stream.sh init <A|B> <adb-serial>                              # switch a stream to another device
 scripts/stream.sh status                                                # worktrees, streams, device locks
 ```
 
