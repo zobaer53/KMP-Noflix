@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Theme.zedMovies" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowLightStatusBar" >true</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
+        <item name="android:dialogTheme">@style/Theme.zedMovies.Dialog</item>
+    </style>
+    <style name="Theme.NoActionbar.FullScreen.zedMovies" parent="android:Theme.Material.Light.NoActionBar.Fullscreen">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowLightStatusBar" >true</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
+        <item name="android:dialogTheme">@style/Theme.zedMovies.Dialog</item>
+    </style>
+
+    <!-- Opaque on purpose: translucent activities may not request an orientation on API 26. -->
+    <style name="Theme.zedMovies.Trailer" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@android:color/black</item>
+    </style>
+
+    <!-- core-splashscreen's theme, so installSplashScreen() shows the same splash below API 31. -->
+    <style name="Theme.zedMovies.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/primaryDark</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/zed_movies_round</item>
+        <item name="postSplashScreenTheme">@style/Theme.zedMovies</item>
+    </style>
+
+    <style name="Theme.zedMovies.Dialog" parent="android:Theme.Material.Light.Dialog">
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
+</resources>

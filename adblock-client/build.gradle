@@ -1,0 +1,45 @@
+plugins {
+    alias(libs.plugins.android.library)
+}
+
+android {
+    namespace 'io.github.edsuns.adblockclient'
+    compileSdk libs.versions.compileSdk.get().toInteger()
+    // r28+ links 64-bit libraries with 16 KB page alignment (Android 15+ 16 KB devices).
+    ndkVersion libs.versions.ndk.get()
+
+    defaultConfig {
+        minSdk 26
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path "CMakeLists.txt"
+            version libs.versions.cmake.get()
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation libs.timber
+
+    testImplementation libs.junit
+    androidTestImplementation libs.androidx.test.ext.junit
+    androidTestImplementation libs.androidx.test.espresso.core
+}
