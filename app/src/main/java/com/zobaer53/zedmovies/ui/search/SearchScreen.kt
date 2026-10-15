@@ -2,7 +2,6 @@
 
 package com.zobaer53.zedmovies.ui.search
 
-import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -23,8 +22,6 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -214,59 +211,13 @@ private fun SearchScreen(
                             onOfflineModeClick = onOfflineModeClick
                         )
                     }
-                  //   else {
-
-                    //if (uiState.error != null) {
-                        /*  zedMoviesCenteredError(
-                              errorMessage = uiState.error.asUserMessage(),
-                              onRetry = onRetry,
-                              shouldShowOfflineMode = uiState.isOfflineModeAvailable,
-                              onOfflineModeClick = onOfflineModeClick
-                          )*/
-                        if(uiState.movies.containsKey(MediaType.Movie.Discover)){
-                            Log.i("error1","ui state error msg ${uiState.error?.message} " +
-                                    " asUserMessage ${uiState.error?.asUserMessage()} " +
-                                    " localizedMessage ${uiState.error?.cause}" +
-                                    "--- Dis")
-                        }else if(uiState.movies.containsKey(MediaType.Movie.TopRated)){
-                            Log.i("error1","ui state error msg ${uiState.error?.message} " +
-                                    " asUserMessage ${uiState.error?.asUserMessage()} " +
-                                    " localizedMessage ${uiState.error?.cause}" +
-                                    "--- top")
-                        }
-                        else if(uiState.movies.containsKey(MediaType.Movie.NowPlaying)){
-                            Log.i("error1","ui state error msg ${uiState.error?.message} " +
-                                    " asUserMessage ${uiState.error?.asUserMessage()} " +
-                                    " localizedMessage ${uiState.error?.cause}" +
-                                    "---- now playing")
-
-                        }else if(uiState.movies.containsKey(MediaType.Movie.Upcoming)){
-                            Log.i("error1","ui state error msg ${uiState.error?.message} " +
-                                    " asUserMessage ${uiState.error?.asUserMessage()} " +
-                                    " localizedMessage ${uiState.error?.cause}" +
-                                    "--- upcomig")
-
-                        }else if(uiState.movies.containsKey(MediaType.Movie.Popular)){
-                            Log.i("error1","ui state error msg ${uiState.error?.message} " +
-                                    " asUserMessage ${uiState.error?.asUserMessage()} " +
-                                    " localizedMessage ${uiState.error?.cause}" +
-                                    "--- popular")
-
-                        }else if(uiState.movies.containsKey(MediaType.Movie.Trending)){
-                            Log.i("error1","ui state error msg ${uiState.error?.message} " +
-                                    " asUserMessage ${uiState.error?.asUserMessage()} " +
-                                    " localizedMessage ${uiState.error?.cause}" +
-                                    "---- trending")
-                        }
-                   // }
-                        SuggestionsContent(
-                            movies = uiState.movies,
-                            tvShows = uiState.tvShows,
-                            onSeeAllClick = onSeeAllClick,
-                            onMovieClick = onMovieClick,
-                            onTvShowClick = onTvShowClick
-                        )
-                   // }
+                    SuggestionsContent(
+                        movies = uiState.movies,
+                        tvShows = uiState.tvShows,
+                        onSeeAllClick = onSeeAllClick,
+                        onMovieClick = onMovieClick,
+                        onTvShowClick = onTvShowClick
+                    )
                 }
             }
         }
@@ -307,7 +258,7 @@ private fun SearchTextField(
                     exit = scaleOut() + fadeOut()
                 ) {
                     zedMoviesIconButton(
-                        imageVector = Icons.Rounded.Close,
+                        iconResourceId = R.drawable.ic_close,
                         contentDescription = stringResource(id = R.string.clear),
                         onClick = { onQueryChange("") }
                     )

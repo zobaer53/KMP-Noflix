@@ -4,7 +4,7 @@ package com.zobaer53.zedmovies.ui.details
 import com.zobaer53.zedmovies.data.model.MediaType
 import com.zobaer53.zedmovies.data.model.MovieDetails
 import com.zobaer53.zedmovies.data.model.TvShowDetails
-import com.zobaer53.zedmovies.data.model.UserMessage
+import com.zobaer53.zedmovies.ui.model.UserMessage
 
 data class DetailsUiState(
     val mediaType: MediaType.Details,

@@ -1,7 +1,6 @@
 
 package com.zobaer53.zedmovies.ui.home
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
@@ -21,7 +20,6 @@ import com.zobaer53.zedmovies.data.model.MediaType
 import com.zobaer53.zedmovies.data.model.Movie
 import com.zobaer53.zedmovies.data.model.TvShow
 import com.zobaer53.zedmovies.ui.smallcomponent.MoviesAndTvShowsContainer
-import com.zobaer53.zedmovies.ui.smallcomponent.mapper.asUserMessage
 import com.zobaer53.zedmovies.ui.home.component.UpcomingMoviesContainer
 
 @Composable
@@ -61,59 +59,13 @@ private fun HomeScreen(
         isRefreshing = uiState.isLoading,
         onRefresh = onRefresh
     ) {
-        if (uiState.error != null) {
-          /*  zedMoviesCenteredError(
-                errorMessage = uiState.error.asUserMessage(),
-                onRetry = onRetry,
-                shouldShowOfflineMode = uiState.isOfflineModeAvailable,
-                onOfflineModeClick = onOfflineModeClick
-            )*/
-            if(uiState.movies.containsKey(MediaType.Movie.Discover)){
-                Log.i("error1","ui state error msg ${uiState.error?.message} " +
-                        " asUserMessage ${uiState.error?.asUserMessage()} " +
-                        " localizedMessage ${uiState.error?.cause}" +
-                        "--- Dis")
-            }else if(uiState.movies.containsKey(MediaType.Movie.TopRated)){
-                Log.i("error1","ui state error msg ${uiState.error?.message} " +
-                        " asUserMessage ${uiState.error?.asUserMessage()} " +
-                        " localizedMessage ${uiState.error?.cause}" +
-                        "--- top")
-            }
-            else if(uiState.movies.containsKey(MediaType.Movie.NowPlaying)){
-                Log.i("error1","ui state error msg ${uiState.error?.message} " +
-                        " asUserMessage ${uiState.error?.asUserMessage()} " +
-                        " localizedMessage ${uiState.error?.cause}" +
-                        "---- now playing")
-
-            }else if(uiState.movies.containsKey(MediaType.Movie.Upcoming)){
-                Log.i("error1","ui state error msg ${uiState.error?.message} " +
-                        " asUserMessage ${uiState.error?.asUserMessage()} " +
-                        " localizedMessage ${uiState.error?.cause}" +
-                        "--- upcomig")
-
-            }else if(uiState.movies.containsKey(MediaType.Movie.Popular)){
-                Log.i("error1","ui state error msg ${uiState.error?.message} " +
-                        " asUserMessage ${uiState.error?.asUserMessage()} " +
-                        " localizedMessage ${uiState.error?.cause}" +
-                        "--- popular")
-
-            }else if(uiState.movies.containsKey(MediaType.Movie.Trending)){
-                Log.i("error1","ui state error msg ${uiState.error?.message} " +
-                        " asUserMessage ${uiState.error?.asUserMessage()} " +
-                        " localizedMessage ${uiState.error?.cause}" +
-                        "---- trending")
-            }
-        }
-
-       // } else {
-            HomeContent(
-                movies = uiState.movies,
-                tvShows = uiState.tvShows,
-                onSeeAllClick = onSeeAllClick,
-                onMovieClick = onMovieClick,
-                onTvShowClick = onTvShowClick
-            )
-      //  }
+        HomeContent(
+            movies = uiState.movies,
+            tvShows = uiState.tvShows,
+            onSeeAllClick = onSeeAllClick,
+            onMovieClick = onMovieClick,
+            onTvShowClick = onTvShowClick
+        )
     }
 }
 

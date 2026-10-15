@@ -2,7 +2,6 @@
 
 package com.zobaer53.zedmovies.ui.details
 
-import android.util.Log
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -21,11 +20,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zobaer53.zedmovies.ui.designsystem.component.ZedMoviesSwipeRefresh
 import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesTopAppBar
 import com.zobaer53.zedmovies.data.model.MediaType
-import com.zobaer53.zedmovies.data.model.UserMessage
+import com.zobaer53.zedmovies.ui.model.UserMessage
 import com.zobaer53.zedmovies.ui.smallcomponent.zedMoviesBackButton
 import com.zobaer53.zedmovies.ui.smallcomponent.zedMoviesCenteredError
 import com.zobaer53.zedmovies.ui.smallcomponent.SnackbarUserMessageHandler
-import com.zobaer53.zedmovies.ui.smallcomponent.mapper.asUserMessage
 import com.zobaer53.zedmovies.ui.details.components.MovieDetailsItem
 import com.zobaer53.zedmovies.ui.details.components.MovieDetailsItemPlaceholder
 import com.zobaer53.zedmovies.ui.details.components.TvShowDetailsItem
@@ -84,27 +82,12 @@ private fun DetailsScreen(
         onRefresh = onRefresh,
         indicatorPadding = WindowInsets.safeDrawing.asPaddingValues()
     ) {
-        if (uiState.error != null) {
-         /*   ErrorContent(
-                errorMessage = uiState.error.asUserMessage(),
-                isOfflineModeAvailable = uiState.isOfflineModeAvailable,
-                onBackButtonClick = onBackButtonClick,
-                onRetry = onRetry,
-                onOfflineModeClick = onOfflineModeClick
-            )*/
-            Log.i("error1","ui state error msg ${uiState.error?.message} " +
-                    " asUserMessage ${uiState.error?.asUserMessage()} " +
-                    " localizedMessage ${uiState.error?.cause}")
-
-       }
-        //else {
-            DetailsContent(
-                uiState = uiState,
-                onBackButtonClick = onBackButtonClick,
-                onWishlistMovieClick = onWishlistMovieClick,
-                onWishlistTvShowClick = onWishlistTvShowClick
-            )
-      //  }
+        DetailsContent(
+            uiState = uiState,
+            onBackButtonClick = onBackButtonClick,
+            onWishlistMovieClick = onWishlistMovieClick,
+            onWishlistTvShowClick = onWishlistTvShowClick
+        )
     }
 }
 

@@ -8,12 +8,18 @@ import android.graphics.Color
 import android.os.Build
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.zobaer53.zedmovies.playback.AndroidMediaLauncher
+import com.zobaer53.zedmovies.ui.playback.LocalMediaLauncher
 import com.zobaer53.zedmovies.ui.zedMoviesApp
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class zedMoviesActivity : ComponentActivity() {
+    // The Activity itself as context: Play and Trailer start their activities without NEW_TASK.
+    private val mediaLauncher = AndroidMediaLauncher(this)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
@@ -28,7 +34,9 @@ class zedMoviesActivity : ComponentActivity() {
         }
 
         setContent {
-            zedMoviesApp()
+            CompositionLocalProvider(LocalMediaLauncher provides mediaLauncher) {
+                zedMoviesApp()
+            }
         }
     }
 }

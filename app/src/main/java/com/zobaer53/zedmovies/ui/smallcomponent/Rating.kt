@@ -2,7 +2,6 @@
 
 package com.zobaer53.zedmovies.ui.smallcomponent
 
-import android.content.Intent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,12 +13,12 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesIcon
 import com.zobaer53.zedmovies.ui.designsystem.theme.zedMoviesTheme
-import com.zobaer53.zedmovies.ui.webview.WebViewActivity
+import com.zobaer53.zedmovies.ui.playback.LocalMediaLauncher
+import com.zobaer53.zedmovies.ui.playback.PlayRequest
 import com.zobaer53.zedmovies.R
 
 @Composable
@@ -31,7 +30,7 @@ fun RatingItem(
     modifier: Modifier = Modifier,
     tmdbId: Int = 0
 ) {
-    val context = LocalContext.current
+    val mediaLauncher = LocalMediaLauncher.current
     Card(
         modifier = modifier,
         shape = zedMoviesTheme.shapes.small,
@@ -57,16 +56,11 @@ fun RatingItem(
             if(rating == 0.0){
                 zedMoviesIcon(
                     modifier = Modifier.size(RatingIconSize)
-                        .clickable{
-                            /*Toast.makeText(context,"clicked", Toast.LENGTH_LONG).show()*/
-                            val intent = Intent(context, WebViewActivity::class.java).apply {
-                                putExtra("movieName", title)
-                                putExtra("movieYear", releaseDate)
-                                putExtra("type", type)
-                                putExtra("tmdbId", tmdbId)
-                            }
-                            context.startActivity(intent)
-
+                        // Placeholders and feed cards have no TMDB id: the tap goes to the card instead.
+                        .clickable(enabled = tmdbId > 0) {
+                            mediaLauncher.play(
+                                PlayRequest(tmdbId = tmdbId, type = type, name = title, year = releaseDate)
+                            )
                         },
                     iconResourceId = R.drawable.ic_play,
                     contentDescription = stringResource(id = R.string.rating)

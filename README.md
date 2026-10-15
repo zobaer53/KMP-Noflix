@@ -92,7 +92,7 @@ NoFlix follows the [official Android architecture guidance](https://developer.an
 - **Hilt** for dependency injection
 - **Retrofit** + **kotlinx.serialization** for the TMDB API
 - **Room** + **Paging 3** (RemoteMediator) for offline caching
-- **DataStore**, **Coil**, **Lottie**
+- **DataStore**, **Coil**
 - **WebView** with an AdGuard-compatible ad-blocking engine (C++ via JNI)
 
 ![NoFlix architecture diagram](architecture-1-overall.png)
