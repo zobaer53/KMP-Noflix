@@ -19,63 +19,65 @@ import com.zobaer53.zedmovies.data.network.util.Constants.Path.POPULAR_TV_SHOW
 import com.zobaer53.zedmovies.data.network.util.Constants.Path.SEARCH_TV_SHOW
 import com.zobaer53.zedmovies.data.network.util.Constants.Path.TOP_RATED_TV_SHOW
 import com.zobaer53.zedmovies.data.network.util.Constants.Path.TRENDING_TV_SHOW
-import retrofit2.http.GET
-import retrofit2.http.Path
-import retrofit2.http.Query
-import retrofit2.http.QueryMap
+import com.zobaer53.zedmovies.data.network.util.safeGet
+import io.ktor.client.HttpClient
+import io.ktor.client.request.parameter
 
-interface TvShowService {
-    @GET(TOP_RATED_TV_SHOW)
-    suspend fun getTopRated(
-        @Query(LANGUAGE) language: String,
-        @Query(PAGE) page: Int = DEFAULT_PAGE
-    ): ZedMoviesResult<TvShowResponseDto>
+/** TMDB TV endpoints. Same signatures as the former Retrofit interface. */
+class TvShowService internal constructor(private val client: HttpClient) {
+    suspend fun getTopRated(language: String, page: Int = DEFAULT_PAGE): ZedMoviesResult<TvShowResponseDto> =
+        list(TOP_RATED_TV_SHOW, language, page)
 
-    @GET(POPULAR_TV_SHOW)
-    suspend fun getPopular(
-        @Query(LANGUAGE) language: String,
-        @Query(PAGE) page: Int = DEFAULT_PAGE
-    ): ZedMoviesResult<TvShowResponseDto>
+    suspend fun getPopular(language: String, page: Int = DEFAULT_PAGE): ZedMoviesResult<TvShowResponseDto> =
+        list(POPULAR_TV_SHOW, language, page)
 
-    @GET(ON_THE_AIR_TV_SHOW)
-    suspend fun getOnTheAir(
-        @Query(LANGUAGE) language: String,
-        @Query(PAGE) page: Int = DEFAULT_PAGE
-    ): ZedMoviesResult<TvShowResponseDto>
+    suspend fun getOnTheAir(language: String, page: Int = DEFAULT_PAGE): ZedMoviesResult<TvShowResponseDto> =
+        list(ON_THE_AIR_TV_SHOW, language, page)
 
-    @GET(DISCOVER_TV_SHOW)
-    suspend fun getDiscover(
-        @Query(LANGUAGE) language: String,
-        @Query(PAGE) page: Int = DEFAULT_PAGE
-    ): ZedMoviesResult<TvShowResponseDto>
+    suspend fun getDiscover(language: String, page: Int = DEFAULT_PAGE): ZedMoviesResult<TvShowResponseDto> =
+        list(DISCOVER_TV_SHOW, language, page)
 
     /** [filters] are the discover parameters (see `Constants.Discover`). */
-    @GET(DISCOVER_TV_SHOW)
     suspend fun discover(
-        @QueryMap filters: Map<String, String>,
-        @Query(LANGUAGE) language: String,
-        @Query(PAGE) page: Int = DEFAULT_PAGE
-    ): ZedMoviesResult<TvShowResponseDto>
+        filters: Map<String, String>,
+        language: String,
+        page: Int = DEFAULT_PAGE
+    ): ZedMoviesResult<TvShowResponseDto> = client.safeGet(DISCOVER_TV_SHOW) {
+        filters.forEach { (key, value) -> parameter(key, value) }
+        parameter(LANGUAGE, language)
+        parameter(PAGE, page)
+    }
 
-    @GET(TRENDING_TV_SHOW)
-    suspend fun getTrending(
-        @Query(LANGUAGE) language: String,
-        @Query(PAGE) page: Int = DEFAULT_PAGE
-    ): ZedMoviesResult<TvShowResponseDto>
+    suspend fun getTrending(language: String, page: Int = DEFAULT_PAGE): ZedMoviesResult<TvShowResponseDto> =
+        list(TRENDING_TV_SHOW, language, page)
 
-    @GET(DETAILS_TV_SHOW)
     suspend fun getDetailsById(
-        @Path(ID) id: Int,
-        @Query(APPEND_TO_RESPONSE) appendToResponse: String = DETAILS_APPEND_TO_RESPONSE,
-        @Query(LANGUAGE) language: String,
-        @Query(INCLUDE_VIDEO_LANGUAGE) includeVideoLanguage: String
-    ): ZedMoviesResult<NetworkTvShowDetails>
+        id: Int,
+        appendToResponse: String = DETAILS_APPEND_TO_RESPONSE,
+        language: String,
+        includeVideoLanguage: String
+    ): ZedMoviesResult<NetworkTvShowDetails> = client.safeGet(DETAILS_TV_SHOW.replace("{$ID}", id.toString())) {
+        parameter(APPEND_TO_RESPONSE, appendToResponse)
+        parameter(LANGUAGE, language)
+        parameter(INCLUDE_VIDEO_LANGUAGE, includeVideoLanguage)
+    }
 
-    @GET(SEARCH_TV_SHOW)
     suspend fun search(
-        @Query(QUERY) query: String,
-        @Query(LANGUAGE) language: String,
-        @Query(PAGE) page: Int = DEFAULT_PAGE,
-        @Query(Discover.FIRST_AIR_DATE_YEAR) firstAirDateYear: Int? = null
-    ): ZedMoviesResult<TvShowResponseDto>
+        query: String,
+        language: String,
+        page: Int = DEFAULT_PAGE,
+        firstAirDateYear: Int? = null
+    ): ZedMoviesResult<TvShowResponseDto> = client.safeGet(SEARCH_TV_SHOW) {
+        parameter(QUERY, query)
+        parameter(LANGUAGE, language)
+        parameter(PAGE, page)
+        // Retrofit dropped null query parameters; so does Ktor, kept explicit.
+        firstAirDateYear?.let { parameter(Discover.FIRST_AIR_DATE_YEAR, it) }
+    }
+
+    private suspend fun list(path: String, language: String, page: Int): ZedMoviesResult<TvShowResponseDto> =
+        client.safeGet(path) {
+            parameter(LANGUAGE, language)
+            parameter(PAGE, page)
+        }
 }

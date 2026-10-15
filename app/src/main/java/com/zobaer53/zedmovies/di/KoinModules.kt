@@ -9,6 +9,7 @@ import com.zobaer53.zedmovies.data.database.util.zedMoviesDatabaseTransactionPro
 import com.zobaer53.zedmovies.data.database.zedMoviesDatabase
 import com.zobaer53.zedmovies.data.datastore.PreferencesDataStoreDataSource
 import com.zobaer53.zedmovies.data.network.api.zedMoviesApi
+import com.zobaer53.zedmovies.data.network.api.zedMoviesApiKeyProvider
 import com.zobaer53.zedmovies.data.network.source.FilterOptionsNetworkDataSource
 import com.zobaer53.zedmovies.data.network.source.MovieDetailsNetworkDataSource
 import com.zobaer53.zedmovies.data.network.source.MovieNetworkDataSource
@@ -53,7 +54,7 @@ import org.koin.dsl.module
 // androidModule (AndroidModule.kt); the ViewModels from viewModelModule (ViewModelModule.kt).
 
 val networkModule = module {
-    single { zedMoviesApi(get()) }
+    single { zedMoviesApi(get<zedMoviesApiKeyProvider>()) }
     single { get<zedMoviesApi>().movieService }
     single { get<zedMoviesApi>().tvShowService }
     single { get<zedMoviesApi>().filterOptionsService }

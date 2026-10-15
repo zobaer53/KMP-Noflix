@@ -716,9 +716,9 @@ Claim a row ("In progress") in the first commit of the package's branch. Edit on
 | ID | Stream | Status | PR | Gates |
 | --- | --- | --- | --- | --- |
 | Setup | — | Done (2026-10-15): repository, `main`/`dev`, worktrees, device lock, pre-push hook, PR checks | — | Lock tested: concurrent, stale, nested and killed runs |
-| A1 | A | In review | #6 | test-merge --maestro green on the Pixel 6a (7/7 flows); unit tests green; Timber kept (used by `:ad-filter`/`:adblock-client`) |
-| A2 | A | In review | #7 | test-merge --maestro green on the Pixel 6a (7/7 flows); process death on Search with filters restores the chip; KoinGraphTest green; no dagger/hilt in the APK |
-| A3 | A | Not started | | |
+| A1 | A | Done (#6 merged) | #6 | test-merge --maestro green on the Pixel 6a (7/7 flows); per-PR phone APK check waived by the owner (auto-merged 2026-10-16); unit tests green; Timber kept (used by `:ad-filter`/`:adblock-client`) |
+| A2 | A | Done (#7 merged) | #7 | test-merge --maestro green on the Pixel 6a (7/7 flows); per-PR phone APK check waived by the owner (auto-merged 2026-10-16); process death on Search with filters restores the chip; KoinGraphTest green; no dagger/hilt in the APK |
+| A3 | A | Done (#8 auto-merge) | #8 | test-merge --maestro green on the Pixel 6a (7/7 flows); per-PR phone APK check waived by the owner (auto-merged 2026-10-16); no retrofit2 in the APK; airplane mode: Search shows "No Internet" (Home never did: its error view is commented out since the original app) |
 | A4 | A | Not started | | |
 | A5 | A | Not started | | |
 | A6 | A | Not started | | |
