@@ -4,9 +4,7 @@ package com.zobaer53.zedmovies.di
 
 import android.content.Context
 import androidx.room.Room
-import com.zobaer53.zedmovies.BuildConfig
 import com.zobaer53.zedmovies.data.database.zedMoviesDatabase
-import com.zobaer53.zedmovies.data.database.util.zedMoviesVersionProvider
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,11 +22,6 @@ object DatabaseModule {
         zedMoviesDatabase::class.java,
         zedMoviesDatabase.zedMovies_DATABASE
     ).build()
-
-    @Provides
-    fun providezedMoviesVersionProvider() = object : zedMoviesVersionProvider {
-        override val version: String = BuildConfig.VERSION_NAME
-    }
 
     @Provides
     fun provideMovieDao(database: zedMoviesDatabase) = database.movieDao

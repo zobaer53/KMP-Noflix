@@ -8,7 +8,7 @@ import com.zobaer53.zedmovies.data.common.result.isFailure
 import com.zobaer53.zedmovies.data.common.result.isSuccess
 import com.zobaer53.zedmovies.data.network.util.DEFAULT_PAGE
 import com.zobaer53.zedmovies.data.util.Constants
-import java.io.IOException
+import kotlinx.io.IOException
 
 /** TMDB pages one load may request when filtering in the app (see [TmdbPagingSource]). */
 internal const val FILTERED_REQUESTS_PER_LOAD = 5

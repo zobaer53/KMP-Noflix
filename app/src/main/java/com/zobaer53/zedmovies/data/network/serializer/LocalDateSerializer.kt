@@ -10,7 +10,6 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import java.text.ParseException
 
 class LocalDateSerializer : KSerializer<LocalDate?> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(
@@ -28,7 +27,7 @@ class LocalDateSerializer : KSerializer<LocalDate?> {
         } else {
             null
         }
-    } catch (exception: ParseException) {
+    } catch (exception: IllegalArgumentException) {
         throw SerializationException(exception)
     }
 }

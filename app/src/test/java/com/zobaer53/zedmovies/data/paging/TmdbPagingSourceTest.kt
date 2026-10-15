@@ -7,8 +7,8 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
+import kotlinx.io.IOException
 import org.junit.Test
-import java.io.IOException
 
 class TmdbPagingSourceTest {
     private fun refresh() = LoadParams.Refresh<Int>(key = null, loadSize = 20, placeholdersEnabled = false)

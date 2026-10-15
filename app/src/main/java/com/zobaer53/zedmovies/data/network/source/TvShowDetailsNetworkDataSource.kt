@@ -1,7 +1,6 @@
 
 package com.zobaer53.zedmovies.data.network.source
 
-import android.util.Log
 import com.zobaer53.zedmovies.data.common.result.ZedMoviesResult
 import com.zobaer53.zedmovies.data.common.result.isFailure
 import com.zobaer53.zedmovies.data.common.result.isSuccess
@@ -27,15 +26,9 @@ class TvShowDetailsNetworkDataSource @Inject constructor(private val tvShowServi
     ): ZedMoviesResult<List<NetworkTvShowDetails>> {
         val tvShows = ids.map { id ->
             val response = tvShowService.getDetailsById(id, appendToResponse, language, buildIncludeVideoLanguage(language))
-
-           // Log.i("tvDetails1","tv details id $id ")
             when {
-                response.isSuccess() -> {
-                    Log.i("Success1","TvShowDetailsNetworkDataSource ${response.value} ")
-                    response.value}
-                response.isFailure() -> {
-                    Log.i("Success1","TvShowDetailsNetworkDataSource ${response.error} ")
-                    return ZedMoviesResult.failure(response.error)}
+                response.isSuccess() -> response.value
+                response.isFailure() -> return ZedMoviesResult.failure(response.error)
                 else ->
                     error("$MESSAGE_UNHANDLED_STATE $response")
             }
