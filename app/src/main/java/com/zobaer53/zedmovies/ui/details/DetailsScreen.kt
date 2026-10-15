@@ -20,7 +20,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zobaer53.zedmovies.ui.designsystem.component.ZedMoviesSwipeRefresh
 import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesTopAppBar
 import com.zobaer53.zedmovies.data.model.MediaType
-import com.zobaer53.zedmovies.data.model.UserMessage
+import com.zobaer53.zedmovies.ui.model.UserMessage
 import com.zobaer53.zedmovies.ui.smallcomponent.zedMoviesBackButton
 import com.zobaer53.zedmovies.ui.smallcomponent.zedMoviesCenteredError
 import com.zobaer53.zedmovies.ui.smallcomponent.SnackbarUserMessageHandler
