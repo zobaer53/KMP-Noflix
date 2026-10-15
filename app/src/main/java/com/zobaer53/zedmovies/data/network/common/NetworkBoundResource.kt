@@ -2,7 +2,6 @@
 
 package com.zobaer53.zedmovies.data.network.common
 
-import android.util.Log
 import com.zobaer53.zedmovies.data.common.result.ZedMoviesResult
 import com.zobaer53.zedmovies.data.common.result.isFailure
 import com.zobaer53.zedmovies.data.common.result.isSuccess
@@ -28,13 +27,10 @@ inline fun <ResultType, RequestType> networkBoundResource(
 
         when {
             response.isSuccess() -> {
-                Log.i("Success1","tv details id ${response.value} ")
                 saveFetchResult(response.value)
                 query().map { ZedMoviesResult.success(it) }
             }
             response.isFailure() -> {
-                Log.i("Success1","tv details error  ${response.error} ")
-
                 val throwable = response.error
                 query().map { ZedMoviesResult.failure(throwable, it) }
             }

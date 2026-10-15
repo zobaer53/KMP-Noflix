@@ -1,7 +1,5 @@
 package com.zobaer53.zedmovies.data.common.result
 
-import android.util.Log
-
 sealed interface ZedMoviesResult<out T> {
     data class Loading<T>(val value: T? = null) : ZedMoviesResult<T> {
         override fun toString(): String = "Loading($value)"
@@ -11,10 +9,7 @@ sealed interface ZedMoviesResult<out T> {
         val value: T
 
         class Value<T>(override val value: T) : Success<T> {
-            override fun toString(): String {
-               Log.i("Success1","Success1: $value")
-                return "Value($value)"
-            }
+            override fun toString(): String = "Value($value)"
         }
 
         data class HttpResponse<T>(
@@ -23,10 +18,7 @@ sealed interface ZedMoviesResult<out T> {
             override val statusMessage: String?,
             override val url: String?
         ) : Success<T>, com.zobaer53.zedmovies.data.common.result.HttpResponse {
-            override fun toString(): String {
-                Log.i("Success1","Success1: $value, StatusCode: $statusCode, StatusMessage: $statusMessage, URL: $url")
-                return "HttpResponse($value, $statusCode, $statusMessage, $url)"
-            }
+            override fun toString(): String = "HttpResponse($value, $statusCode, $statusMessage, $url)"
         }
     }
 
@@ -36,10 +28,7 @@ sealed interface ZedMoviesResult<out T> {
 
         data class Error<T>(override val error: Throwable, override val value: T? = null) :
             Failure<T> {
-            override fun toString(): String {
-                Log.i("Success1","error: $value")
-               return "Error($error, $value)"
-            }
+            override fun toString(): String = "Error($error, $value)"
         }
 
         data class HttpError<T>(override val error: HttpException, override val value: T? = null) :
@@ -48,11 +37,7 @@ sealed interface ZedMoviesResult<out T> {
             override val statusMessage: String? = error.statusMessage
             override val url: String? = error.url
 
-            override fun toString(): String {
-
-                Log.i("Success1","error: $value")
-                return "HttpError($error, $value)"
-            }
+            override fun toString(): String = "HttpError($error, $value)"
         }
     }
 

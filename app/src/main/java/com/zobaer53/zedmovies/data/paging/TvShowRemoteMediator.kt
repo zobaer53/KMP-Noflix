@@ -2,7 +2,6 @@
 
 package com.zobaer53.zedmovies.data.paging
 
-import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
@@ -23,7 +22,7 @@ import com.zobaer53.zedmovies.data.database.source.TvShowDatabaseDataSource
 import com.zobaer53.zedmovies.data.datastore.PreferencesDataStoreDataSource
 import com.zobaer53.zedmovies.data.network.source.TvShowNetworkDataSource
 import kotlinx.coroutines.flow.first
-import java.io.IOException
+import kotlinx.io.IOException
 
 @OptIn(ExperimentalPagingApi::class)
 class TvShowRemoteMediator(
@@ -64,11 +63,9 @@ class TvShowRemoteMediator(
                 language = preferencesDataStoreDataSource.getContentLanguage().first(),
                 page = currentPage
             )
-            Log.i("Success1","tv details id ${response} ")
 
             when {
                 response.isSuccess() -> {
-                    Log.i("Success1","tv details id ${response.value} ")
                     val tvShows = response.value.results.map {
                         it.asTvShowEntity(mediaType)
                     }
@@ -95,10 +92,7 @@ class TvShowRemoteMediator(
 
                     MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
                 }
-                response.isFailure() ->{
-                    Log.i("Success1","tv details id ${response.error} ")
-
-                    return MediatorResult.Error(response.error)}
+                response.isFailure() -> return MediatorResult.Error(response.error)
                 else ->
                     error("${Constants.Messages.UNHANDLED_STATE} $response")
             }

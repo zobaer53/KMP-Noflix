@@ -8,7 +8,7 @@ import okio.Timeout
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.io.IOException
+import kotlinx.io.IOException
 
 internal class ResultCall<T>(proxy: Call<T>) : CallDelegate<T, ZedMoviesResult<T>>(proxy) {
 

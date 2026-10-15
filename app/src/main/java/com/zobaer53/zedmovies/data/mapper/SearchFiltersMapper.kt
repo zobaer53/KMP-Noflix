@@ -7,13 +7,18 @@ import com.zobaer53.zedmovies.domain.model.FilterMediaTypeModel
 import com.zobaer53.zedmovies.domain.model.GenreMatchModel
 import com.zobaer53.zedmovies.domain.model.SearchFiltersModel
 import com.zobaer53.zedmovies.domain.model.SortModel
-import java.time.LocalDate
+import kotlin.time.Clock
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.todayIn
 
-internal fun SearchFiltersModel.asDiscoverMovieQuery(today: LocalDate = LocalDate.now()) =
+internal fun SearchFiltersModel.asDiscoverMovieQuery(today: LocalDate = today()) =
     asDiscoverQuery(FilterMediaTypeModel.MOVIE, today)
 
-internal fun SearchFiltersModel.asDiscoverTvQuery(today: LocalDate = LocalDate.now()) =
+internal fun SearchFiltersModel.asDiscoverTvQuery(today: LocalDate = today()) =
     asDiscoverQuery(FilterMediaTypeModel.TV_SHOW, today)
+
+private fun today(): LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
 
 /** Genres the media type doesn't have are left out (see [SearchFiltersModel.unmatchableGenres]). */
 private fun SearchFiltersModel.asDiscoverQuery(
@@ -32,9 +37,9 @@ private fun SearchFiltersModel.asDiscoverQuery(
 
     val dateFrom = if (isMovie) Discover.PRIMARY_RELEASE_DATE_GTE else Discover.FIRST_AIR_DATE_GTE
     val dateTo = if (isMovie) Discover.PRIMARY_RELEASE_DATE_LTE else Discover.FIRST_AIR_DATE_LTE
-    yearFrom?.let { put(dateFrom, LocalDate.of(it, 1, 1).toString()) }
+    yearFrom?.let { put(dateFrom, LocalDate(it, 1, 1).toString()) }
     // Newest first would otherwise start with announced titles that are years away.
-    val upperBound = yearTo?.let { LocalDate.of(it, 12, 31) }
+    val upperBound = yearTo?.let { LocalDate(it, 12, 31) }
         ?: today.takeIf { sort == SortModel.RELEASE_DATE_DESC }
     upperBound?.let { put(dateTo, it.toString()) }
 

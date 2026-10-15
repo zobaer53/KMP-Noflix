@@ -7,6 +7,7 @@ import com.zobaer53.zedmovies.data.datastore.PreferencesDataStoreDataSource
 import com.zobaer53.zedmovies.data.mapper.asCertificationsModel
 import com.zobaer53.zedmovies.data.mapper.asWatchProvidersModel
 import com.zobaer53.zedmovies.data.network.source.FilterOptionsNetworkDataSource
+import com.zobaer53.zedmovies.data.platform.RegionProvider
 import com.zobaer53.zedmovies.data.util.Constants
 import com.zobaer53.zedmovies.domain.model.FilterOptionsModel
 import com.zobaer53.zedmovies.domain.repository.FilterOptionsRepository
@@ -15,14 +16,14 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class FilterOptionsRepositoryImpl @Inject constructor(
     private val networkDataSource: FilterOptionsNetworkDataSource,
-    private val preferencesDataStoreDataSource: PreferencesDataStoreDataSource
+    private val preferencesDataStoreDataSource: PreferencesDataStoreDataSource,
+    private val regionProvider: RegionProvider
 ) : FilterOptionsRepository {
     private val mutex = Mutex()
     private var cached: FilterOptionsModel? = null
@@ -30,7 +31,7 @@ class FilterOptionsRepositoryImpl @Inject constructor(
     // These lists rarely change, so one fetch per process is enough.
     override suspend fun getFilterOptions(): ZedMoviesResult<FilterOptionsModel> = mutex.withLock {
         cached?.let { return ZedMoviesResult.success(it) }
-        val region = Locale.getDefault().country.ifBlank { FALLBACK_REGION }
+        val region = regionProvider.region().ifBlank { FALLBACK_REGION }
         val language = preferencesDataStoreDataSource.getContentLanguage().first()
         coroutineScope {
             val certifications = async { networkDataSource.getMovieCertifications() }

@@ -10,11 +10,11 @@ import com.zobaer53.zedmovies.domain.model.TvTypeModel
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import kotlinx.datetime.LocalDate
 import org.junit.Test
-import java.time.LocalDate
 
 class SearchFiltersMapperTest {
-    private val today = LocalDate.of(2026, 10, 14)
+    private val today = LocalDate(2026, 10, 14)
 
     @Test
     fun `default filters only sort by popularity and exclude adult titles`() {

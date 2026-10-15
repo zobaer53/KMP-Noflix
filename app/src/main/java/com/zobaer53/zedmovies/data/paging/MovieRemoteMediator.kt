@@ -19,9 +19,8 @@ import com.zobaer53.zedmovies.data.database.model.movie.MovieRemoteKeyEntity
 import com.zobaer53.zedmovies.data.database.source.MovieDatabaseDataSource
 import com.zobaer53.zedmovies.data.datastore.PreferencesDataStoreDataSource
 import com.zobaer53.zedmovies.data.network.source.MovieNetworkDataSource
-
 import kotlinx.coroutines.flow.first
-import java.io.IOException
+import kotlinx.io.IOException
 
 @OptIn(ExperimentalPagingApi::class)
 class MovieRemoteMediator(

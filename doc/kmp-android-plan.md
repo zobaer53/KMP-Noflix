@@ -716,7 +716,7 @@ Claim a row ("In progress") in the first commit of the package's branch. Edit on
 | ID | Stream | Status | PR | Gates |
 | --- | --- | --- | --- | --- |
 | Setup | — | Done (2026-10-15): repository, `main`/`dev`, worktrees, device lock, pre-push hook, PR checks | — | Lock tested: concurrent, stale, nested and killed runs |
-| A1 | A | Not started | | |
+| A1 | A | In progress | | |
 | A2 | A | Not started | | |
 | A3 | A | Not started | | |
 | A4 | A | Not started | | |
