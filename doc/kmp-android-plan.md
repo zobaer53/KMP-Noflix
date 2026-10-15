@@ -720,7 +720,7 @@ Claim a row ("In progress") in the first commit of the package's branch. Edit on
 | A2 | A | Done (#7 merged) | #7 | test-merge --maestro green on the Pixel 6a (7/7 flows); per-PR phone APK check waived by the owner (auto-merged 2026-10-16); process death on Search with filters restores the chip; KoinGraphTest green; no dagger/hilt in the APK |
 | A3 | A | Done (#8 auto-merge) | #8 | test-merge --maestro green on the Pixel 6a (7/7 flows); per-PR phone APK check waived by the owner (auto-merged 2026-10-16); no retrofit2 in the APK; airplane mode: Search shows "No Internet" (Home never did: its error view is commented out since the original app) |
 | A4 | A | In review | #11 | test-merge on the Pixel 6a: 7/7 flows, process death restores the filter chip; baseline: APK +4.0%, cold start +1.7%; upgrade over 3.0.1 passed, also with a 12-item wish list (6 movies, 6 TV); `:shared:jvmTest` green incl. DAO and 2→3 migration tests; 3.json unchanged; `data/model` stays in `:app` until Phase 4 |
-| A5 | A | In progress | | |
+| A5 | A | In progress | | Gated on the Pixel 6a (stacked on A4, PR after #11 merges): run.sh 7/7 + process death, 6 filter lists; upgrade over 3.0.1 passed, also with a 12-item wish list; APK as A4 (+4.0%), cold start +2.6%; no new native library |
 | A6 | A | Not started | | |
 | B1 | B | Done (#3 merged) | #3 | test-merge --maestro green on the Pixel 6a; baseline in `doc/local/baseline.md` |
 | B2 | B | Done (#4 merged) | #4 | test-merge --maestro green on the Pixel 6a; APK −6%, cold start 232 vs 235 ms (`doc/local/b2.md`) |
