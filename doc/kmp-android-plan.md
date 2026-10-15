@@ -719,7 +719,7 @@ Claim a row ("In progress") in the first commit of the package's branch. Edit on
 | A1 | A | Done (#6 merged) | #6 | test-merge --maestro green on the Pixel 6a (7/7 flows); per-PR phone APK check waived by the owner (auto-merged 2026-10-16); unit tests green; Timber kept (used by `:ad-filter`/`:adblock-client`) |
 | A2 | A | Done (#7 merged) | #7 | test-merge --maestro green on the Pixel 6a (7/7 flows); per-PR phone APK check waived by the owner (auto-merged 2026-10-16); process death on Search with filters restores the chip; KoinGraphTest green; no dagger/hilt in the APK |
 | A3 | A | Done (#8 auto-merge) | #8 | test-merge --maestro green on the Pixel 6a (7/7 flows); per-PR phone APK check waived by the owner (auto-merged 2026-10-16); no retrofit2 in the APK; airplane mode: Search shows "No Internet" (Home never did: its error view is commented out since the original app) |
-| A4 | A | Not started | | |
+| A4 | A | In progress | | |
 | A5 | A | Not started | | |
 | A6 | A | Not started | | |
 | B1 | B | Done (#3 merged) | #3 | test-merge --maestro green on the Pixel 6a; baseline in `doc/local/baseline.md` |
