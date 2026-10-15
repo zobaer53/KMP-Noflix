@@ -1,0 +1,121 @@
+# Baseline screenshots (doc/kmp-android-plan.md → "Baseline", "Visual" success criterion), taken by
+# .maestro/baseline.sh: home, see-all, details for a movie and a TV show, the wish list, search, and
+# the filter sheet. Not part of the suite (config.yaml only runs flows/).
+appId: com.zobaer53.zedmovies
+name: baseline_screens
+---
+- launchApp:
+    clearState: true
+# Old builds show a 16 KB compat-mode dialog on 16 KB page-size devices.
+- tapOn:
+    text: "OK"
+    optional: true
+- extendedWaitUntil:
+    visible: "Upcoming Movies"
+    timeout: 30000
+# Posters have loaded once a rating chip is shown on a card.
+- extendedWaitUntil:
+    visible: "Rating"
+    timeout: 20000
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: 01_home
+- tapOn:
+    text: "See all"
+    index: 0
+- extendedWaitUntil:
+    visible: "Rating"
+    timeout: 20000
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: 02_see_all
+- back
+- extendedWaitUntil:
+    visible: "Top Rated"
+    timeout: 10000
+# First top-rated movie; saved to the wish list for the wish-list screenshot.
+- tapOn:
+    text: "Rating"
+    below: "Movies"
+    index: 0
+    retryTapIfNoChange: false
+- extendedWaitUntil:
+    visible: "Overview"
+    timeout: 20000
+- assertVisible: "Cast"
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: 03_details_movie
+- tapOn: "Wish list"
+- back
+- extendedWaitUntil:
+    visible: "Top Rated"
+    timeout: 10000
+# First top-rated TV show.
+- scrollUntilVisible:
+    element: "Tv Shows"
+    direction: DOWN
+    centerElement: true
+- tapOn:
+    text: "Rating"
+    below: "Tv Shows"
+    index: 0
+    retryTapIfNoChange: false
+- extendedWaitUntil:
+    visible: "Overview"
+    timeout: 20000
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: 04_details_tv
+- tapOn: "Wish list"
+- back
+# Home is still scrolled down to the TV shows row.
+- extendedWaitUntil:
+    visible: "Tv Shows"
+    timeout: 10000
+# Bottom-bar tab (the details top bar is gone).
+- tapOn:
+    text: "Wish list"
+    index: 0
+- assertNotVisible: "Wish list is empty"
+- extendedWaitUntil:
+    visible: "Rating"
+    timeout: 10000
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: 05_wishlist
+- tapOn: "Search"
+- extendedWaitUntil:
+    visible: "Discover"
+    timeout: 20000
+- extendedWaitUntil:
+    visible: "Rating"
+    timeout: 20000
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: 06_search
+- tapOn: "Filters"
+- extendedWaitUntil:
+    visible: "Show results"
+    timeout: 10000
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: 07_filters_sheet
+- back
+- extendedWaitUntil:
+    notVisible: "Show results"
+    timeout: 10000
+- tapOn: "search place holder"
+# Maestro's inputText occasionally doubles the first key ("BBatman"), so clear and retype on a miss.
+- retry:
+    maxRetries: 2
+    commands:
+      - eraseText: 20
+      - inputText: "Batman"
+      - hideKeyboard
+      - extendedWaitUntil:
+          visible: "Batman Begins"
+          timeout: 20000
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: 08_search_results
