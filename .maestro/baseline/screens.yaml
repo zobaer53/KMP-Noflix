@@ -67,8 +67,9 @@ name: baseline_screens
 - takeScreenshot: 04_details_tv
 - tapOn: "Wish list"
 - back
+# Home is still scrolled down to the TV shows row.
 - extendedWaitUntil:
-    visible: "Top Rated"
+    visible: "Tv Shows"
     timeout: 10000
 # Bottom-bar tab (the details top bar is gone).
 - tapOn:
