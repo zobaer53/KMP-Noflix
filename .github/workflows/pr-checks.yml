@@ -50,15 +50,12 @@ jobs:
           [ -n "$TMDB_API_KEY" ] || { echo "::error::Repository secret TMDB_API_KEY is not set"; exit 1; }
           printf 'sdk.dir=%s\nAPI_KEY=%s\n' "$ANDROID_HOME" "$TMDB_API_KEY" > local.properties
 
-      - name: KMP guard (no Android/JVM imports in shared commonMain)
-        run: |
-          if [ -d shared/src/commonMain ] &&
-             grep -rnE '^import (android|androidx\.core|java|javax)\.' shared/src/commonMain; then
-            echo "::error::Android/JVM imports in shared/src/commonMain"; exit 1
-          fi
+      - name: KMP guard (no Android/JVM APIs in shared commonMain)
+        run: scripts/kmp-guard.sh || { echo "::error::Android/JVM APIs in shared/src/commonMain"; exit 1; }
 
+      # :shared's tests run on its JVM target (Room on the bundled SQLite, no device).
       - name: Unit tests and debug build
-        run: ./gradlew :app:testDebugUnitTest :app:assembleDebug --stacktrace
+        run: ./gradlew :shared:jvmTest :app:testDebugUnitTest :app:assembleDebug --stacktrace
 
       - name: Upload debug APK
         uses: actions/upload-artifact@v7
