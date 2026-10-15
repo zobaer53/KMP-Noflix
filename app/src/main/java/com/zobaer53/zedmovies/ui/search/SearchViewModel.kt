@@ -31,7 +31,6 @@ import com.zobaer53.zedmovies.ui.smallcomponent.mapper.asMovie
 import com.zobaer53.zedmovies.ui.smallcomponent.mapper.asSearchFiltersModel
 import com.zobaer53.zedmovies.ui.smallcomponent.mapper.asTvShow
 import com.zobaer53.zedmovies.ui.smallcomponent.mapper.pagingMap
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -45,11 +44,9 @@ import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
-import javax.inject.Inject
 
 @Suppress("TooManyFunctions", "LongParameterList")
-@HiltViewModel
-class SearchViewModel @Inject constructor(
+class SearchViewModel(
     private val savedStateHandle: SavedStateHandle,
     private val getMoviesUseCase: GetMoviesUseCase,
     private val getTvShowsUseCase: GetTvShowsUseCase,

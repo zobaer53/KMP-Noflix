@@ -16,16 +16,13 @@ import com.zobaer53.zedmovies.ui.smallcomponent.common.EventHandler
 import com.zobaer53.zedmovies.ui.smallcomponent.mapper.asMediaTypeModel
 import com.zobaer53.zedmovies.ui.smallcomponent.mapper.asMovie
 import com.zobaer53.zedmovies.ui.smallcomponent.mapper.asTvShow
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class HomeViewModel @Inject constructor(
+class HomeViewModel(
     private val getMoviesUseCase: GetMoviesUseCase,
     private val getTvShowsUseCase: GetTvShowsUseCase
 ) : ViewModel(), EventHandler<HomeEvent> {

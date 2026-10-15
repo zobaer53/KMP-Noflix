@@ -18,16 +18,13 @@ import com.zobaer53.zedmovies.ui.details.navigation.DetailsDestination
 import com.zobaer53.zedmovies.ui.smallcomponent.common.EventHandler
 import com.zobaer53.zedmovies.ui.smallcomponent.mapper.asMovieDetails
 import com.zobaer53.zedmovies.ui.smallcomponent.mapper.asTvShowDetails
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @Suppress("LongParameterList", "TooManyFunctions")
-@HiltViewModel
-class DetailsViewModel @Inject constructor(
+class DetailsViewModel(
     private val getMovieDetailsUseCase: GetMovieDetailsUseCase,
     private val getTvShowDetailsUseCase: GetTvShowDetailsUseCase,
     private val addMovieToWishlistUseCase: AddMovieToWishlistUseCase,

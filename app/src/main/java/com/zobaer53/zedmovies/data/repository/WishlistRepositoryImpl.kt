@@ -9,9 +9,8 @@ import com.zobaer53.zedmovies.data.database.source.WishlistDatabaseDataSource
 import com.zobaer53.zedmovies.domain.model.WishlistModel
 import com.zobaer53.zedmovies.domain.repository.WishlistRepository
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
 
-class WishlistRepositoryImpl @Inject constructor(
+class WishlistRepositoryImpl(
     private val databaseDataSource: WishlistDatabaseDataSource
 ) : WishlistRepository {
     override fun getMovies(): Flow<List<WishlistModel>> =

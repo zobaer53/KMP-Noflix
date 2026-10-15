@@ -15,9 +15,8 @@ import com.zobaer53.zedmovies.data.network.source.MovieDetailsNetworkDataSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
-class MovieDetailsRepositoryImpl @Inject constructor(
+class MovieDetailsRepositoryImpl(
     private val databaseDataSource: MovieDetailsDatabaseDataSource,
     private val networkDataSource: MovieDetailsNetworkDataSource,
     private val wishlistDatabaseDataSource: WishlistDatabaseDataSource,

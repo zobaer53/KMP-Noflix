@@ -11,7 +11,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import org.koin.compose.viewmodel.koinViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -31,7 +31,7 @@ internal fun ListRoute(
     onMovieClick: (Int) -> Unit,
     onTvShowClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: ListViewModel = hiltViewModel()
+    viewModel: ListViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val movies = uiState.movies.collectAsLazyPagingItems()

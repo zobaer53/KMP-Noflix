@@ -7,9 +7,8 @@ import com.zobaer53.zedmovies.domain.repository.TvShowDetailsRepository
 import com.zobaer53.zedmovies.domain.repository.WishlistRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flatMapLatest
-import javax.inject.Inject
 
-class GetWishlistTvShowsUseCase @Inject constructor(
+class GetWishlistTvShowsUseCase(
     private val wishlistRepository: WishlistRepository,
     private val tvShowDetailsRepository: TvShowDetailsRepository
 ) {

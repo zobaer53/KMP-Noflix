@@ -5,9 +5,8 @@ import com.zobaer53.zedmovies.data.network.api.service.TvShowService
 import com.zobaer53.zedmovies.data.network.model.common.NetworkMediaType
 import com.zobaer53.zedmovies.data.network.model.response.TvShowResponseDto
 import com.zobaer53.zedmovies.data.network.util.Constants.DEFAULT_PAGE
-import javax.inject.Inject
 
-class TvShowNetworkDataSource @Inject constructor(private val tvShowService: TvShowService) {
+class TvShowNetworkDataSource(private val tvShowService: TvShowService) {
     suspend fun getByMediaType(
         mediaType: NetworkMediaType.TvShow,
         language: String,

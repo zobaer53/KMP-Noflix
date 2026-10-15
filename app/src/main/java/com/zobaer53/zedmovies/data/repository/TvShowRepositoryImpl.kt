@@ -37,9 +37,8 @@ import com.zobaer53.zedmovies.data.network.util.Constants.Discover
 import com.zobaer53.zedmovies.data.network.util.PAGE_SIZE
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import javax.inject.Inject
 
-class TvShowRepositoryImpl @Inject constructor(
+class TvShowRepositoryImpl(
     private val databaseDataSource: TvShowDatabaseDataSource,
     private val networkDataSource: TvShowNetworkDataSource,
     private val preferencesDataStoreDataSource: PreferencesDataStoreDataSource

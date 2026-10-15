@@ -9,9 +9,8 @@ import com.zobaer53.zedmovies.data.network.model.movie.NetworkMovieDetails
 import com.zobaer53.zedmovies.data.network.util.Constants.Fields.DETAILS_APPEND_TO_RESPONSE
 import com.zobaer53.zedmovies.data.network.util.Constants.Fields.buildIncludeVideoLanguage
 import com.zobaer53.zedmovies.data.network.util.MESSAGE_UNHANDLED_STATE
-import javax.inject.Inject
 
-class MovieDetailsNetworkDataSource @Inject constructor(private val movieService: MovieService) {
+class MovieDetailsNetworkDataSource(private val movieService: MovieService) {
     suspend fun getById(
         id: Int,
         language: String,

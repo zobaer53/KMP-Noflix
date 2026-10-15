@@ -17,14 +17,11 @@ import com.zobaer53.zedmovies.ui.smallcomponent.mapper.asTvShow
 import com.zobaer53.zedmovies.ui.smallcomponent.mapper.asTvShowMediaType
 import com.zobaer53.zedmovies.ui.smallcomponent.mapper.pagingMap
 import com.zobaer53.zedmovies.ui.list.navigation.ListDestination
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.emptyFlow
-import javax.inject.Inject
 
-@HiltViewModel
-class ListViewModel @Inject constructor(
+class ListViewModel(
     private val getMoviesPagingUseCase: GetMoviesPagingUseCase,
     private val getTvShowsPagingUseCase: GetTvShowsPagingUseCase,
     savedStateHandle: SavedStateHandle

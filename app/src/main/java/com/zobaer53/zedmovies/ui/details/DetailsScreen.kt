@@ -15,7 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import org.koin.compose.viewmodel.koinViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zobaer53.zedmovies.ui.designsystem.component.ZedMoviesSwipeRefresh
 import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesTopAppBar
@@ -36,7 +36,7 @@ internal fun DetailsRoute(
     onSetSystemBarsColorTransparent: () -> Unit,
     onResetSystemBarsColor: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: DetailsViewModel = hiltViewModel()
+    viewModel: DetailsViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     DetailsScreen(

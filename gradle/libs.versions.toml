@@ -5,14 +5,12 @@ ksp = "2.3.12"
 compileSdk = "37"
 ndk = "28.2.13676358"
 cmake = "3.22.1"
-hilt = "2.60.1"
 
 androidxCore = "1.19.1"
 activity = "1.13.0"
 lifecycle = "2.11.0"
 composeBom = "2026.09.00"
 navigation = "2.10.2"
-androidxHilt = "1.4.0"
 splashscreen = "1.2.0"
 paging = "3.5.3"
 room = "2.8.5"
@@ -24,6 +22,7 @@ coroutines = "1.11.0"
 serialization = "1.11.0"
 datetime = "0.8.0"
 kotlinxIo = "0.9.1"
+koin = "4.2.2"
 retrofit = "3.0.0"
 okhttp = "5.5.0"
 coil = "3.6.3"
@@ -60,7 +59,6 @@ androidx-compose-foundation = { module = "androidx.compose.foundation:foundation
 androidx-compose-material3 = { module = "androidx.compose.material3:material3" }
 
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigation" }
-androidx-hilt-lifecycle-viewmodel-compose = { module = "androidx.hilt:hilt-lifecycle-viewmodel-compose", version.ref = "androidxHilt" }
 androidx-paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "paging" }
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
@@ -69,9 +67,14 @@ androidx-room-paging = { module = "androidx.room:room-paging", version.ref = "ro
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 
-hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
-hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
-
+# DI: one BOM version for every Koin artifact (the KMP-ready replacement for Hilt).
+koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin" }
+koin-android = { module = "io.insert-koin:koin-android" }
+koin-compose = { module = "io.insert-koin:koin-compose" }
+koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel" }
+koin-core = { module = "io.insert-koin:koin-core" }
+koin-core-viewmodel = { module = "io.insert-koin:koin-core-viewmodel" }
+koin-test = { module = "io.insert-koin:koin-test" }
 
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
@@ -107,5 +110,4 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 room = { id = "androidx.room", version.ref = "room" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }

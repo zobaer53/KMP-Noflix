@@ -3,9 +3,8 @@ package com.zobaer53.zedmovies.data.database.source
 import com.zobaer53.zedmovies.data.database.dao.wishlist.WishlistDao
 import com.zobaer53.zedmovies.data.database.mapper.asWishlistEntity
 import com.zobaer53.zedmovies.data.database.model.common.MediaType.Wishlist
-import javax.inject.Inject
 
-class WishlistDatabaseDataSource @Inject constructor(private val wishlistDao: WishlistDao) {
+class WishlistDatabaseDataSource(private val wishlistDao: WishlistDao) {
     fun getMovies() = wishlistDao.getByMediaType(Wishlist.Movie)
     fun getTvShows() = wishlistDao.getByMediaType(Wishlist.TvShow)
 

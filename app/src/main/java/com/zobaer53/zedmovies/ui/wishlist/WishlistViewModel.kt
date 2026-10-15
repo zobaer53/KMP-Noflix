@@ -12,15 +12,12 @@ import com.zobaer53.zedmovies.domain.usecase.GetWishlistTvShowsUseCase
 import com.zobaer53.zedmovies.ui.smallcomponent.common.EventHandler
 import com.zobaer53.zedmovies.ui.smallcomponent.mapper.asMovieDetails
 import com.zobaer53.zedmovies.ui.smallcomponent.mapper.asTvShowDetails
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class WishlistViewModel @Inject constructor(
+class WishlistViewModel(
     private val getWishlistMoviesUseCase: GetWishlistMoviesUseCase,
     private val getWishlistTvShowsUseCase: GetWishlistTvShowsUseCase
 ) : ViewModel(), EventHandler<WishlistEvent> {

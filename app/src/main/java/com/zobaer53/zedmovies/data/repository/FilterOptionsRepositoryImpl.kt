@@ -16,11 +16,8 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class FilterOptionsRepositoryImpl @Inject constructor(
+class FilterOptionsRepositoryImpl(
     private val networkDataSource: FilterOptionsNetworkDataSource,
     private val preferencesDataStoreDataSource: PreferencesDataStoreDataSource,
     private val regionProvider: RegionProvider

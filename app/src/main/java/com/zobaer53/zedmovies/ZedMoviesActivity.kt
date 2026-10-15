@@ -13,9 +13,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.zobaer53.zedmovies.playback.AndroidMediaLauncher
 import com.zobaer53.zedmovies.ui.playback.LocalMediaLauncher
 import com.zobaer53.zedmovies.ui.zedMoviesApp
-import dagger.hilt.android.AndroidEntryPoint
 
-@AndroidEntryPoint
 class zedMoviesActivity : ComponentActivity() {
     // The Activity itself as context: Play and Trailer start their activities without NEW_TASK.
     private val mediaLauncher = AndroidMediaLauncher(this)

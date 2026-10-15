@@ -8,9 +8,8 @@ import com.zobaer53.zedmovies.data.datastore.util.Constants.CONTENT_LANGUAGE_KEY
 import com.zobaer53.zedmovies.data.platform.DeviceLocaleProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
-class PreferencesDataStoreDataSource @Inject constructor(
+class PreferencesDataStoreDataSource(
     private val deviceLocaleProvider: DeviceLocaleProvider,
     private val dataStore: DataStore<Preferences>
 ) {
