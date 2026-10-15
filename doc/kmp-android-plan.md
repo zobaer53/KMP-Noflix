@@ -72,7 +72,7 @@ Each package is one branch and one PR into `dev`. **Exceptions** are the only li
 | **A6** | `feat/a-hardening` | Phase 5 items 2–5 (catalog/leftover clean-up, optional R8 + Baseline Profile, docs) | B6 | none |
 | **B1** | `feat/b-baseline` | Baseline section, automated as `.maestro/baseline.sh` (APK size, `.so` list, cold start ×10, dependency snapshot, screenshot flow) → results in `doc/local/` | — | none |
 | **B2** | `feat/b-ui-cleanup` | 0.1 UI rows (`"error1"`/`"error2"` logs), `UserMessage` → `ui/` as a sealed type (incl. `IOException` → `kotlinx.io` in `UserMessageMapper`), 0.3 (`PlatformFormat`, `MediaLauncher`, icon drawables), 0.4 if decided, 0.5 `UserMessageMapperTest` | B1 | Delete `data/model/UserMessage.kt` (moved to `ui/`) |
-| **B3** | `feat/b-screenshot-tests` | **Addition:** JVM screenshot tests (Roborazzi + Robolectric) of every screen's stateless composable with fake UI state. They automate the "Visual" success criterion for B5/B6 and later move to `:shared`. | B2 | none |
+| **B3** | `feat/b-screenshot-tests` | **Addition:** JVM screenshot tests (Roborazzi + Robolectric) of every screen's stateless composable with fake UI state. They automate the "Visual" success criterion for B5/B6 and later move to `:shared`. | B2 | Approved by the user: Roborazzi plugin line in the root `build.gradle`; in `app/build.gradle` the plugin line, the test dependency lines and `testOptions { unitTests { includeAndroidResources = true } }`; catalog entries |
 | **B4** | `feat/b-gate-checks` | **Addition:** automate the remaining success criteria. `upgrade.sh` also checks that the content language survives (non-English locale before the old APK's first start). A process-death check (`am kill` on Search with filters, then reopen) for A2's gate. A cold-start comparison against the B1 baseline. | B1 | none |
 | **B5** | `feat/b-cmp-foundation` | 4.1 (Compose Multiplatform in `:shared`), 4.2 (resources), 4.3 steps 1–3 (design system, `ui/smallcomponent`) | **A4** | `shared/build.gradle.kts`: the compose plugin, the compose dependency lines and the `compose.resources {}` block only |
 | **B6** | `feat/b-cmp-screens` | 4.3 steps 4–8, 4.4, 4.5 (screens, navigation, `SystemBarsAppearance`, `MediaLauncher` → commonMain, slim `zedMoviesActivity`, JVM UI smoke test) | B5 | Move `di/ViewModelModule.kt` into `:shared` |
@@ -723,8 +723,8 @@ Claim a row ("In progress") in the first commit of the package's branch. Edit on
 | A5 | A | Not started | | |
 | A6 | A | Not started | | |
 | B1 | B | Done (#3 merged) | #3 | test-merge --maestro green on the Pixel 6a; baseline in `doc/local/baseline.md` |
-| B2 | B | In review | this PR | test-merge --maestro green on the Pixel 6a; APK −6%, cold start 232 vs 235 ms (`doc/local/b2.md`) |
-| B3 | B | Not started | | |
+| B2 | B | Done (#4 merged) | #4 | test-merge --maestro green on the Pixel 6a; APK −6%, cold start 232 vs 235 ms (`doc/local/b2.md`) |
+| B3 | B | In review | this PR | 12 screenshots, `verifyRoborazziDebug` green; test-merge --maestro green on the Pixel 6a |
 | B4 | B | Not started | | |
 | B5 | B | Not started | | |
 | B6 | B | Not started | | |

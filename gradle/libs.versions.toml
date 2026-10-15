@@ -33,6 +33,8 @@ youtubePlayer = "13.0.0"
 junit = "4.13.2"
 androidxTestExt = "1.3.0"
 espresso = "3.7.0"
+robolectric = "4.17"
+roborazzi = "1.76.0"
 
 [libraries]
 # AGP 9 compiles Kotlin itself (built-in Kotlin); this pins the Kotlin Gradle plugin it uses.
@@ -51,10 +53,10 @@ androidx-compose-ui = { module = "androidx.compose.ui:ui" }
 androidx-compose-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
 androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
+androidx-compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
 androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 androidx-compose-ui-util = { module = "androidx.compose.ui:ui-util" }
 androidx-compose-foundation = { module = "androidx.compose.foundation:foundation" }
-# Frozen at 1.7.8 (still in the BOM); only Icons.Rounded.Close is used.
 androidx-compose-material3 = { module = "androidx.compose.material3:material3" }
 
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigation" }
@@ -92,6 +94,11 @@ youtube-player-core = { module = "com.pierfrancescosoffritti.androidyoutubeplaye
 junit = { module = "junit:junit", version.ref = "junit" }
 androidx-test-ext-junit = { module = "androidx.test.ext:junit", version.ref = "androidxTestExt" }
 androidx-test-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso" }
+# JVM screenshot tests of the screens (B3): Robolectric renders, Roborazzi records and compares.
+robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
+roborazzi = { module = "io.github.takahirom.roborazzi:roborazzi", version.ref = "roborazzi" }
+roborazzi-compose = { module = "io.github.takahirom.roborazzi:roborazzi-compose", version.ref = "roborazzi" }
+roborazzi-junit-rule = { module = "io.github.takahirom.roborazzi:roborazzi-junit-rule", version.ref = "roborazzi" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -101,3 +108,4 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 room = { id = "androidx.room", version.ref = "room" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }

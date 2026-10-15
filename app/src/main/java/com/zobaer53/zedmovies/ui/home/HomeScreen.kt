@@ -44,7 +44,7 @@ internal fun HomeRoute(
 }
 
 @Composable
-private fun HomeScreen(
+internal fun HomeScreen(
     uiState: HomeUiState,
     onSeeAllClick: (MediaType.Common) -> Unit,
     onMovieClick: (Int) -> Unit,
