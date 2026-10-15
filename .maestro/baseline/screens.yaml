@@ -38,6 +38,7 @@ name: baseline_screens
     text: "Rating"
     below: "Movies"
     index: 0
+    retryTapIfNoChange: false
 - extendedWaitUntil:
     visible: "Overview"
     timeout: 20000
@@ -59,6 +60,7 @@ name: baseline_screens
     text: "Rating"
     below: "Tv Shows"
     index: 0
+    retryTapIfNoChange: false
 - extendedWaitUntil:
     visible: "Overview"
     timeout: 20000
