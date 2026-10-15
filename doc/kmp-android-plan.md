@@ -20,7 +20,7 @@ Move the Android app onto a Kotlin Multiplatform structure **without users notic
 
 | Check | How | Pass |
 | --- | --- | --- |
-| Functional | `.maestro/run.sh` (flows 01–07) on a 16 KB API 36+ emulator and a real device | All pass, no logcat crash |
+| Functional | `.maestro/run.sh` (flows 01–07) on the shared Pixel 6a (Android 17, 4 KB pages). 16 KB page support is covered by the static alignment check below. | All pass, no logcat crash |
 | Data survives update | `.maestro/upgrade.sh <last public APK>` (`1_add_wishlist` → install over → `2_check_wishlist`) | Wish list intact, no Room crash |
 | Content language survives update | Set the device to a non-English locale before the old APK's first start, then install over and open Home | Titles still in that language |
 | Unit tests | `./gradlew :app:testDebugUnitTest` (later `:shared:allTests`) | All pass |
@@ -33,7 +33,7 @@ Move the Android app onto a Kotlin Multiplatform structure **without users notic
 
 1. Build the current `master` as release and as debug. Record APK size, `.so` list, cold start (median of 10) and `./gradlew :app:dependencies --configuration releaseRuntimeClasspath > doc/local/deps-baseline.txt`.
 2. Save the **last public release APK** (from GitHub Releases) as `doc/local/baseline.apk`. Every upgrade test installs over it.
-3. Take the baseline screenshots on one emulator profile (Pixel, API 36, 16 KB, en-US, dark theme as the app ships) and save them in `doc/local/screens-baseline/`.
+3. Take the baseline screenshots on the shared Pixel 6a (Android 17, 4 KB pages, en-US, dark theme) and save them in `doc/local/screens-baseline/`. 16 KB page support is covered by the static alignment check, not on this device.
 4. Run `.maestro/run.sh` and `.maestro/upgrade.sh doc/local/baseline.apk` and record that both pass.
 
 `doc/local/` is for files that aren't committed. Check that it's ignored.
@@ -722,7 +722,7 @@ Claim a row ("In progress") in the first commit of the package's branch. Edit on
 | A4 | A | Not started | | |
 | A5 | A | Not started | | |
 | A6 | A | Not started | | |
-| B1 | B | Not started | | |
+| B1 | B | In review | #3 | test-merge --maestro green on the Pixel 6a; baseline in `doc/local/baseline.md` |
 | B2 | B | Not started | | |
 | B3 | B | Not started | | |
 | B4 | B | Not started | | |
