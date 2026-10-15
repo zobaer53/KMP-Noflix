@@ -20,14 +20,14 @@ Move the Android app onto a Kotlin Multiplatform structure **without users notic
 
 | Check | How | Pass |
 | --- | --- | --- |
-| Functional | `.maestro/run.sh` (flows 01–07) on the shared Pixel 6a (Android 17, 4 KB pages). 16 KB page support is covered by the static alignment check below. | All pass, no logcat crash |
+| Functional | `.maestro/run.sh` (flows 01–07, then the process-death check on Search) on the shared Pixel 6a (Android 17, 4 KB pages). 16 KB page support is covered by the static alignment check below. | All pass, no logcat crash |
 | Data survives update | `.maestro/upgrade.sh <last public APK>` (`1_add_wishlist` → install over → `2_check_wishlist`) | Wish list intact, no Room crash |
-| Content language survives update | Set the device to a non-English locale before the old APK's first start, then install over and open Home | Titles still in that language |
+| Content language survives update | `.maestro/upgrade.sh --content-language <last public APK> <release build>`: it waits while you set the phone to German before the old APK's first start and back to English before the new build starts | A movie's details, never opened before, load in German |
 | Unit tests | `./gradlew :app:testDebugUnitTest` (later `:shared:allTests`) | All pass |
 | 16 KB alignment | `zipalign -c -P 16 -v 4` + `llvm-objdump -p` on every 64-bit `.so`, as in CI | Aligned |
-| APK size | Compare with the baseline | ≤ +10% (target: smaller once Retrofit and Hilt are gone) |
-| Cold start | `adb shell am start -W -n com.zobaer53.zedmovies/.zedMoviesActivity`, median of 10 | ≤ baseline + 10% |
-| Visual | Screenshots of home, see-all, search + filter sheet, details (movie and TV), wish list | Matches the baseline |
+| APK size | `.maestro/baseline.sh --name <package>` compares with `doc/local/baseline.json` | ≤ +10% (target: smaller once Retrofit and Hilt are gone) |
+| Cold start | `adb shell am start -W -n com.zobaer53.zedmovies/.zedMoviesActivity`, median of 10, by `.maestro/baseline.sh --name <package>` | ≤ baseline + 10% (or ≤ +10% vs the public release in the same run) |
+| Visual | `./gradlew :app:verifyRoborazziDebug` (B3), plus the device screenshots of `baseline.sh` | No diff |
 
 ## Baseline (do this first, before any change)
 
@@ -724,8 +724,8 @@ Claim a row ("In progress") in the first commit of the package's branch. Edit on
 | A6 | A | Not started | | |
 | B1 | B | Done (#3 merged) | #3 | test-merge --maestro green on the Pixel 6a; baseline in `doc/local/baseline.md` |
 | B2 | B | Done (#4 merged) | #4 | test-merge --maestro green on the Pixel 6a; APK −6%, cold start 232 vs 235 ms (`doc/local/b2.md`) |
-| B3 | B | In review | this PR | 12 screenshots, `verifyRoborazziDebug` green; test-merge --maestro green on the Pixel 6a |
-| B4 | B | Not started | | |
+| B3 | B | Done (#5 merged) | #5 | 12 screenshots, `verifyRoborazziDebug` green; test-merge --maestro green on the Pixel 6a |
+| B4 | B | In review | this PR | run.sh with process death, upgrade, size and cold-start comparison green on the Pixel 6a; `upgrade.sh --content-language` not run end to end yet (skipped by the user) |
 | B5 | B | Not started | | |
 | B6 | B | Not started | | |
 

@@ -50,6 +50,27 @@ if [ $# -gt 0 ]; then
 else
   "${MAESTRO[@]}" test --test-output-dir "$OUT" .maestro || status=$?
 fi
+# Process death (full runs only): Search with a filter goes to the background, the process is killed,
+# and the restored task must still show the filter. Catches ViewModels that lose their
+# SavedStateHandle (e.g. after a DI change). Inside the logcat window, so a crash on restore counts.
+if [ $# -eq 0 ] && [ $status -eq 0 ]; then
+  if "${MAESTRO[@]}" test --test-output-dir "$OUT" .maestro/process-death/1_apply_filters.yaml; then
+    adb shell am kill $PKG; sleep 2
+    if [ -n "$(adb shell pidof $PKG | tr -d '\r')" ]; then
+      echo "process death: the app was still running after am kill"; status=1
+    else
+      # Like the launcher: brings the existing task back, so Android restores the saved state.
+      adb shell monkey -p $PKG -c android.intent.category.LAUNCHER 1 >/dev/null 2>&1
+      if "${MAESTRO[@]}" test --test-output-dir "$OUT" .maestro/process-death/2_check_filters.yaml; then
+        echo "process death: Search filters restored"
+      else
+        status=1
+      fi
+    fi
+  else
+    status=1
+  fi
+fi
 sleep 2; logcat_children=$(pgrep -P "$logcat_pid" || true)
 kill "$logcat_pid" $logcat_children 2>/dev/null || true
 wait "$logcat_pid" 2>/dev/null || true

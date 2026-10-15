@@ -1,0 +1,23 @@
+# Upgrade test, part 3 (only with upgrade.sh --content-language): the old build stored a German content
+# language on its first start; the phone is back in English now, so the new build only loads German
+# content if it kept that setting. The second top-rated movie wasn't opened before, so its details come
+# fresh from TMDB in the stored language. Common German words, none of them English, mark the overview.
+appId: com.zobaer53.zedmovies
+name: upgrade_3_check_content_language
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Top Rated"
+    timeout: 30000
+# No retap: when details load slowly Maestro sees "no change", taps again and hits the Play chip.
+- tapOn:
+    text: "Rating"
+    below: "Movies"
+    index: 1
+    retryTapIfNoChange: false
+- extendedWaitUntil:
+    visible: "Overview"
+    timeout: 20000
+- extendedWaitUntil:
+    visible: "(?s).*\\b(und|der|das|nicht|sich|eine|einen|wird|seine|ihre|mit)\\b.*"
+    timeout: 20000

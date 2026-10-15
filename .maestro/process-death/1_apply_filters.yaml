@@ -1,0 +1,24 @@
+# Process death, part 1: apply a filter on Search, then leave the app in the background.
+# .maestro/run.sh then kills the process (am kill) and brings the task back like the launcher does.
+appId: com.zobaer53.zedmovies
+name: process_death_1_apply_filters
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Upcoming Movies"
+    timeout: 30000
+- tapOn: "Search"
+- extendedWaitUntil:
+    visible: "Discover"
+    timeout: 20000
+- tapOn: "Filters"
+- extendedWaitUntil:
+    visible: "Show results"
+    timeout: 10000
+- tapOn: "Drama"
+- tapOn: "Show results"
+- extendedWaitUntil:
+    visible: "Remove filter"
+    timeout: 10000
+- assertVisible: "Clear all"
+- pressKey: Home
