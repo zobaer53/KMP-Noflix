@@ -723,8 +723,8 @@ Claim a row ("In progress") in the first commit of the package's branch. Edit on
 | A5 | A | Not started | | |
 | A6 | A | Not started | | |
 | B1 | B | Done (#3 merged) | #3 | test-merge --maestro green on the Pixel 6a; baseline in `doc/local/baseline.md` |
-| B2 | B | In review | this PR | test-merge --maestro green on the Pixel 6a; APK −6%, cold start 232 vs 235 ms (`doc/local/b2.md`) |
-| B3 | B | In progress | | |
+| B2 | B | Done (#4 merged) | #4 | test-merge --maestro green on the Pixel 6a; APK −6%, cold start 232 vs 235 ms (`doc/local/b2.md`) |
+| B3 | B | In review | this PR | 12 screenshots, `verifyRoborazziDebug` green; test-merge --maestro green on the Pixel 6a |
 | B4 | B | Not started | | |
 | B5 | B | Not started | | |
 | B6 | B | Not started | | |
