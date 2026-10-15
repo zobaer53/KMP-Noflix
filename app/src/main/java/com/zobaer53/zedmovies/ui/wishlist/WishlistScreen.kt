@@ -15,7 +15,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import org.koin.compose.viewmodel.koinViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesMessage
 import com.zobaer53.zedmovies.ui.designsystem.component.ZedMoviesSwipeRefresh
@@ -36,7 +36,7 @@ internal fun WishlistRoute(
     onMovieClick: (Int) -> Unit,
     onTvShowClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: WishlistViewModel = hiltViewModel()
+    viewModel: WishlistViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     WishlistScreen(

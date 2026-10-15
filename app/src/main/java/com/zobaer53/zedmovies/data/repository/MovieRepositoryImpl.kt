@@ -36,9 +36,8 @@ import com.zobaer53.zedmovies.data.network.util.Constants.Discover
 import com.zobaer53.zedmovies.data.network.util.PAGE_SIZE
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import javax.inject.Inject
 
-class MovieRepositoryImpl @Inject constructor(
+class MovieRepositoryImpl(
     private val databaseDataSource: MovieDatabaseDataSource,
     private val networkDataSource: MovieNetworkDataSource,
     private val preferencesDataStoreDataSource: PreferencesDataStoreDataSource

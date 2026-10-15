@@ -10,9 +10,8 @@ import com.zobaer53.zedmovies.data.database.model.tvshow.TvShowEntity
 import com.zobaer53.zedmovies.data.database.model.tvshow.TvShowRemoteKeyEntity
 import com.zobaer53.zedmovies.data.database.util.zedMoviesDatabaseTransactionProvider
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
 
-class TvShowDatabaseDataSource @Inject constructor(
+class TvShowDatabaseDataSource(
     private val tvShowDao: TvShowDao,
     private val tvShowRemoteKeyDao: TvShowRemoteKeyDao,
     private val transactionProvider: zedMoviesDatabaseTransactionProvider

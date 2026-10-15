@@ -8,9 +8,8 @@ import com.zobaer53.zedmovies.data.database.model.movie.MovieEntity
 import com.zobaer53.zedmovies.data.database.model.movie.MovieRemoteKeyEntity
 import com.zobaer53.zedmovies.data.database.util.zedMoviesDatabaseTransactionProvider
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
 
-class MovieDatabaseDataSource @Inject constructor(
+class MovieDatabaseDataSource(
     private val movieDao: MovieDao,
     private val movieRemoteKeyDao: MovieRemoteKeyDao,
     private val transactionProvider: zedMoviesDatabaseTransactionProvider
