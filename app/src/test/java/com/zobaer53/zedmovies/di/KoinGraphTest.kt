@@ -12,8 +12,8 @@ class KoinGraphTest {
     @Test
     fun `graph is complete`() {
         module {
-            includes(androidModule, viewModelModule)
-            includes(dataModules)
+            includes(androidAppModule, viewModelModule)
+            includes(sharedModules) // with :shared's Android platformModule (database, DataStore, locale)
         }.verify(extraTypes = listOf(Context::class, SavedStateHandle::class, CreationExtras::class))
     }
 }
