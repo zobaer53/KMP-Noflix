@@ -40,11 +40,53 @@ Move the Android app onto a Kotlin Multiplatform structure **without users notic
 
 ## Branching and release strategy
 
-- **Pushing to `master` publishes a public release.** Do all work on short-lived branches (`kmp/phase-0`, `kmp/phase-1`, …) and merge **one phase at a time**, only after its gates pass. Each merge is then an ordinary release, and a regression can be pinned to a single phase.
-- **Before merging, test a real device build from the branch.** Add a `workflow_dispatch` or branch-push job that builds and signs the APK, verifies it as `release.yml` does, and uploads it as a workflow artifact **without** creating a release. Install that artifact over the current public release on a real phone.
-- **Version line:** when Phase 3 merges, bump `versionName` in `app/build.gradle` to `3.1.0`, so bug reports show whether the KMP data layer is in use.
-- **Rollback:** no phase changes the DB schema (it stays at version 3) or the DB/DataStore file locations. If a phase misbehaves after release, reverting its merge commit and releasing again is safe. Users install the higher-version APK over it, and their data stays readable.
-- **Commit hygiene:** don't name the streaming site in commits, file names or identifiers. New files under `app/` need `git add -f`, because `.gitignore` ignores `/app/`. `shared/` isn't affected.
+This plan runs in the **`zobaer53/KMP-Noflix`** repository. It has no release workflow yet, so merging doesn't publish anything. The rules below keep it shippable anyway: the original NoFlix release pipeline comes back here once the migration lands.
+
+- **Branches:** `main` = stable and always releasable. `dev` = integration: every PR goes into `dev`. `main` only receives `dev`, after a set of work packages passes all success criteria on a real device. Feature branches are `feat/a-…` (stream A) and `feat/b-…` (stream B), one per work package (see "Parallel streams").
+- **Checks:** `.github/workflows/pr-checks.yml` runs unit tests, the debug build and the KMP guard on every PR, and uploads the debug APK as an artifact. Install that artifact over the baseline APK on a real phone before merging anything that touches data (A1–A5).
+- **Merge one work package at a time**, only after its gates pass. Then a regression can be pinned to one package.
+- **Version line:** when A4 (Phase 3) merges, bump `versionName` in `app/build.gradle` to `3.1.0`, so bug reports show whether the KMP data layer is in use.
+- **Rollback:** no package changes the DB schema (it stays at version 3) or the DB/DataStore file locations. Reverting a merge commit on `dev` is safe, and a build from the reverted `dev`, installed over the newer one, still reads the data.
+- **Commit hygiene:** don't name the streaming site in commits, file names or identifiers. Files under `app/` are tracked normally in this repository (no `git add -f`).
+
+## Parallel streams
+
+Two Claude Code sessions work in parallel, each in its own **git worktree**. Setup, ownership and conflict rules are in `CLAUDE.md` → "Parallel streams". In short:
+
+- **Stream A (core)** works in the main checkout `NoFlix_KMP/`. It owns data, domain, DI, Gradle, CI and scripts, and builds the shared core first.
+- **Stream B (UI)** works in the worktree `NoFlix_KMP-b/`. It owns `ui/`, `navigation/`, resources, Maestro and UI tests, and builds the UI on top of that core.
+
+Both branch from `dev`, never from each other's unmerged branches, and share one emulator through the device lock.
+
+### Work packages
+
+Each package is one branch and one PR into `dev`. **Exceptions** are the only lines a package may change in files the other stream owns. Every other edit stays inside the package's own stream's folders.
+
+| ID | Branch | Scope (plan sections) | Depends on (merged) | Exceptions (other stream's files) |
+| --- | --- | --- | --- | --- |
+| **A1** | `feat/a-core-cleanup` | 0.1 data rows (`"Success1"` logs incl. the `toString()` side effects, `DispatchersModule`, `zedMoviesVersionProvider`, Timber); 0.2 except `UserMessage`; 0.5 `LocalDateSerializerTest` | — | none |
+| **A2** | `feat/a-koin` | Phase 1 (Hilt → Koin, `KoinGraphTest`) | A1, **B2** (B2 edits the same screen files) | 5 screens: the `hiltViewModel` import + default-parameter line. 5 ViewModels: `@HiltViewModel`/`@Inject` lines + imports. `ZedMoviesActivity.kt`: the `@AndroidEntryPoint` line. |
+| **A3** | `feat/a-ktor` | Phase 2 (Retrofit/OkHttp → Ktor, Coil network, `SafeRequestTest`, `MovieServiceTest`) | A2 | none |
+| **A4** | `feat/a-shared-data` | Phase 3 (`:shared` with android + jvm, domain + data + Koin data modules, Room/DataStore KMP, CI guard, JVM DAO/migration tests, `versionName` 3.1.0). `di/ViewModelModule.kt` stays in `:app` (it references `:app` ViewModels). | A3 | none (package names are unchanged, so UI imports compile as they are) |
+| **A5** | `feat/a-sqlite-driver` | 3.3b (`AndroidSQLiteDriver`) | A4, verified on a real device | none |
+| **A6** | `feat/a-hardening` | Phase 5 items 2–5 (catalog/leftover clean-up, optional R8 + Baseline Profile, docs) | B6 | none |
+| **B1** | `feat/b-baseline` | Baseline section, automated as `.maestro/baseline.sh` (APK size, `.so` list, cold start ×10, dependency snapshot, screenshot flow) → results in `doc/local/` | — | none |
+| **B2** | `feat/b-ui-cleanup` | 0.1 UI rows (`"error1"`/`"error2"` logs), `UserMessage` → `ui/` as a sealed type (incl. `IOException` → `kotlinx.io` in `UserMessageMapper`), 0.3 (`PlatformFormat`, `MediaLauncher`, icon drawables), 0.4 if decided, 0.5 `UserMessageMapperTest` | B1 | Delete `data/model/UserMessage.kt` (moved to `ui/`) |
+| **B3** | `feat/b-screenshot-tests` | **Addition:** JVM screenshot tests (Roborazzi + Robolectric) of every screen's stateless composable with fake UI state. They automate the "Visual" success criterion for B5/B6 and later move to `:shared`. | B2 | none |
+| **B4** | `feat/b-gate-checks` | **Addition:** automate the remaining success criteria. `upgrade.sh` also checks that the content language survives (non-English locale before the old APK's first start). A process-death check (`am kill` on Search with filters, then reopen) for A2's gate. A cold-start comparison against the B1 baseline. | B1 | none |
+| **B5** | `feat/b-cmp-foundation` | 4.1 (Compose Multiplatform in `:shared`), 4.2 (resources), 4.3 steps 1–3 (design system, `ui/smallcomponent`) | **A4** | `shared/build.gradle.kts`: the compose plugin, the compose dependency lines and the `compose.resources {}` block only |
+| **B6** | `feat/b-cmp-screens` | 4.3 steps 4–8, 4.4, 4.5 (screens, navigation, `SystemBarsAppearance`, `MediaLauncher` → commonMain, slim `zedMoviesActivity`, JVM UI smoke test) | B5 | Move `di/ViewModelModule.kt` into `:shared` |
+
+### Waves
+
+| Wave | Stream A | Stream B | Notes |
+| --- | --- | --- | --- |
+| 1 | A1 | B1 → B2 | No overlap: A edits data/domain/di, B edits ui/. Both touch the catalog in different groups. |
+| 2 | A2 (starts once B2 has merged) | B3 | A2's screen edits are one-liners |
+| 3 | A3 | B4 | |
+| 4 | A4 | reviews A4 and runs the B3/B4 gates on its branch artifact | B makes no code changes in data/domain/di while files move into `:shared` |
+| 5 | A5 | B5 | B5 needs `:shared` from A4 |
+| 6 | A6 (after B6) | B6 | A6 removes catalog entries only once B6 no longer uses them |
 
 ## Audit summary (Android-relevant)
 
@@ -669,16 +711,23 @@ class zedMoviesActivity : ComponentActivity() {
 
 ## Progress
 
-| Phase | Status | Gates |
-| --- | --- | --- |
-| Baseline | Not started | |
-| 0. Clean-up | Not started | |
-| 1. Hilt → Koin | Not started | |
-| 2. Retrofit → Ktor | Not started | |
-| 3. `:shared` domain + data | Not started | |
-| 3b. `AndroidSQLiteDriver` | Not started | |
-| 4. Compose Multiplatform UI | Not started | |
-| 5. Hardening | Not started | |
+Claim a row ("In progress") in the first commit of the package's branch. Edit only your own stream's rows.
+
+| ID | Stream | Status | PR | Gates |
+| --- | --- | --- | --- | --- |
+| Setup | — | Done (2026-10-15): repository, `main`/`dev`, worktrees, device lock, pre-push hook, PR checks | — | Lock tested: concurrent, stale, nested and killed runs |
+| A1 | A | Not started | | |
+| A2 | A | Not started | | |
+| A3 | A | Not started | | |
+| A4 | A | Not started | | |
+| A5 | A | Not started | | |
+| A6 | A | Not started | | |
+| B1 | B | Not started | | |
+| B2 | B | Not started | | |
+| B3 | B | Not started | | |
+| B4 | B | Not started | | |
+| B5 | B | Not started | | |
+| B6 | B | Not started | | |
 
 ## Risks (Android)
 
@@ -695,7 +744,9 @@ class zedMoviesActivity : ComponentActivity() {
 | Compose resources render strings differently (escapes, plurals) | 4 | Wrong text | Screenshot diff; check the 5 `\'` strings and both plurals |
 | `android.*` creeping into `commonMain` | 3–4 | Hidden work later for TV, desktop and web | `jvm()` target + CI import guard |
 | New native libraries | 3 | 16 KB warning on Android 15+ | No `sqlite-bundled` in the APK; the existing CI `llvm-objdump` check |
-| A phase merged to `master` too early | all | A broken public release | Branch builds as artifacts, real-device check before merge, one phase per merge |
+| A package merged to `dev` too early | all | A broken integration branch, and the other stream builds on it | PR checks, the debug APK artifact on a real device for data packages, one package per merge, `scripts/stream.sh test-merge` before every merge |
+| Parallel PRs conflict | all | GitHub skips checks on a conflicting PR | Folder ownership + listed exceptions, `sync` (merge, never rebase), shared-file rules in `CLAUDE.md` |
+| Both streams using the emulator at once | all | Flaky Maestro runs, wrong APK installed | Per-device lock in the git common dir (`run.sh`, `upgrade.sh`, `stream.sh with-device`) |
 
 ## Open decisions (Android)
 

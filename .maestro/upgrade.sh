@@ -3,8 +3,13 @@
 # Usage: .maestro/upgrade.sh path/to/old.apk [path/to/new.apk]  (new defaults to the debug build)
 set -euo pipefail
 cd "$(dirname "$0")/.."
-# With several devices attached, pick one with ANDROID_SERIAL (adb reads it; Maestro gets --device).
-MAESTRO=(maestro ${ANDROID_SERIAL:+--device "$ANDROID_SERIAL"})
+# A stream worktree's .stream.env sets ANDROID_SERIAL (see "Parallel streams" in CLAUDE.md).
+[ -f .stream.env ] && . ./.stream.env
+. scripts/lib/device-lock.sh
+ANDROID_SERIAL=$(device_lock_id); export ANDROID_SERIAL
+device_lock_acquire "$ANDROID_SERIAL"
+# adb reads ANDROID_SERIAL; Maestro gets --device.
+MAESTRO=(maestro --device "$ANDROID_SERIAL")
 adb uninstall com.zobaer53.zedmovies >/dev/null 2>&1 || true
 adb install "$1" >/dev/null
 "${MAESTRO[@]}" test .maestro/upgrade/1_add_wishlist.yaml

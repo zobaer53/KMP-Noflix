@@ -1,14 +1,20 @@
 #!/usr/bin/env bash
 # Builds (unless --no-build), installs the debug APK, runs every Maestro flow, then checks
-# logcat for crashes and that the Play screenshot is landscape.
+# logcat for crashes and that the Play screenshot is landscape. Holds a device lock while it runs.
 # Usage: .maestro/run.sh [--no-build] [flow.yaml ...]
 set -euo pipefail
 cd "$(dirname "$0")/.."
-# With several devices attached, pick one with ANDROID_SERIAL (adb reads it; Maestro gets --device).
-MAESTRO=(maestro ${ANDROID_SERIAL:+--device "$ANDROID_SERIAL"})
+# A stream worktree's .stream.env sets ANDROID_SERIAL (see "Parallel streams" in CLAUDE.md).
+[ -f .stream.env ] && . ./.stream.env
+. scripts/lib/device-lock.sh
 PKG=com.zobaer53.zedmovies
 OUT=build/maestro
 if [ "${1:-}" = "--no-build" ]; then shift; else ./gradlew :app:assembleDebug --console=plain -q; fi
+# Build first, then wait for the device: another stream may be running its suite on it.
+ANDROID_SERIAL=$(device_lock_id); export ANDROID_SERIAL
+device_lock_acquire "$ANDROID_SERIAL"
+# adb reads ANDROID_SERIAL; Maestro gets --device.
+MAESTRO=(maestro --device "$ANDROID_SERIAL")
 # Clean install: an update over an older build can inherit its state (e.g. 16 KB compat mode).
 adb uninstall com.zobaer53.zedmovies >/dev/null 2>&1 || true
 adb install app/build/outputs/apk/debug/app-debug.apk >/dev/null

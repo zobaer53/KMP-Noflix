@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Shared by every worktree (core.hooksPath, set by scripts/stream.sh).
+# Blocks force pushes and direct updates of main/dev: those change through merged PRs only.
+# Creating a branch (the first push of main/dev) is allowed.
+# Escape hatch for a deliberate admin push: ALLOW_PROTECTED_PUSH=1 git push …
+set -euo pipefail
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+  [[ "$remote_sha" =~ ^0+$ ]] && continue             # new branch on the remote
+  case "$remote_ref" in
+    refs/heads/main | refs/heads/dev)
+      if [ -z "${ALLOW_PROTECTED_PUSH:-}" ]; then
+        echo "pre-push: ${remote_ref#refs/heads/} changes only through a merged PR (push a feature branch)." >&2
+        exit 1
+      fi ;;
+  esac
+  if [[ "$local_sha" =~ ^0+$ ]]; then
+    continue                                          # deleting a remote feature branch
+  fi
+  if ! git merge-base --is-ancestor "$remote_sha" "$local_sha" 2> /dev/null; then
+    echo "pre-push: ${remote_ref#refs/heads/} would be rewritten (force push or rebase)." >&2
+    echo "          Merge origin/dev into the branch instead: scripts/stream.sh sync" >&2
+    exit 1
+  fi
+done
