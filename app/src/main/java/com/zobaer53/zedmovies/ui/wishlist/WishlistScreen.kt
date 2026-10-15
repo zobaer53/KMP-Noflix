@@ -52,7 +52,7 @@ internal fun WishlistRoute(
 }
 
 @Composable
-private fun WishlistScreen(
+internal fun WishlistScreen(
     uiState: WishlistUiState,
     onRefreshMovies: () -> Unit,
     onRefreshTvShows: () -> Unit,

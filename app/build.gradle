@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.room)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.roborazzi)
 }
 
 
@@ -66,6 +67,12 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+    testOptions {
+        unitTests {
+            // Robolectric screenshot tests render with the app's resources.
+            includeAndroidResources = true
+        }
+    }
 }
 
 
@@ -123,6 +130,12 @@ dependencies {
 
     testImplementation libs.junit
     testImplementation libs.kotlinx.coroutines.test
+    testImplementation platform(libs.androidx.compose.bom)
+    testImplementation libs.androidx.compose.ui.test.junit4
+    testImplementation libs.robolectric
+    testImplementation libs.roborazzi
+    testImplementation libs.roborazzi.compose
+    testImplementation libs.roborazzi.junit.rule
     androidTestImplementation libs.androidx.test.ext.junit
     androidTestImplementation libs.androidx.test.espresso.core
 }

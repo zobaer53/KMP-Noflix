@@ -59,7 +59,7 @@ internal fun DetailsRoute(
 }
 
 @Composable
-private fun DetailsScreen(
+internal fun DetailsScreen(
     uiState: DetailsUiState,
     onShowMessage: (String) -> Unit,
     onRefresh: () -> Unit,
