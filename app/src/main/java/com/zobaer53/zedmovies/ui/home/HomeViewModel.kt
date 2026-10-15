@@ -2,7 +2,6 @@
 
 package com.zobaer53.zedmovies.ui.home
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zobaer53.zedmovies.data.common.result.handle
@@ -92,9 +91,7 @@ class HomeViewModel @Inject constructor(
                     )
                 }
             }
-            onFailure { error ->
-                Log.i("error2","home view model ${error.message} mediaType = $mediaType")
-                handleFailure(error = error, mediaType = mediaType) }
+            onFailure { error -> handleFailure(error = error, mediaType = mediaType) }
         }
     }
 

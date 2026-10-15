@@ -723,7 +723,7 @@ Claim a row ("In progress") in the first commit of the package's branch. Edit on
 | A5 | A | Not started | | |
 | A6 | A | Not started | | |
 | B1 | B | Not started | | |
-| B2 | B | Not started | | |
+| B2 | B | In progress | | |
 | B3 | B | Not started | | |
 | B4 | B | Not started | | |
 | B5 | B | Not started | | |

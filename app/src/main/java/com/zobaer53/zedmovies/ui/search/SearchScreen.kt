@@ -2,7 +2,6 @@
 
 package com.zobaer53.zedmovies.ui.search
 
-import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -214,59 +213,13 @@ private fun SearchScreen(
                             onOfflineModeClick = onOfflineModeClick
                         )
                     }
-                  //   else {
-
-                    //if (uiState.error != null) {
-                        /*  zedMoviesCenteredError(
-                              errorMessage = uiState.error.asUserMessage(),
-                              onRetry = onRetry,
-                              shouldShowOfflineMode = uiState.isOfflineModeAvailable,
-                              onOfflineModeClick = onOfflineModeClick
-                          )*/
-                        if(uiState.movies.containsKey(MediaType.Movie.Discover)){
-                            Log.i("error1","ui state error msg ${uiState.error?.message} " +
-                                    " asUserMessage ${uiState.error?.asUserMessage()} " +
-                                    " localizedMessage ${uiState.error?.cause}" +
-                                    "--- Dis")
-                        }else if(uiState.movies.containsKey(MediaType.Movie.TopRated)){
-                            Log.i("error1","ui state error msg ${uiState.error?.message} " +
-                                    " asUserMessage ${uiState.error?.asUserMessage()} " +
-                                    " localizedMessage ${uiState.error?.cause}" +
-                                    "--- top")
-                        }
-                        else if(uiState.movies.containsKey(MediaType.Movie.NowPlaying)){
-                            Log.i("error1","ui state error msg ${uiState.error?.message} " +
-                                    " asUserMessage ${uiState.error?.asUserMessage()} " +
-                                    " localizedMessage ${uiState.error?.cause}" +
-                                    "---- now playing")
-
-                        }else if(uiState.movies.containsKey(MediaType.Movie.Upcoming)){
-                            Log.i("error1","ui state error msg ${uiState.error?.message} " +
-                                    " asUserMessage ${uiState.error?.asUserMessage()} " +
-                                    " localizedMessage ${uiState.error?.cause}" +
-                                    "--- upcomig")
-
-                        }else if(uiState.movies.containsKey(MediaType.Movie.Popular)){
-                            Log.i("error1","ui state error msg ${uiState.error?.message} " +
-                                    " asUserMessage ${uiState.error?.asUserMessage()} " +
-                                    " localizedMessage ${uiState.error?.cause}" +
-                                    "--- popular")
-
-                        }else if(uiState.movies.containsKey(MediaType.Movie.Trending)){
-                            Log.i("error1","ui state error msg ${uiState.error?.message} " +
-                                    " asUserMessage ${uiState.error?.asUserMessage()} " +
-                                    " localizedMessage ${uiState.error?.cause}" +
-                                    "---- trending")
-                        }
-                   // }
-                        SuggestionsContent(
-                            movies = uiState.movies,
-                            tvShows = uiState.tvShows,
-                            onSeeAllClick = onSeeAllClick,
-                            onMovieClick = onMovieClick,
-                            onTvShowClick = onTvShowClick
-                        )
-                   // }
+                    SuggestionsContent(
+                        movies = uiState.movies,
+                        tvShows = uiState.tvShows,
+                        onSeeAllClick = onSeeAllClick,
+                        onMovieClick = onMovieClick,
+                        onTvShowClick = onTvShowClick
+                    )
                 }
             }
         }
