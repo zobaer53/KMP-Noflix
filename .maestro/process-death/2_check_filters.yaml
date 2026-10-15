@@ -1,0 +1,16 @@
+# Process death, part 2 (after the process was killed and the task restored): the app comes back on
+# Search with the Drama filter still applied (filters are kept in the SavedStateHandle).
+appId: com.zobaer53.zedmovies
+name: process_death_2_check_filters
+---
+- extendedWaitUntil:
+    visible: "Remove filter"
+    timeout: 20000
+- assertVisible: "Drama"
+- assertVisible: "Clear all"
+- assertNotVisible: "Upcoming Movies"
+- extendedWaitUntil:
+    visible:
+      text: "Rating"
+      below: "Tv Shows"
+    timeout: 20000

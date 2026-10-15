@@ -11,7 +11,8 @@
 # installed over it. Release signing needs the RELEASE_* keys in local.properties.
 #
 # Usage: .maestro/baseline.sh [--name NAME] [--no-build] [--skip-suites] [--runs N]
-#   --name NAME    output name (default: baseline). Use another name to compare a branch with the baseline.
+#   --name NAME    output name (default: baseline). Any other name is also compared with baseline.json:
+#                  the release APK and the cold start may be at most 10% bigger and slower.
 #   --no-build     reuse the APKs in app/build/outputs (and the existing deps-NAME.txt)
 #   --skip-suites  skip .maestro/run.sh and .maestro/upgrade.sh
 #   --runs N       cold starts to measure (default: 10)
@@ -195,5 +196,35 @@ mb() { awk -v b="$1" 'BEGIN { printf "%.2f MB", b / 1048576 }'; }
   echo "  \"screens\": \"$screens_status\", \"suite\": \"$suite_status\", \"upgrade\": \"$upgrade_status\""
   echo "}"
 } > "$LOCAL/$NAME.json"
+
+# Against the B1 baseline (success criteria "APK size" and "Cold start"): at most 10% bigger and slower.
+# The cold start fails only if it is also more than 10% slower than the public release measured in this
+# same run, so a phone that is warmer or busier than during the baseline doesn't fail a package.
+compare_status=skipped
+if [ "$NAME" != baseline ] && [ -f "$LOCAL/baseline.json" ]; then
+  if python3 -I - "$LOCAL/baseline.json" "$LOCAL/$NAME.json" >> "$LOCAL/$NAME.md" <<'COMPARE'
+import json, sys
+base, new = (json.load(open(path)) for path in sys.argv[1:3])
+size_ratio = new["apkBytes"]["release"] / base["apkBytes"]["release"]
+start = new["coldStartMs"]["releaseMedian"]
+vs_base = start / base["coldStartMs"]["releaseMedian"]
+public = new["coldStartMs"]["publicMedian"]
+vs_public = start / float(public) if public not in ("-", "") else None
+size_ok = size_ratio <= 1.10
+start_ok = vs_base <= 1.10 or (vs_public is not None and vs_public <= 1.10)
+pct = lambda r: f"{(r - 1) * 100:+.1f}%"
+print()
+print("Against the baseline (at most +10%):")
+print()
+print("| Check | Baseline | This run | Change | Result |")
+print("| --- | --- | --- | --- | --- |")
+print(f"| Release APK | {base['apkBytes']['release']} B | {new['apkBytes']['release']} B | {pct(size_ratio)} | {'pass' if size_ok else 'FAIL'} |")
+same_run = f", {pct(vs_public)} vs the public release in this run" if vs_public is not None else ""
+print(f"| Cold start median | {base['coldStartMs']['releaseMedian']} ms | {start} ms | {pct(vs_base)}{same_run} | {'pass' if start_ok else 'FAIL'} |")
+sys.exit(0 if size_ok and start_ok else 1)
+COMPARE
+  then compare_status=passed; else compare_status=failed; fi
+fi
 cat "$LOCAL/$NAME.md"
-[ "$screens_status" = passed ] && [ "$suite_status" != failed ] && [ "$upgrade_status" != failed ]
+[ "$screens_status" = passed ] && [ "$suite_status" != failed ] && [ "$upgrade_status" != failed ] &&
+  [ "$compare_status" != failed ]
