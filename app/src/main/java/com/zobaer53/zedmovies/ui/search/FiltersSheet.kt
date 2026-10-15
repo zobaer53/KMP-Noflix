@@ -52,10 +52,15 @@ import com.zobaer53.zedmovies.data.model.FilterOptions
 import com.zobaer53.zedmovies.data.model.FilterSort
 import com.zobaer53.zedmovies.data.model.SearchFilters
 import com.zobaer53.zedmovies.ui.designsystem.theme.zedMoviesTheme
+import com.zobaer53.zedmovies.ui.util.capitalized
+import com.zobaer53.zedmovies.ui.util.currentYear
+import com.zobaer53.zedmovies.ui.util.displayCountryName
+import com.zobaer53.zedmovies.ui.util.displayLanguageName
+import com.zobaer53.zedmovies.ui.util.formatRating
+import com.zobaer53.zedmovies.ui.util.isoCountryCodes
+import com.zobaer53.zedmovies.ui.util.isoLanguageCodes
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
-import java.time.Year
-import java.util.Locale
 import kotlin.math.roundToInt
 
 /**
@@ -179,7 +184,7 @@ internal fun FiltersSheet(
                     }
                 }
 
-                val maxYear = remember { Year.now().value + 1 }
+                val maxYear = remember { currentYear() + 1 }
                 FilterSection(
                     titleResourceId = R.string.filters_release_year,
                     value = yearsLabel(draft.yearFrom, draft.yearTo)
@@ -232,7 +237,7 @@ internal fun FiltersSheet(
                         }
                         shown.forEach { code ->
                             FilterOptionChip(
-                                label = languageName(code),
+                                label = displayLanguageName(code),
                                 selected = selected == code,
                                 onClick = { draft = draft.copy(originalLanguage = code) }
                             )
@@ -392,13 +397,13 @@ internal fun sliderColors() = SliderDefaults.colors(
 private fun CodeListDialog(list: CodeList, onSelect: (String) -> Unit, onDismiss: () -> Unit) {
     val entries = remember(list) {
         val codes = when (list) {
-            CodeList.LANGUAGES -> Locale.getISOLanguages()
-            CodeList.COUNTRIES -> Locale.getISOCountries()
+            CodeList.LANGUAGES -> isoLanguageCodes()
+            CodeList.COUNTRIES -> isoCountryCodes()
         }
         codes.map { code ->
             code to when (list) {
-                CodeList.LANGUAGES -> languageName(code)
-                CodeList.COUNTRIES -> countryName(code)
+                CodeList.LANGUAGES -> displayLanguageName(code)
+                CodeList.COUNTRIES -> displayCountryName(code)
             }
         }
             .filter { (code, name) -> name.isNotBlank() && !name.equals(code, ignoreCase = true) }
@@ -443,7 +448,7 @@ private fun CodeListDialog(list: CodeList, onSelect: (String) -> Unit, onDismiss
 
 @Composable
 internal fun FilterGenre.displayName() =
-    stringResource(id = nameResourceId).replaceFirstChar { it.titlecase(Locale.getDefault()) }
+    stringResource(id = nameResourceId).capitalized()
 
 @Composable
 internal fun yearsLabel(from: Int?, to: Int?) = when {
@@ -452,16 +457,6 @@ internal fun yearsLabel(from: Int?, to: Int?) = when {
     to != null -> stringResource(id = R.string.filters_year_to, to)
     else -> stringResource(id = R.string.filters_any_year)
 }
-
-internal fun languageName(code: String) = Locale.forLanguageTag(code)
-    .getDisplayLanguage(Locale.getDefault())
-    .replaceFirstChar { it.titlecase(Locale.getDefault()) }
-
-internal fun countryName(code: String): String =
-    runCatching { Locale.Builder().setRegion(code).build().getDisplayCountry(Locale.getDefault()) }
-        .getOrDefault(code)
-
-internal fun formatRating(rating: Double) = String.format(Locale.getDefault(), "%.1f", rating)
 
 private val SearchFiltersSaver = Saver<SearchFilters, String>(
     save = { Json.encodeToString(SearchFilters.serializer(), it) },

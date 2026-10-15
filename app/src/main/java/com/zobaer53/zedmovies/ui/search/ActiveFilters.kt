@@ -8,8 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.FilterChip
@@ -30,6 +28,10 @@ import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesIcon
 import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesIconButton
 import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesOutlinedButton
 import com.zobaer53.zedmovies.ui.designsystem.theme.zedMoviesTheme
+import com.zobaer53.zedmovies.ui.util.displayCountryName
+import com.zobaer53.zedmovies.ui.util.displayLanguageName
+import com.zobaer53.zedmovies.ui.util.formatCount
+import com.zobaer53.zedmovies.ui.util.formatRating
 
 /** Opens the filters sheet; the badge counts the active filters. */
 @Composable
@@ -76,7 +78,7 @@ internal fun ActiveFiltersRow(
                 trailingIcon = {
                     zedMoviesIcon(
                         modifier = Modifier.size(16.dp),
-                        imageVector = Icons.Rounded.Close,
+                        iconResourceId = R.drawable.ic_close,
                         contentDescription = stringResource(id = R.string.filters_remove)
                     )
                 },
@@ -103,10 +105,10 @@ private fun ActiveFilter.label(): String = when (this) {
     is ActiveFilter.Genre -> genre.displayName()
     is ActiveFilter.Years -> yearsLabel(from, to)
     is ActiveFilter.Rating -> stringResource(id = R.string.filters_rating_value, formatRating(minRating))
-    is ActiveFilter.Language -> languageName(code)
-    is ActiveFilter.MinVotes -> stringResource(id = R.string.filters_votes_chip, formatVotes(minVotes))
+    is ActiveFilter.Language -> displayLanguageName(code)
+    is ActiveFilter.MinVotes -> stringResource(id = R.string.filters_votes_chip, formatCount(minVotes))
     is ActiveFilter.Runtime -> runtimeLabel(min, max)
-    is ActiveFilter.Country -> countryName(code)
+    is ActiveFilter.Country -> displayCountryName(code)
     is ActiveFilter.ExcludedGenre -> stringResource(id = R.string.filters_excluded_genre_chip, genre.displayName())
     is ActiveFilter.Certification -> stringResource(id = R.string.filters_age_rating_chip, code)
     is ActiveFilter.Provider -> provider.name
