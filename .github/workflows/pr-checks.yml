@@ -1,6 +1,7 @@
 # Checks every PR into dev/main and every push to dev (see "Parallel streams" in CLAUDE.md).
 # GitHub skips PR checks while a PR is in conflict: merge origin/dev into the branch (scripts/stream.sh sync).
 # Needs the repository secret TMDB_API_KEY (app/build.gradle reads API_KEY from local.properties).
+# Run it by hand on any branch to get its debug APK: gh workflow run pr-checks.yml --ref <branch>
 name: PR checks
 
 on:
@@ -8,6 +9,7 @@ on:
     branches: [dev, main]
   push:
     branches: [dev]
+  workflow_dispatch:
 
 concurrency:
   group: pr-checks-${{ github.ref }}
