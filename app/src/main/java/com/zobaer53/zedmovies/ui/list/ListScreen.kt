@@ -49,7 +49,7 @@ internal fun ListRoute(
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-private fun ListScreen(
+internal fun ListScreen(
     uiState: ListUiState,
     movies: LazyPagingItems<Movie>,
     tvShows: LazyPagingItems<TvShow>,

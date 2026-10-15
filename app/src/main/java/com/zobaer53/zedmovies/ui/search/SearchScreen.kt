@@ -89,7 +89,7 @@ internal fun SearchRoute(
 @Suppress("LongParameterList")
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-private fun SearchScreen(
+internal fun SearchScreen(
     uiState: SearchUiState,
     searchMovies: LazyPagingItems<Movie>,
     searchTvShows: LazyPagingItems<TvShow>,
