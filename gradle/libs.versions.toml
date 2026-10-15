@@ -27,8 +27,6 @@ kotlinxIo = "0.9.1"
 retrofit = "3.0.0"
 okhttp = "5.5.0"
 coil = "3.6.3"
-lottie = "6.7.1"
-jsoup = "1.23.2"
 timber = "5.0.1"
 youtubePlayer = "13.0.0"
 
@@ -57,7 +55,6 @@ androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-mani
 androidx-compose-ui-util = { module = "androidx.compose.ui:ui-util" }
 androidx-compose-foundation = { module = "androidx.compose.foundation:foundation" }
 # Frozen at 1.7.8 (still in the BOM); only Icons.Rounded.Close is used.
-androidx-compose-material-icons-core = { module = "androidx.compose.material:material-icons-core" }
 androidx-compose-material3 = { module = "androidx.compose.material3:material3" }
 
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigation" }
@@ -87,8 +84,6 @@ okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 # Coil 3 needs a network fetcher on the classpath (registers itself) or remote images never load.
 coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
-lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
-jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 # Trailers: wraps YouTube's official IFrame embed player in a WebView (no native code).
 youtube-player-core = { module = "com.pierfrancescosoffritti.androidyoutubeplayer:core", version.ref = "youtubePlayer" }

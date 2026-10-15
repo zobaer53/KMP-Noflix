@@ -32,7 +32,7 @@ import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesMessage
 import com.zobaer53.zedmovies.ui.designsystem.theme.zedMoviesTheme
 import com.zobaer53.zedmovies.data.model.Movie
 import com.zobaer53.zedmovies.data.model.TvShow
-import com.zobaer53.zedmovies.data.model.UserMessage
+import com.zobaer53.zedmovies.ui.model.UserMessage
 import com.zobaer53.zedmovies.ui.smallcomponent.mapper.asUserMessage
 import com.zobaer53.zedmovies.ui.smallcomponent.util.error
 import com.zobaer53.zedmovies.ui.smallcomponent.util.isEmpty

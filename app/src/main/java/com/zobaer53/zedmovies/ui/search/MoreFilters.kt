@@ -8,9 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.KeyboardArrowDown
-import androidx.compose.material.icons.rounded.KeyboardArrowUp
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.RangeSlider
 import androidx.compose.material3.Text
@@ -36,7 +33,8 @@ import com.zobaer53.zedmovies.data.model.SearchFilters
 import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesCircularProgressIndicator
 import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesIcon
 import com.zobaer53.zedmovies.ui.designsystem.theme.zedMoviesTheme
-import java.text.NumberFormat
+import com.zobaer53.zedmovies.ui.util.displayCountryName
+import com.zobaer53.zedmovies.ui.util.formatCount
 import kotlin.math.roundToInt
 
 /**
@@ -74,7 +72,7 @@ internal fun MoreFilters(
                 color = zedMoviesTheme.colors.accent
             )
             zedMoviesIcon(
-                imageVector = if (isExpanded) Icons.Rounded.KeyboardArrowUp else Icons.Rounded.KeyboardArrowDown,
+                iconResourceId = if (isExpanded) R.drawable.ic_arrow_up else R.drawable.ic_arrow_down,
                 contentDescription = null,
                 tint = zedMoviesTheme.colors.accent
             )
@@ -159,7 +157,7 @@ internal fun MoreFilters(
                         }
                         shown.forEach { code ->
                             FilterOptionChip(
-                                label = countryName(code),
+                                label = displayCountryName(code),
                                 selected = selected == code,
                                 enabled = isDiscoverOnlyEnabled,
                                 onClick = { onDraftChange(draft.copy(originCountry = code)) }
@@ -176,7 +174,7 @@ internal fun MoreFilters(
 
                 FilterSection(
                     titleResourceId = R.string.filters_age_rating,
-                    value = options?.let { countryName(it.certificationCountry) },
+                    value = options?.let { displayCountryName(it.certificationCountry) },
                     noteResourceId = R.string.filters_movies_only
                 ) {
                     FilterOptionsContent(options, isOptionsLoading, optionsError, onRetryOptions) { loaded ->
@@ -203,7 +201,7 @@ internal fun MoreFilters(
 
                 FilterSection(
                     titleResourceId = R.string.filters_streaming,
-                    value = options?.let { countryName(it.watchRegion) }
+                    value = options?.let { displayCountryName(it.watchRegion) }
                 ) {
                     FilterOptionsContent(options, isOptionsLoading, optionsError, onRetryOptions) { loaded ->
                         var isShowingAll by rememberSaveable { mutableStateOf(false) }
@@ -338,9 +336,7 @@ internal fun runtimeLabel(min: Int?, max: Int?) = when {
 }
 
 @Composable
-private fun votesLabel(votes: Int) = stringResource(id = R.string.filters_votes_value, formatVotes(votes))
-
-internal fun formatVotes(votes: Int): String = NumberFormat.getIntegerInstance().format(votes)
+private fun votesLabel(votes: Int) = stringResource(id = R.string.filters_votes_value, formatCount(votes))
 
 private fun <T> Set<T>.toggle(item: T) = if (item in this) this - item else this + item
 

@@ -722,8 +722,8 @@ Claim a row ("In progress") in the first commit of the package's branch. Edit on
 | A4 | A | Not started | | |
 | A5 | A | Not started | | |
 | A6 | A | Not started | | |
-| B1 | B | In review | #3 | test-merge --maestro green on the Pixel 6a; baseline in `doc/local/baseline.md` |
-| B2 | B | Not started | | |
+| B1 | B | Done (#3 merged) | #3 | test-merge --maestro green on the Pixel 6a; baseline in `doc/local/baseline.md` |
+| B2 | B | In review | this PR | test-merge --maestro green on the Pixel 6a; APK −6%, cold start 232 vs 235 ms (`doc/local/b2.md`) |
 | B3 | B | Not started | | |
 | B4 | B | Not started | | |
 | B5 | B | Not started | | |
@@ -750,7 +750,7 @@ Claim a row ("In progress") in the first commit of the package's branch. Edit on
 
 ## Open decisions (Android)
 
-1. **Scraping fallback** (Jsoup + Lottie): delete it in Phase 0 (recommended), or keep it in `:app`?
+1. **Scraping fallback** (Jsoup + Lottie): delete it in Phase 0 (recommended), or keep it in `:app`? **Decided: deleted in B2.**
 2. **`values-night/strings.xml`:** delete it, or move it to `values-dark`?
 3. **Driver switch** (3.3b): do it right after Phase 3 (recommended), or leave Android on the compatibility path?
 4. **R8:** enable it in Phase 5, or leave it for later?

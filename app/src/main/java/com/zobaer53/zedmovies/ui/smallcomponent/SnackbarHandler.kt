@@ -5,7 +5,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import com.zobaer53.zedmovies.ui.designsystem.component.LocalSnackbarHostState
-import com.zobaer53.zedmovies.data.model.UserMessage
+import com.zobaer53.zedmovies.ui.model.UserMessage
 import com.zobaer53.zedmovies.ui.smallcomponent.mapper.asString
 
 @Composable

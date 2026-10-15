@@ -23,7 +23,7 @@ import androidx.compose.ui.text.TextStyle
 import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesCenteredBox
 import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesOutlinedButton
 import com.zobaer53.zedmovies.ui.designsystem.theme.zedMoviesTheme
-import com.zobaer53.zedmovies.data.model.UserMessage
+import com.zobaer53.zedmovies.ui.model.UserMessage
 import com.zobaer53.zedmovies.ui.smallcomponent.mapper.asString
 import com.zobaer53.zedmovies.R
 

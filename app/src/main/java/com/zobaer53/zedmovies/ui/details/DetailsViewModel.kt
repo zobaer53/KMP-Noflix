@@ -13,9 +13,8 @@ import com.zobaer53.zedmovies.domain.usecase.GetTvShowDetailsUseCase
 import com.zobaer53.zedmovies.domain.usecase.RemoveMovieFromWishlistUseCase
 import com.zobaer53.zedmovies.domain.usecase.RemoveTvShowFromWishlistUseCase
 import com.zobaer53.zedmovies.data.model.MediaType
-import com.zobaer53.zedmovies.data.model.UserMessage
+import com.zobaer53.zedmovies.ui.model.UserMessage
 import com.zobaer53.zedmovies.ui.details.navigation.DetailsDestination
-import com.zobaer53.zedmovies.R
 import com.zobaer53.zedmovies.ui.smallcomponent.common.EventHandler
 import com.zobaer53.zedmovies.ui.smallcomponent.mapper.asMovieDetails
 import com.zobaer53.zedmovies.ui.smallcomponent.mapper.asTvShowDetails
@@ -69,10 +68,10 @@ class DetailsViewModel @Inject constructor(
             uiState.value.movie?.let { movie ->
                 if (movie.isWishlisted) {
                     addMovieToWishlistUseCase(movie.id)
-                    setUserMessage(UserMessage(messageResourceId = R.string.add_movie_wishlist))
+                    setUserMessage(UserMessage.MovieAddedToWishlist)
                 } else {
                     removeMovieFromWishlistUseCase(movie.id)
-                    setUserMessage(UserMessage(messageResourceId = R.string.remove_movie_wishlist))
+                    setUserMessage(UserMessage.MovieRemovedFromWishlist)
                 }
             }
         }
@@ -86,10 +85,10 @@ class DetailsViewModel @Inject constructor(
             uiState.value.tvShow?.let { tvShow ->
                 if (tvShow.isWishlisted) {
                     addTvShowToWishlistUseCase(tvShow.id)
-                    setUserMessage(UserMessage(messageResourceId = R.string.add_tv_show_wishlist))
+                    setUserMessage(UserMessage.TvShowAddedToWishlist)
                 } else {
                     removeTvShowFromWishlistUseCase(tvShow.id)
-                    setUserMessage(UserMessage(messageResourceId = R.string.remove_tv_show_wishlist))
+                    setUserMessage(UserMessage.TvShowRemovedFromWishlist)
                 }
             }
         }
