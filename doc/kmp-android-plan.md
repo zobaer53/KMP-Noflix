@@ -726,8 +726,8 @@ Claim a row ("In progress") in the first commit of the package's branch. Edit on
 | B2 | B | Done (#4 merged) | #4 | test-merge --maestro green on the Pixel 6a; APK −6%, cold start 232 vs 235 ms (`doc/local/b2.md`) |
 | B3 | B | Done (#5 merged) | #5 | 12 screenshots, `verifyRoborazziDebug` green; test-merge --maestro green on the Pixel 6a |
 | B4 | B | Done (#9 merged) | #9 | run.sh with process death, upgrade, size and cold-start comparison green on the Pixel 6a; `upgrade.sh --content-language` not run end to end yet (skipped by the user) |
-| B5 | B | In review | this PR | test-merge --maestro green on the Pixel 6a (7/7, process death restores the filter); `verifyRoborazziDebug` 12/12 unchanged; release APK +4.3% vs baseline (+47 KB vs A5), cold start 246 vs 235 ms (+4.7%); upgrade over 3.0.1 passed; every `androidx.compose.*` unchanged (1.12.1, material3 1.4.0) |
-| B6 | B | Not started | | |
+| B5 | B | Done (#14 merged) | #14 | test-merge --maestro green on the Pixel 6a (7/7, process death restores the filter); `verifyRoborazziDebug` 12/12 unchanged; release APK +4.3% vs baseline (+47 KB vs A5), cold start 246 vs 235 ms (+4.7%); upgrade over 3.0.1 passed; every `androidx.compose.*` unchanged (1.12.1, material3 1.4.0) |
+| B6 | B | In progress | | Navigation: JetBrains navigation-compose 2.10.0-rc01 in commonMain, `:app` keeps androidx 2.10.2 (user decision) |
 
 ## Risks (Android)
 
