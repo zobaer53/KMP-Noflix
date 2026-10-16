@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://zobaer53.github.io/NoFlix/sitemap.xml

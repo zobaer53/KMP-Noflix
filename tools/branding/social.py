@@ -67,8 +67,8 @@ def social_preview():
     img = background()
 
     # Phones on the right, the back one slightly lower.
-    for path, x, y in ((f"{ROOT}/screenshot-4-details.png", 966, 104),
-                       (f"{ROOT}/screenshot-1-home.png", 770, 56)):
+    for path, x, y in ((f"{ROOT}/images/screenshot-4-details.png", 966, 104),
+                       (f"{ROOT}/images/screenshot-1-home.png", 770, 56)):
         p = phone(path, 500)
         s, pad = shadow(p)
         img.alpha_composite(s, (x - pad, y - pad + 12))
