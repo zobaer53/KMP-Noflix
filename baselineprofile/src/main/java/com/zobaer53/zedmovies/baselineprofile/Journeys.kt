@@ -62,7 +62,8 @@ internal fun MacrobenchmarkScope.openDetails() {
 
 /** Search tab: discover lists, the filter sheet, then the wish list tab. */
 internal fun MacrobenchmarkScope.browseSearchAndWishlist() {
-    waitFor(label("Search")).click()
+    // An unselected bottom-bar tab shows only its icon; its name is the content description.
+    anyOf(label("Search"), description("Search")).click()
     waitFor(label("Discover"), NETWORK_TIMEOUT_MS)
     anyOf(description("Filters"), label("Filters")).click()
     waitFor(label("Show results"))
@@ -70,6 +71,6 @@ internal fun MacrobenchmarkScope.browseSearchAndWishlist() {
     device.waitForIdle()
     device.pressBack()
     waitFor(label("Discover"))
-    waitFor(label("Wish list")).click()
+    anyOf(label("Wish list"), description("Wish list")).click()
     device.waitForIdle()
 }
