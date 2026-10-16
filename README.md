@@ -88,9 +88,10 @@ No. See the [disclaimer](#disclaimer) below.
 NoFlix follows the [official Android architecture guidance](https://developer.android.com/topic/architecture) (data, domain and UI layers):
 
 - **Kotlin**, **Coroutines & Flow**
-- **Jetpack Compose**, Material 3, Navigation Compose
-- **Hilt** for dependency injection
-- **Retrofit** + **kotlinx.serialization** for the TMDB API
+- **Kotlin Multiplatform**: domain, data, ViewModels and UI live in the `:shared` module (Android, plus a JVM target for host tests)
+- **Compose Multiplatform** (Jetpack Compose on Android), Material 3, Navigation Compose, Compose resources
+- **Koin** for dependency injection
+- **Ktor** (OkHttp engine) + **kotlinx.serialization** for the TMDB API
 - **Room** + **Paging 3** (RemoteMediator) for offline caching
 - **DataStore**, **Coil**
 - **WebView** with an AdGuard-compatible ad-blocking engine (C++ via JNI)
@@ -102,9 +103,9 @@ NoFlix follows the [official Android architecture guidance](https://developer.an
 1. Clone the repo and open it in Android Studio.
 2. Get a free API key from [The Movie DB](https://www.themoviedb.org/settings/api) and add it to `local.properties`:
    ```properties
-   API_KEY="yourApiKey"
+   API_KEY=yourApiKey
    ```
-3. Install **CMake 3.10.2** and the **NDK** from *SDK Manager → SDK Tools* (needed by the native ad-block library; see [this Stack Overflow answer](https://stackoverflow.com/questions/71853200/cmake-3-10-2-not-found-in-sdk-path-or-by-cmake-dir-prop) if CMake isn't found).
+3. Install **CMake 3.22.1** and **NDK 28.2.13676358** (r28c) from *SDK Manager → SDK Tools*. The native ad-block library needs them. You also need JDK 17 or newer.
 4. Run `./gradlew :app:installDebug` or press Run in Android Studio.
 
 ## Contributing
