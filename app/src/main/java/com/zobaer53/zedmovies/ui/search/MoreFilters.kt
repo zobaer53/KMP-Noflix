@@ -39,6 +39,7 @@ import com.zobaer53.zedmovies.ui.designsystem.theme.zedMoviesTheme
 import com.zobaer53.zedmovies.ui.util.displayCountryName
 import com.zobaer53.zedmovies.ui.util.formatCount
 import kotlin.math.roundToInt
+import org.jetbrains.compose.resources.stringResource
 
 /**
  * The sheet's collapsible "More filters" section, open when any of its filters is set. While
@@ -275,7 +276,7 @@ internal fun MoreFilters(
                     ChipFlow {
                         FilterTvStatus.entries.forEach { status ->
                             FilterOptionChip(
-                                label = stringResource(id = status.labelResourceId),
+                                label = stringResource(status.labelResourceId),
                                 selected = status in draft.tvStatuses,
                                 enabled = isDiscoverOnlyEnabled,
                                 onClick = { onDraftChange(draft.copy(tvStatuses = draft.tvStatuses.toggle(status))) }
@@ -288,7 +289,7 @@ internal fun MoreFilters(
                     ChipFlow {
                         FilterTvType.entries.forEach { type ->
                             FilterOptionChip(
-                                label = stringResource(id = type.labelResourceId),
+                                label = stringResource(type.labelResourceId),
                                 selected = type in draft.tvTypes,
                                 enabled = isDiscoverOnlyEnabled,
                                 onClick = { onDraftChange(draft.copy(tvTypes = draft.tvTypes.toggle(type))) }

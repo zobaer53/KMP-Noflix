@@ -24,6 +24,8 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
+import com.zobaer53.zedmovies.resources.Res
+import com.zobaer53.zedmovies.resources.upcoming_movies
 import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesImagePlaceholder
 import com.zobaer53.zedmovies.ui.designsystem.component.ZedMoviesNetworkImage
 import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesPlaceholder
@@ -47,7 +49,7 @@ internal fun UpcomingMoviesContainer(
     val shouldShowPlaceholder = movies.isEmpty()
 
     MoviesContainer(
-        titleResourceId = R.string.upcoming_movies,
+        titleResourceId = Res.string.upcoming_movies,
         onSeeAllClick = onSeeAllClick,
         modifier = modifier
     ) {

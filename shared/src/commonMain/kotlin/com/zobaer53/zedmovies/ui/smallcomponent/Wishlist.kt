@@ -5,13 +5,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesIconButton
-import com.zobaer53.zedmovies.ui.designsystem.theme.zedMoviesTheme
-import com.zobaer53.zedmovies.R
 import com.zobaer53.zedmovies.resources.Res
 import com.zobaer53.zedmovies.resources.ic_wishlist
+import com.zobaer53.zedmovies.resources.wishlist
+import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesIconButton
+import com.zobaer53.zedmovies.ui.designsystem.theme.zedMoviesTheme
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun zedMoviesWishlistButton(
@@ -27,7 +27,7 @@ fun zedMoviesWishlistButton(
                 shape = zedMoviesTheme.shapes.smallMedium
             ),
         iconResourceId = Res.drawable.ic_wishlist,
-        contentDescription = stringResource(id = R.string.wishlist),
+        contentDescription = stringResource(Res.string.wishlist),
         onClick = onClick,
         tint = zedMoviesTheme.colors.error.let { color ->
             if (isWishlisted) color else color.copy(alpha = DisabledContentAlpha)

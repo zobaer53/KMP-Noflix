@@ -13,16 +13,17 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.zobaer53.zedmovies.resources.Res
+import com.zobaer53.zedmovies.resources.ic_play
+import com.zobaer53.zedmovies.resources.ic_star
+import com.zobaer53.zedmovies.resources.not_rated
+import com.zobaer53.zedmovies.resources.rating
 import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesIcon
 import com.zobaer53.zedmovies.ui.designsystem.theme.zedMoviesTheme
 import com.zobaer53.zedmovies.ui.playback.LocalMediaLauncher
 import com.zobaer53.zedmovies.ui.playback.PlayRequest
-import com.zobaer53.zedmovies.R
-import com.zobaer53.zedmovies.resources.Res
-import com.zobaer53.zedmovies.resources.ic_play
-import com.zobaer53.zedmovies.resources.ic_star
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun RatingItem(
@@ -66,7 +67,7 @@ fun RatingItem(
                             )
                         },
                     iconResourceId = Res.drawable.ic_play,
-                    contentDescription = stringResource(id = R.string.rating)
+                    contentDescription = stringResource(Res.string.rating)
                 )
                 Spacer(modifier = Modifier.width(zedMoviesTheme.spacing.extraSmall))
                 Text(
@@ -78,12 +79,12 @@ fun RatingItem(
                 zedMoviesIcon(
                     modifier = Modifier.size(RatingIconSize),
                     iconResourceId = Res.drawable.ic_star,
-                    contentDescription = stringResource(id = R.string.rating)
+                    contentDescription = stringResource(Res.string.rating)
                 )
                 Spacer(modifier = Modifier.width(zedMoviesTheme.spacing.extraSmall))
                 Text(
                     text = if (rating == RatingNotRatedValue) {
-                        stringResource(id = R.string.not_rated)
+                        stringResource(Res.string.not_rated)
                     } else {
                         rating.toString()
                     },

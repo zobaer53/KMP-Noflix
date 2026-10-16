@@ -19,14 +19,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.zobaer53.zedmovies.resources.Res
+import com.zobaer53.zedmovies.resources.no_genre
 import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesImagePlaceholder
 import com.zobaer53.zedmovies.ui.designsystem.component.ZedMoviesNetworkImage
 import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesPlaceholder
 import com.zobaer53.zedmovies.ui.designsystem.theme.zedMoviesTheme
-import com.zobaer53.zedmovies.R
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun HorizontalFeedItem(
@@ -120,7 +121,7 @@ internal fun HorizontalFeedItem(
                         }
                     ),
                 text = genres.joinToString(separator = FeedItemGenreSeparator)
-                    .ifEmpty { stringResource(id = R.string.no_genre) },
+                    .ifEmpty { stringResource(Res.string.no_genre) },
                 style = zedMoviesTheme.typography.medium.h7,
                 color = zedMoviesTheme.colors.textSecondary,
                 maxLines = 1,

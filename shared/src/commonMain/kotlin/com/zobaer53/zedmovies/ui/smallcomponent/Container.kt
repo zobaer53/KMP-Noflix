@@ -2,7 +2,6 @@
 
 package com.zobaer53.zedmovies.ui.smallcomponent
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -22,10 +21,16 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
+import com.zobaer53.zedmovies.resources.Res
+import com.zobaer53.zedmovies.resources.movies
+import com.zobaer53.zedmovies.resources.no_movie_results
+import com.zobaer53.zedmovies.resources.no_search_results
+import com.zobaer53.zedmovies.resources.no_tv_show_results
+import com.zobaer53.zedmovies.resources.see_all
+import com.zobaer53.zedmovies.resources.tv_shows
 import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesCenteredBox
 import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesCircularProgressIndicator
 import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesMessage
@@ -40,16 +45,13 @@ import com.zobaer53.zedmovies.ui.smallcomponent.util.isError
 import com.zobaer53.zedmovies.ui.smallcomponent.util.isFinished
 import com.zobaer53.zedmovies.ui.smallcomponent.util.isLoading
 import com.zobaer53.zedmovies.ui.smallcomponent.util.isNotEmpty
-import com.zobaer53.zedmovies.R
-import com.zobaer53.zedmovies.resources.Res
-import com.zobaer53.zedmovies.resources.no_movie_results
-import com.zobaer53.zedmovies.resources.no_search_results
-import com.zobaer53.zedmovies.resources.no_tv_show_results
 import com.zobaer53.zedmovies.ui.designsystem.component.ZedMoviesSwipeRefresh
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun MoviesAndTvShowsContainer(
-    @StringRes titleResourceId: Int,
+    titleResourceId: StringResource,
     onSeeAllClick: () -> Unit,
     movies: List<Movie>,
     tvShows: List<TvShow>,
@@ -61,7 +63,7 @@ fun MoviesAndTvShowsContainer(
         ContainerTitleWithButton(titleResourceId = titleResourceId, onSeeAllClick = onSeeAllClick)
         Text(
             modifier = Modifier.padding(horizontal = zedMoviesTheme.spacing.extraMedium),
-            text = stringResource(id = R.string.movies),
+            text = stringResource(Res.string.movies),
             style = zedMoviesTheme.typography.semiBold.h5,
             color = zedMoviesTheme.colors.textPrimaryVariant
         )
@@ -70,7 +72,7 @@ fun MoviesAndTvShowsContainer(
         Spacer(modifier = Modifier.height(zedMoviesTheme.spacing.smallMedium))
         Text(
             modifier = Modifier.padding(horizontal = zedMoviesTheme.spacing.extraMedium),
-            text = stringResource(id = R.string.tv_shows),
+            text = stringResource(Res.string.tv_shows),
             style = zedMoviesTheme.typography.semiBold.h5,
             color = zedMoviesTheme.colors.textPrimaryVariant
         )
@@ -81,7 +83,7 @@ fun MoviesAndTvShowsContainer(
 
 @Composable
 fun MoviesContainer(
-    @StringRes titleResourceId: Int,
+    titleResourceId: StringResource,
     onSeeAllClick: () -> Unit,
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit
@@ -304,7 +306,7 @@ private fun <T> ContainerContent(
 
 @Composable
 private fun ContainerTitleWithButton(
-    @StringRes titleResourceId: Int,
+    titleResourceId: StringResource,
     onSeeAllClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -316,13 +318,13 @@ private fun ContainerTitleWithButton(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = stringResource(id = titleResourceId),
+            text = stringResource(titleResourceId),
             style = zedMoviesTheme.typography.semiBold.h4,
             color = zedMoviesTheme.colors.textPrimary
         )
         TextButton(onClick = onSeeAllClick) {
             Text(
-                text = stringResource(id = R.string.see_all),
+                text = stringResource(Res.string.see_all),
                 style = zedMoviesTheme.typography.medium.h5,
                 color = zedMoviesTheme.colors.accent
             )

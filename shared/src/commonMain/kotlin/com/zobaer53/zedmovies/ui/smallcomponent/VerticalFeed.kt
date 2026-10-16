@@ -1,6 +1,5 @@
 package com.zobaer53.zedmovies.ui.smallcomponent
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,16 +20,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.zobaer53.zedmovies.resources.Res
+import com.zobaer53.zedmovies.resources.ic_calendar
+import com.zobaer53.zedmovies.resources.ic_film
+import com.zobaer53.zedmovies.resources.no_genre
+import com.zobaer53.zedmovies.resources.no_overview
+import com.zobaer53.zedmovies.resources.no_release_date
 import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesImagePlaceholder
 import com.zobaer53.zedmovies.ui.designsystem.component.ZedMoviesNetworkImage
 import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesPlaceholder
 import com.zobaer53.zedmovies.ui.designsystem.theme.zedMoviesTheme
 import com.zobaer53.zedmovies.data.model.ReleaseDate
-import com.zobaer53.zedmovies.R
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun VerticalFeedItem(
@@ -112,7 +117,7 @@ internal fun VerticalFeedItem(
                 } else {
                     Modifier
                 },
-                text = overview.ifEmpty { stringResource(id = R.string.no_overview) },
+                text = overview.ifEmpty { stringResource(Res.string.no_overview) },
                 style = zedMoviesTheme.typography.medium.h5,
                 color = zedMoviesTheme.colors.textSecondary,
                 maxLines = 2,
@@ -120,17 +125,17 @@ internal fun VerticalFeedItem(
             )
             Column {
                 if (isPlaceholder) {
-                    VerticalFeedItemIconAndTextPlaceholder(iconResourceId = R.drawable.ic_calendar)
-                    VerticalFeedItemIconAndTextPlaceholder(iconResourceId = R.drawable.ic_film)
+                    VerticalFeedItemIconAndTextPlaceholder(iconResourceId = Res.drawable.ic_calendar)
+                    VerticalFeedItemIconAndTextPlaceholder(iconResourceId = Res.drawable.ic_film)
                 } else {
                     VerticalFeedItemIconAndText(
-                        iconResourceId = R.drawable.ic_calendar,
-                        text = releaseDate.year.ifEmpty { stringResource(id = R.string.no_release_date) }
+                        iconResourceId = Res.drawable.ic_calendar,
+                        text = releaseDate.year.ifEmpty { stringResource(Res.string.no_release_date) }
                     )
                     VerticalFeedItemIconAndText(
-                        iconResourceId = R.drawable.ic_film,
+                        iconResourceId = Res.drawable.ic_film,
                         text = genres.joinToString(separator = FeedItemGenreSeparator)
-                            .ifEmpty { stringResource(id = R.string.no_genre) }
+                            .ifEmpty { stringResource(Res.string.no_genre) }
                     )
                 }
             }
@@ -155,7 +160,7 @@ internal fun VerticalFeedItemPlaceholder(modifier: Modifier = Modifier) {
 
 @Composable
 private fun VerticalFeedItemIconAndText(
-    @DrawableRes iconResourceId: Int,
+    iconResourceId: DrawableResource,
     text: String,
     modifier: Modifier = Modifier,
     color: Color = zedMoviesTheme.colors.textSecondary,
@@ -168,7 +173,7 @@ private fun VerticalFeedItemIconAndText(
     ) {
         Icon(
             modifier = Modifier.size(VerticalFeedItemIconSize),
-            painter = painterResource(id = iconResourceId),
+            painter = painterResource(iconResourceId),
             contentDescription = text,
             tint = color
         )
@@ -192,7 +197,7 @@ private fun VerticalFeedItemIconAndText(
 
 @Composable
 private fun VerticalFeedItemIconAndTextPlaceholder(
-    @DrawableRes iconResourceId: Int,
+    iconResourceId: DrawableResource,
     modifier: Modifier = Modifier,
     color: Color = zedMoviesTheme.colors.textSecondary
 ) {

@@ -35,6 +35,12 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import com.zobaer53.zedmovies.resources.Res
+import com.zobaer53.zedmovies.resources.discover
+import com.zobaer53.zedmovies.resources.ic_close
+import com.zobaer53.zedmovies.resources.ic_search
+import com.zobaer53.zedmovies.resources.search_placeholder
+import com.zobaer53.zedmovies.resources.trending
 import org.koin.compose.viewmodel.koinViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
@@ -50,10 +56,6 @@ import com.zobaer53.zedmovies.data.model.SearchFilters
 import com.zobaer53.zedmovies.data.model.TvShow
 import com.zobaer53.zedmovies.ui.smallcomponent.MediaTabPager
 import com.zobaer53.zedmovies.R
-import com.zobaer53.zedmovies.resources.Res
-import com.zobaer53.zedmovies.resources.ic_close
-import com.zobaer53.zedmovies.resources.ic_search
-import com.zobaer53.zedmovies.resources.search_placeholder
 import com.zobaer53.zedmovies.ui.smallcomponent.MoviesAndTvShowsContainer
 import com.zobaer53.zedmovies.ui.smallcomponent.MoviesContainer
 import com.zobaer53.zedmovies.ui.smallcomponent.TvShowsContainer
@@ -294,7 +296,7 @@ private fun SuggestionsContent(
     ) {
         item {
             MoviesAndTvShowsContainer(
-                titleResourceId = R.string.discover,
+                titleResourceId = Res.string.discover,
                 onSeeAllClick = { onSeeAllClick(MediaType.Common.Discover) },
                 movies = movies[MediaType.Movie.Discover].orEmpty(),
                 tvShows = tvShows[MediaType.TvShow.Discover].orEmpty(),
@@ -304,7 +306,7 @@ private fun SuggestionsContent(
         }
         item {
             MoviesAndTvShowsContainer(
-                titleResourceId = R.string.trending,
+                titleResourceId = Res.string.trending,
                 onSeeAllClick = { onSeeAllClick(MediaType.Common.Trending) },
                 movies = movies[MediaType.Movie.Trending].orEmpty(),
                 tvShows = tvShows[MediaType.TvShow.Trending].orEmpty(),

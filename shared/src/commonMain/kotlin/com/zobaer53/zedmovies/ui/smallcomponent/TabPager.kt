@@ -22,13 +22,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Measurable
 import androidx.compose.ui.layout.MeasureResult
 import androidx.compose.ui.layout.MeasureScope
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.lerp
 import com.zobaer53.zedmovies.ui.designsystem.theme.zedMoviesTheme
 import com.zobaer53.zedmovies.ui.smallcomponent.common.MediaTab
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -68,7 +68,7 @@ fun MediaTabPager(
                     onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } },
                     text = {
                         Text(
-                            text = stringResource(id = tab.titleResourceId),
+                            text = stringResource(tab.titleResourceId),
                             style = zedMoviesTheme.typography.medium.h4
                         )
                     },

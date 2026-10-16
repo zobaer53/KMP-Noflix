@@ -36,6 +36,7 @@ import com.zobaer53.zedmovies.ui.util.displayCountryName
 import com.zobaer53.zedmovies.ui.util.displayLanguageName
 import com.zobaer53.zedmovies.ui.util.formatCount
 import com.zobaer53.zedmovies.ui.util.formatRating
+import org.jetbrains.compose.resources.stringResource
 
 /** Opens the filters sheet; the badge counts the active filters. */
 @Composable
@@ -105,7 +106,7 @@ internal fun ActiveFiltersRow(
 
 @Composable
 private fun ActiveFilter.label(): String = when (this) {
-    is ActiveFilter.Sort -> stringResource(id = sort.labelResourceId)
+    is ActiveFilter.Sort -> stringResource(sort.labelResourceId)
     is ActiveFilter.Genre -> genre.displayName()
     is ActiveFilter.Years -> yearsLabel(from, to)
     is ActiveFilter.Rating -> stringResource(id = R.string.filters_rating_value, formatRating(minRating))
@@ -117,8 +118,8 @@ private fun ActiveFilter.label(): String = when (this) {
     is ActiveFilter.Certification -> stringResource(id = R.string.filters_age_rating_chip, code)
     is ActiveFilter.Provider -> provider.name
     is ActiveFilter.Network -> network.displayName
-    is ActiveFilter.TvStatus -> stringResource(id = status.labelResourceId)
-    is ActiveFilter.TvType -> stringResource(id = type.labelResourceId)
+    is ActiveFilter.TvStatus -> stringResource(status.labelResourceId)
+    is ActiveFilter.TvType -> stringResource(type.labelResourceId)
 }
 
 /** Empty results while filters are set, or a tab whose media type lacks the selected genres. */

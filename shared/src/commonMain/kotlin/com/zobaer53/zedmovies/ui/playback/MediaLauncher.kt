@@ -2,7 +2,7 @@ package com.zobaer53.zedmovies.ui.playback
 
 import androidx.compose.runtime.staticCompositionLocalOf
 
-// Moves to commonMain in Phase 4; the Android implementation stays in the app.
+// Common so the shared Play button can use it; the Android implementation (playback/AndroidMediaLauncher.kt) stays in the app.
 
 /** What the Play button needs to start playback. [type] "tv" plays a TV show, anything else a movie. */
 data class PlayRequest(val tmdbId: Int, val type: String, val name: String, val year: String)

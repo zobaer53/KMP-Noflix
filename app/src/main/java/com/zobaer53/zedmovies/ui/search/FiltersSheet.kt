@@ -62,6 +62,7 @@ import com.zobaer53.zedmovies.ui.util.isoLanguageCodes
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kotlin.math.roundToInt
+import org.jetbrains.compose.resources.stringResource
 
 /**
  * Edits a copy of [filters] and hands it to [onApply] on "Show results", so dragging a slider
@@ -139,7 +140,7 @@ internal fun FiltersSheet(
                     ChipFlow {
                         FilterSort.entries.forEach { sort ->
                             FilterOptionChip(
-                                label = stringResource(id = sort.labelResourceId),
+                                label = stringResource(sort.labelResourceId),
                                 selected = draft.sort == sort,
                                 enabled = isSortEnabled,
                                 onClick = { draft = draft.copy(sort = sort) }
@@ -448,7 +449,7 @@ private fun CodeListDialog(list: CodeList, onSelect: (String) -> Unit, onDismiss
 
 @Composable
 internal fun FilterGenre.displayName() =
-    stringResource(id = nameResourceId).capitalized()
+    stringResource(nameResourceId).capitalized()
 
 @Composable
 internal fun yearsLabel(from: Int?, to: Int?) = when {

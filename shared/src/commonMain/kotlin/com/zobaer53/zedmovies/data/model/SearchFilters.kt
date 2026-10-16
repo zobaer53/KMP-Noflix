@@ -1,8 +1,50 @@
 package com.zobaer53.zedmovies.data.model
 
-import androidx.annotation.StringRes
-import com.zobaer53.zedmovies.R
+import com.zobaer53.zedmovies.resources.Res
+import com.zobaer53.zedmovies.resources.action
+import com.zobaer53.zedmovies.resources.adventure
+import com.zobaer53.zedmovies.resources.animation
+import com.zobaer53.zedmovies.resources.comedy
+import com.zobaer53.zedmovies.resources.crime
+import com.zobaer53.zedmovies.resources.documentary
+import com.zobaer53.zedmovies.resources.drama
+import com.zobaer53.zedmovies.resources.family
+import com.zobaer53.zedmovies.resources.fantasy
+import com.zobaer53.zedmovies.resources.filters_sort_newest
+import com.zobaer53.zedmovies.resources.filters_sort_oldest
+import com.zobaer53.zedmovies.resources.filters_sort_popular
+import com.zobaer53.zedmovies.resources.filters_sort_title
+import com.zobaer53.zedmovies.resources.filters_sort_top_rated
+import com.zobaer53.zedmovies.resources.filters_tv_status_cancelled
+import com.zobaer53.zedmovies.resources.filters_tv_status_ended
+import com.zobaer53.zedmovies.resources.filters_tv_status_in_production
+import com.zobaer53.zedmovies.resources.filters_tv_status_pilot
+import com.zobaer53.zedmovies.resources.filters_tv_status_planned
+import com.zobaer53.zedmovies.resources.filters_tv_status_returning
+import com.zobaer53.zedmovies.resources.filters_tv_type_documentary
+import com.zobaer53.zedmovies.resources.filters_tv_type_miniseries
+import com.zobaer53.zedmovies.resources.filters_tv_type_news
+import com.zobaer53.zedmovies.resources.filters_tv_type_reality
+import com.zobaer53.zedmovies.resources.filters_tv_type_scripted
+import com.zobaer53.zedmovies.resources.filters_tv_type_talk_show
+import com.zobaer53.zedmovies.resources.filters_tv_type_video
+import com.zobaer53.zedmovies.resources.history
+import com.zobaer53.zedmovies.resources.horror
+import com.zobaer53.zedmovies.resources.kids
+import com.zobaer53.zedmovies.resources.music
+import com.zobaer53.zedmovies.resources.mystery
+import com.zobaer53.zedmovies.resources.news
+import com.zobaer53.zedmovies.resources.reality
+import com.zobaer53.zedmovies.resources.romance
+import com.zobaer53.zedmovies.resources.science_fiction
+import com.zobaer53.zedmovies.resources.soap
+import com.zobaer53.zedmovies.resources.talk
+import com.zobaer53.zedmovies.resources.thriller
+import com.zobaer53.zedmovies.resources.tv_movie
+import com.zobaer53.zedmovies.resources.war
+import com.zobaer53.zedmovies.resources.western
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.resources.StringResource
 
 /** The Search tab's filters (UI copy of `SearchFiltersModel`); serializable for the saved state. */
 @Serializable
@@ -144,58 +186,58 @@ enum class FilterTvNetwork(val id: Int, val displayName: String) {
 }
 
 /** Same constants as `TvStatusModel`. */
-enum class FilterTvStatus(@StringRes val labelResourceId: Int) {
-    RETURNING(R.string.filters_tv_status_returning),
-    PLANNED(R.string.filters_tv_status_planned),
-    IN_PRODUCTION(R.string.filters_tv_status_in_production),
-    ENDED(R.string.filters_tv_status_ended),
-    CANCELLED(R.string.filters_tv_status_cancelled),
-    PILOT(R.string.filters_tv_status_pilot)
+enum class FilterTvStatus(val labelResourceId: StringResource) {
+    RETURNING(Res.string.filters_tv_status_returning),
+    PLANNED(Res.string.filters_tv_status_planned),
+    IN_PRODUCTION(Res.string.filters_tv_status_in_production),
+    ENDED(Res.string.filters_tv_status_ended),
+    CANCELLED(Res.string.filters_tv_status_cancelled),
+    PILOT(Res.string.filters_tv_status_pilot)
 }
 
 /** Same constants as `TvTypeModel`. */
-enum class FilterTvType(@StringRes val labelResourceId: Int) {
-    SCRIPTED(R.string.filters_tv_type_scripted),
-    MINISERIES(R.string.filters_tv_type_miniseries),
-    DOCUMENTARY(R.string.filters_tv_type_documentary),
-    REALITY(R.string.filters_tv_type_reality),
-    TALK_SHOW(R.string.filters_tv_type_talk_show),
-    NEWS(R.string.filters_tv_type_news),
-    VIDEO(R.string.filters_tv_type_video)
+enum class FilterTvType(val labelResourceId: StringResource) {
+    SCRIPTED(Res.string.filters_tv_type_scripted),
+    MINISERIES(Res.string.filters_tv_type_miniseries),
+    DOCUMENTARY(Res.string.filters_tv_type_documentary),
+    REALITY(Res.string.filters_tv_type_reality),
+    TALK_SHOW(Res.string.filters_tv_type_talk_show),
+    NEWS(Res.string.filters_tv_type_news),
+    VIDEO(Res.string.filters_tv_type_video)
 }
 
-enum class FilterSort(@StringRes val labelResourceId: Int) {
-    POPULAR(R.string.filters_sort_popular),
-    TOP_RATED(R.string.filters_sort_top_rated),
-    NEWEST(R.string.filters_sort_newest),
-    OLDEST(R.string.filters_sort_oldest),
-    TITLE(R.string.filters_sort_title)
+enum class FilterSort(val labelResourceId: StringResource) {
+    POPULAR(Res.string.filters_sort_popular),
+    TOP_RATED(Res.string.filters_sort_top_rated),
+    NEWEST(Res.string.filters_sort_newest),
+    OLDEST(Res.string.filters_sort_oldest),
+    TITLE(Res.string.filters_sort_title)
 }
 
 /** Same constants as `FilterGenreModel`. */
-enum class FilterGenre(@StringRes val nameResourceId: Int) {
-    ACTION(R.string.action),
-    ADVENTURE(R.string.adventure),
-    ANIMATION(R.string.animation),
-    COMEDY(R.string.comedy),
-    CRIME(R.string.crime),
-    DOCUMENTARY(R.string.documentary),
-    DRAMA(R.string.drama),
-    FAMILY(R.string.family),
-    FANTASY(R.string.fantasy),
-    HISTORY(R.string.history),
-    HORROR(R.string.horror),
-    KIDS(R.string.kids),
-    MUSIC(R.string.music),
-    MYSTERY(R.string.mystery),
-    NEWS(R.string.news),
-    REALITY(R.string.reality),
-    ROMANCE(R.string.romance),
-    SCIENCE_FICTION(R.string.science_fiction),
-    SOAP(R.string.soap),
-    TALK(R.string.talk),
-    THRILLER(R.string.thriller),
-    TV_MOVIE(R.string.tv_movie),
-    WAR(R.string.war),
-    WESTERN(R.string.western)
+enum class FilterGenre(val nameResourceId: StringResource) {
+    ACTION(Res.string.action),
+    ADVENTURE(Res.string.adventure),
+    ANIMATION(Res.string.animation),
+    COMEDY(Res.string.comedy),
+    CRIME(Res.string.crime),
+    DOCUMENTARY(Res.string.documentary),
+    DRAMA(Res.string.drama),
+    FAMILY(Res.string.family),
+    FANTASY(Res.string.fantasy),
+    HISTORY(Res.string.history),
+    HORROR(Res.string.horror),
+    KIDS(Res.string.kids),
+    MUSIC(Res.string.music),
+    MYSTERY(Res.string.mystery),
+    NEWS(Res.string.news),
+    REALITY(Res.string.reality),
+    ROMANCE(Res.string.romance),
+    SCIENCE_FICTION(Res.string.science_fiction),
+    SOAP(Res.string.soap),
+    TALK(Res.string.talk),
+    THRILLER(Res.string.thriller),
+    TV_MOVIE(Res.string.tv_movie),
+    WAR(Res.string.war),
+    WESTERN(Res.string.western)
 }
