@@ -5,6 +5,11 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+plugins {
+    // :shared's jvmToolchain(17) needs a JDK 17. With only a newer JDK installed (CLAUDE.md allows
+    // "17+"), Gradle downloads one instead of failing to configure.
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
+}
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
