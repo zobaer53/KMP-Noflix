@@ -5,6 +5,9 @@ plugins {
     id("org.jetbrains.kotlin.multiplatform") // no version: KGP is on the root buildscript classpath
     alias(libs.plugins.android.kotlin.multiplatform.library)
     alias(libs.plugins.kotlin.serialization)
+    // The design system and its resources (Phase 4, B5).
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.ksp)
     alias(libs.plugins.room)
 }
@@ -14,6 +17,8 @@ kotlin {
         namespace = "com.zobaer53.zedmovies.shared"
         compileSdk = libs.versions.compileSdk.get().toInt()
         minSdk = 26
+        // Compose resources ship as assets, and AGP's KMP library only packages assets with this on.
+        androidResources { enable = true }
     }
     jvm()
     jvmToolchain(17)
@@ -26,6 +31,13 @@ kotlin {
             api(libs.kotlinx.coroutines.core)
             api(libs.androidx.paging.common)
             api(libs.kotlinx.datetime)
+            // The design system's public API (theme, components, Res), used by :app's screens until B6.
+            api(libs.jetbrains.compose.runtime)
+            api(libs.jetbrains.compose.foundation)
+            api(libs.jetbrains.compose.ui)
+            api(libs.jetbrains.compose.material3)
+            api(libs.jetbrains.compose.components.resources)
+            api(libs.androidx.paging.compose) // LazyPagingItems in the shared components' signatures
 
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.content.negotiation)
@@ -35,6 +47,10 @@ kotlin {
             implementation(libs.androidx.datastore.preferences.core)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.io.core)
+            implementation(libs.jetbrains.compose.material.ripple) // RippleAlpha for the custom ripple
+            implementation(libs.coil.compose)
+            // Coil's network fetcher; its Ktor engine is the OkHttp one already in androidMain/jvmMain.
+            implementation(libs.coil.network.ktor3)
         }
         androidMain.dependencies {
             implementation(libs.ktor.client.okhttp)
@@ -63,6 +79,11 @@ kotlin {
 dependencies {
     add("kspAndroid", libs.androidx.room.compiler)
     add("kspJvm", libs.androidx.room.compiler)
+}
+
+compose.resources {
+    packageOfResClass = "com.zobaer53.zedmovies.resources"
+    publicResClass = true // :app's screens use Res until B6; back to false once all UI is in :shared
 }
 
 room {

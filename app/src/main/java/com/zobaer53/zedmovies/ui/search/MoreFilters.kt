@@ -20,10 +20,36 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import com.zobaer53.zedmovies.R
+import com.zobaer53.zedmovies.resources.Res
+import com.zobaer53.zedmovies.resources.ic_arrow_down
+import com.zobaer53.zedmovies.resources.ic_arrow_up
+import com.zobaer53.zedmovies.resources.filters_age_rating
+import com.zobaer53.zedmovies.resources.filters_any
+import com.zobaer53.zedmovies.resources.filters_any_country
+import com.zobaer53.zedmovies.resources.filters_any_runtime
+import com.zobaer53.zedmovies.resources.filters_excluded_genres
+import com.zobaer53.zedmovies.resources.filters_min_votes
+import com.zobaer53.zedmovies.resources.filters_more
+import com.zobaer53.zedmovies.resources.filters_more_languages
+import com.zobaer53.zedmovies.resources.filters_more_search_note
+import com.zobaer53.zedmovies.resources.filters_movies_only
+import com.zobaer53.zedmovies.resources.filters_options_error
+import com.zobaer53.zedmovies.resources.filters_origin_country
+import com.zobaer53.zedmovies.resources.filters_runtime
+import com.zobaer53.zedmovies.resources.filters_runtime_from
+import com.zobaer53.zedmovies.resources.filters_runtime_range
+import com.zobaer53.zedmovies.resources.filters_runtime_to
+import com.zobaer53.zedmovies.resources.filters_show_all
+import com.zobaer53.zedmovies.resources.filters_streaming
+import com.zobaer53.zedmovies.resources.filters_streaming_credit
+import com.zobaer53.zedmovies.resources.filters_tv_network
+import com.zobaer53.zedmovies.resources.filters_tv_only
+import com.zobaer53.zedmovies.resources.filters_tv_status
+import com.zobaer53.zedmovies.resources.filters_tv_type
+import com.zobaer53.zedmovies.resources.filters_votes_value
+import com.zobaer53.zedmovies.resources.retry
 import com.zobaer53.zedmovies.data.model.FilterGenre
 import com.zobaer53.zedmovies.data.model.FilterOptions
 import com.zobaer53.zedmovies.data.model.FilterTvNetwork
@@ -35,7 +61,9 @@ import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesIcon
 import com.zobaer53.zedmovies.ui.designsystem.theme.zedMoviesTheme
 import com.zobaer53.zedmovies.ui.util.displayCountryName
 import com.zobaer53.zedmovies.ui.util.formatCount
+import com.zobaer53.zedmovies.ui.util.formatInteger
 import kotlin.math.roundToInt
+import org.jetbrains.compose.resources.stringResource
 
 /**
  * The sheet's collapsible "More filters" section, open when any of its filters is set. While
@@ -67,12 +95,12 @@ internal fun MoreFilters(
         ) {
             Text(
                 modifier = Modifier.weight(1f),
-                text = stringResource(id = R.string.filters_more),
+                text = stringResource(Res.string.filters_more),
                 style = zedMoviesTheme.typography.semiBold.h4,
                 color = zedMoviesTheme.colors.accent
             )
             zedMoviesIcon(
-                iconResourceId = if (isExpanded) R.drawable.ic_arrow_up else R.drawable.ic_arrow_down,
+                iconResourceId = if (isExpanded) Res.drawable.ic_arrow_up else Res.drawable.ic_arrow_down,
                 contentDescription = null,
                 tint = zedMoviesTheme.colors.accent
             )
@@ -82,17 +110,17 @@ internal fun MoreFilters(
             Column(verticalArrangement = Arrangement.spacedBy(zedMoviesTheme.spacing.extraMedium)) {
                 if (isSearchTextEntered) {
                     Text(
-                        text = stringResource(id = R.string.filters_more_search_note),
+                        text = stringResource(Res.string.filters_more_search_note),
                         style = zedMoviesTheme.typography.regular.h6,
                         color = zedMoviesTheme.colors.textSecondary
                     )
                 }
 
-                FilterSection(titleResourceId = R.string.filters_min_votes) {
+                FilterSection(titleResourceId = Res.string.filters_min_votes) {
                     ChipFlow {
                         VoteSteps.forEach { votes ->
                             FilterOptionChip(
-                                label = votes?.let { votesLabel(it) } ?: stringResource(id = R.string.filters_any),
+                                label = votes?.let { votesLabel(it) } ?: stringResource(Res.string.filters_any),
                                 selected = draft.minVotes == votes,
                                 onClick = { onDraftChange(draft.copy(minVotes = votes)) }
                             )
@@ -101,7 +129,7 @@ internal fun MoreFilters(
                 }
 
                 FilterSection(
-                    titleResourceId = R.string.filters_runtime,
+                    titleResourceId = Res.string.filters_runtime,
                     value = runtimeLabel(draft.runtimeMin, draft.runtimeMax)
                 ) {
                     RangeSlider(
@@ -122,7 +150,7 @@ internal fun MoreFilters(
                     )
                 }
 
-                FilterSection(titleResourceId = R.string.filters_excluded_genres) {
+                FilterSection(titleResourceId = Res.string.filters_excluded_genres) {
                     ChipFlow {
                         FilterGenre.entries.forEach { genre ->
                             FilterOptionChip(
@@ -141,10 +169,10 @@ internal fun MoreFilters(
                     }
                 }
 
-                FilterSection(titleResourceId = R.string.filters_origin_country) {
+                FilterSection(titleResourceId = Res.string.filters_origin_country) {
                     ChipFlow {
                         FilterOptionChip(
-                            label = stringResource(id = R.string.filters_any_country),
+                            label = stringResource(Res.string.filters_any_country),
                             selected = draft.originCountry == null,
                             enabled = isDiscoverOnlyEnabled,
                             onClick = { onDraftChange(draft.copy(originCountry = null)) }
@@ -164,7 +192,7 @@ internal fun MoreFilters(
                             )
                         }
                         FilterOptionChip(
-                            label = stringResource(id = R.string.filters_more_languages),
+                            label = stringResource(Res.string.filters_more_languages),
                             selected = false,
                             enabled = isDiscoverOnlyEnabled,
                             onClick = onMoreCountries
@@ -173,9 +201,9 @@ internal fun MoreFilters(
                 }
 
                 FilterSection(
-                    titleResourceId = R.string.filters_age_rating,
+                    titleResourceId = Res.string.filters_age_rating,
                     value = options?.let { displayCountryName(it.certificationCountry) },
-                    noteResourceId = R.string.filters_movies_only
+                    noteResourceId = Res.string.filters_movies_only
                 ) {
                     FilterOptionsContent(options, isOptionsLoading, optionsError, onRetryOptions) { loaded ->
                         ChipFlow {
@@ -200,7 +228,7 @@ internal fun MoreFilters(
                 }
 
                 FilterSection(
-                    titleResourceId = R.string.filters_streaming,
+                    titleResourceId = Res.string.filters_streaming,
                     value = options?.let { displayCountryName(it.watchRegion) }
                 ) {
                     FilterOptionsContent(options, isOptionsLoading, optionsError, onRetryOptions) { loaded ->
@@ -239,7 +267,7 @@ internal fun MoreFilters(
                             }
                             if (!isShowingAll && loaded.watchProviders.size > PROVIDERS_SHOWN) {
                                 FilterOptionChip(
-                                    label = stringResource(id = R.string.filters_show_all),
+                                    label = stringResource(Res.string.filters_show_all),
                                     selected = false,
                                     enabled = isDiscoverOnlyEnabled,
                                     onClick = { isShowingAll = true }
@@ -248,14 +276,14 @@ internal fun MoreFilters(
                         }
                         // TMDB's terms ask apps that show its watch-provider data to credit JustWatch.
                         Text(
-                            text = stringResource(id = R.string.filters_streaming_credit),
+                            text = stringResource(Res.string.filters_streaming_credit),
                             style = zedMoviesTheme.typography.regular.h7,
                             color = zedMoviesTheme.colors.textSecondary
                         )
                     }
                 }
 
-                FilterSection(titleResourceId = R.string.filters_tv_network, noteResourceId = R.string.filters_tv_only) {
+                FilterSection(titleResourceId = Res.string.filters_tv_network, noteResourceId = Res.string.filters_tv_only) {
                     ChipFlow {
                         FilterTvNetwork.entries.forEach { network ->
                             FilterOptionChip(
@@ -268,11 +296,11 @@ internal fun MoreFilters(
                     }
                 }
 
-                FilterSection(titleResourceId = R.string.filters_tv_status, noteResourceId = R.string.filters_tv_only) {
+                FilterSection(titleResourceId = Res.string.filters_tv_status, noteResourceId = Res.string.filters_tv_only) {
                     ChipFlow {
                         FilterTvStatus.entries.forEach { status ->
                             FilterOptionChip(
-                                label = stringResource(id = status.labelResourceId),
+                                label = stringResource(status.labelResourceId),
                                 selected = status in draft.tvStatuses,
                                 enabled = isDiscoverOnlyEnabled,
                                 onClick = { onDraftChange(draft.copy(tvStatuses = draft.tvStatuses.toggle(status))) }
@@ -281,11 +309,11 @@ internal fun MoreFilters(
                     }
                 }
 
-                FilterSection(titleResourceId = R.string.filters_tv_type, noteResourceId = R.string.filters_tv_only) {
+                FilterSection(titleResourceId = Res.string.filters_tv_type, noteResourceId = Res.string.filters_tv_only) {
                     ChipFlow {
                         FilterTvType.entries.forEach { type ->
                             FilterOptionChip(
-                                label = stringResource(id = type.labelResourceId),
+                                label = stringResource(type.labelResourceId),
                                 selected = type in draft.tvTypes,
                                 enabled = isDiscoverOnlyEnabled,
                                 onClick = { onDraftChange(draft.copy(tvTypes = draft.tvTypes.toggle(type))) }
@@ -316,12 +344,12 @@ private fun FilterOptionsContent(
         else -> Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 modifier = Modifier.weight(1f),
-                text = stringResource(id = R.string.filters_options_error),
+                text = stringResource(Res.string.filters_options_error),
                 style = zedMoviesTheme.typography.regular.h5,
                 color = zedMoviesTheme.colors.textSecondary
             )
             TextButton(onClick = onRetry) {
-                Text(text = stringResource(id = R.string.retry), color = zedMoviesTheme.colors.accent)
+                Text(text = stringResource(Res.string.retry), color = zedMoviesTheme.colors.accent)
             }
         }
     }
@@ -329,14 +357,14 @@ private fun FilterOptionsContent(
 
 @Composable
 internal fun runtimeLabel(min: Int?, max: Int?) = when {
-    min != null && max != null -> stringResource(id = R.string.filters_runtime_range, min, max)
-    min != null -> stringResource(id = R.string.filters_runtime_from, min)
-    max != null -> stringResource(id = R.string.filters_runtime_to, max)
-    else -> stringResource(id = R.string.filters_any_runtime)
+    min != null && max != null -> stringResource(Res.string.filters_runtime_range, formatInteger(min), formatInteger(max))
+    min != null -> stringResource(Res.string.filters_runtime_from, formatInteger(min))
+    max != null -> stringResource(Res.string.filters_runtime_to, formatInteger(max))
+    else -> stringResource(Res.string.filters_any_runtime)
 }
 
 @Composable
-private fun votesLabel(votes: Int) = stringResource(id = R.string.filters_votes_value, formatCount(votes))
+private fun votesLabel(votes: Int) = stringResource(Res.string.filters_votes_value, formatCount(votes))
 
 private fun <T> Set<T>.toggle(item: T) = if (item in this) this - item else this + item
 

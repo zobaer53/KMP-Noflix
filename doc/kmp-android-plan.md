@@ -74,8 +74,8 @@ Each package is one branch and one PR into `dev`. **Exceptions** are the only li
 | **B2** | `feat/b-ui-cleanup` | 0.1 UI rows (`"error1"`/`"error2"` logs), `UserMessage` → `ui/` as a sealed type (incl. `IOException` → `kotlinx.io` in `UserMessageMapper`), 0.3 (`PlatformFormat`, `MediaLauncher`, icon drawables), 0.4 if decided, 0.5 `UserMessageMapperTest` | B1 | Delete `data/model/UserMessage.kt` (moved to `ui/`) |
 | **B3** | `feat/b-screenshot-tests` | **Addition:** JVM screenshot tests (Roborazzi + Robolectric) of every screen's stateless composable with fake UI state. They automate the "Visual" success criterion for B5/B6 and later move to `:shared`. | B2 | Approved by the user: Roborazzi plugin line in the root `build.gradle`; in `app/build.gradle` the plugin line, the test dependency lines and `testOptions { unitTests { includeAndroidResources = true } }`; catalog entries |
 | **B4** | `feat/b-gate-checks` | **Addition:** automate the remaining success criteria. `upgrade.sh` also checks that the content language survives (non-English locale before the old APK's first start). A process-death check (`am kill` on Search with filters, then reopen) for A2's gate. A cold-start comparison against the B1 baseline. | B1 | none |
-| **B5** | `feat/b-cmp-foundation` | 4.1 (Compose Multiplatform in `:shared`), 4.2 (resources), 4.3 steps 1–3 (design system, `ui/smallcomponent`) | **A4** | `shared/build.gradle.kts`: the compose plugin, the compose dependency lines and the `compose.resources {}` block only |
-| **B6** | `feat/b-cmp-screens` | 4.3 steps 4–8, 4.4, 4.5 (screens, navigation, `SystemBarsAppearance`, `MediaLauncher` → commonMain, slim `zedMoviesActivity`, JVM UI smoke test) | B5 | Move `di/ViewModelModule.kt` into `:shared` |
+| **B5** | `feat/b-cmp-foundation` | 4.1 (Compose Multiplatform in `:shared`), 4.2 (resources), 4.3 steps 1–3 (design system, `ui/smallcomponent`) | **A4** | `shared/build.gradle.kts`: the compose plugin, the compose dependency lines (incl. paging-compose and Coil), the `compose.resources {}` block and `androidResources { enable = true }` (AGP 9's KMP library only packages assets with it). Approved by the user: move `data/model` to `shared/commonMain` (its `R.string` ids become `StringResource`; stream A agreed), `publicResClass = true` until B6, `MediaLauncher` → commonMain pulled forward from B6 (`Rating.kt` needs it), the font path in `tools/branding/social.py` |
+| **B6** | `feat/b-cmp-screens` | 4.3 steps 4–8, 4.4, 4.5 (screens, navigation, `SystemBarsAppearance`, slim `zedMoviesActivity`, JVM UI smoke test; `MediaLauncher` already moved in B5; set `publicResClass = false` once no `:app` code uses `Res`) | B5 | Move `di/ViewModelModule.kt` into `:shared` |
 
 ### Waves
 
@@ -726,7 +726,7 @@ Claim a row ("In progress") in the first commit of the package's branch. Edit on
 | B2 | B | Done (#4 merged) | #4 | test-merge --maestro green on the Pixel 6a; APK −6%, cold start 232 vs 235 ms (`doc/local/b2.md`) |
 | B3 | B | Done (#5 merged) | #5 | 12 screenshots, `verifyRoborazziDebug` green; test-merge --maestro green on the Pixel 6a |
 | B4 | B | Done (#9 merged) | #9 | run.sh with process death, upgrade, size and cold-start comparison green on the Pixel 6a; `upgrade.sh --content-language` not run end to end yet (skipped by the user) |
-| B5 | B | Not started | | |
+| B5 | B | In review | this PR | test-merge --maestro green on the Pixel 6a (7/7, process death restores the filter); `verifyRoborazziDebug` 12/12 unchanged; release APK +4.3% vs baseline (+47 KB vs A5), cold start 246 vs 235 ms (+4.7%); upgrade over 3.0.1 passed; every `androidx.compose.*` unchanged (1.12.1, material3 1.4.0) |
 | B6 | B | Not started | | |
 
 ## Risks (Android)
@@ -751,7 +751,7 @@ Claim a row ("In progress") in the first commit of the package's branch. Edit on
 ## Open decisions (Android)
 
 1. **Scraping fallback** (Jsoup + Lottie): delete it in Phase 0 (recommended), or keep it in `:app`? **Decided: deleted in B2.**
-2. **`values-night/strings.xml`:** delete it, or move it to `values-dark`?
+2. **`values-night/strings.xml`:** delete it, or move it to `values-dark`? **Decided: moved to `values-dark` in B5** (it only changes the casing of 5 strings in dark mode; the clean-up can come later).
 3. **Driver switch** (3.3b): do it right after Phase 3 (recommended), or leave Android on the compatibility path?
 4. **R8:** enable it in Phase 5, or leave it for later?
 5. **DI:** Koin (recommended) or Metro?

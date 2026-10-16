@@ -12,12 +12,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.zobaer53.zedmovies.R
+import com.zobaer53.zedmovies.resources.Res
+import com.zobaer53.zedmovies.resources.ic_film
+import com.zobaer53.zedmovies.resources.trailer
 import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesIcon
 import com.zobaer53.zedmovies.ui.designsystem.theme.zedMoviesTheme
 import com.zobaer53.zedmovies.ui.playback.LocalMediaLauncher
+import org.jetbrains.compose.resources.stringResource
 
 /** Opens the YouTube trailer; styled like the Play chip ([RatingItem][com.zobaer53.zedmovies.ui.smallcomponent.RatingItem]). */
 @Composable
@@ -45,12 +47,12 @@ internal fun TrailerItem(
         ) {
             zedMoviesIcon(
                 modifier = Modifier.size(TrailerIconSize),
-                iconResourceId = R.drawable.ic_film,
+                iconResourceId = Res.drawable.ic_film,
                 contentDescription = null
             )
             Spacer(modifier = Modifier.width(zedMoviesTheme.spacing.extraSmall))
             Text(
-                text = stringResource(id = R.string.trailer),
+                text = stringResource(Res.string.trailer),
                 style = zedMoviesTheme.typography.semiBold.h6
             )
         }

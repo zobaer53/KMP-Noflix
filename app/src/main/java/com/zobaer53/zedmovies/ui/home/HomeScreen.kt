@@ -11,9 +11,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import com.zobaer53.zedmovies.resources.Res
+import com.zobaer53.zedmovies.resources.most_popular
+import com.zobaer53.zedmovies.resources.now_playing
+import com.zobaer53.zedmovies.resources.top_rated
 import org.koin.compose.viewmodel.koinViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.zobaer53.zedmovies.R
 import com.zobaer53.zedmovies.ui.designsystem.component.ZedMoviesSwipeRefresh
 import com.zobaer53.zedmovies.ui.designsystem.theme.zedMoviesTheme
 import com.zobaer53.zedmovies.data.model.MediaType
@@ -92,7 +95,7 @@ private fun HomeContent(
         }
         item {
             MoviesAndTvShowsContainer(
-                titleResourceId = R.string.top_rated,
+                titleResourceId = Res.string.top_rated,
                 onSeeAllClick = { onSeeAllClick(MediaType.Common.TopRated) },
                 movies = movies[MediaType.Movie.TopRated].orEmpty(),
                 tvShows = tvShows[MediaType.TvShow.TopRated].orEmpty(),
@@ -102,7 +105,7 @@ private fun HomeContent(
         }
         item {
             MoviesAndTvShowsContainer(
-                titleResourceId = R.string.most_popular,
+                titleResourceId = Res.string.most_popular,
                 onSeeAllClick = { onSeeAllClick(MediaType.Common.Popular) },
                 movies = movies[MediaType.Movie.Popular].orEmpty(),
                 tvShows = tvShows[MediaType.TvShow.Popular].orEmpty(),
@@ -112,7 +115,7 @@ private fun HomeContent(
         }
         item {
             MoviesAndTvShowsContainer(
-                titleResourceId = R.string.now_playing,
+                titleResourceId = Res.string.now_playing,
                 onSeeAllClick = { onSeeAllClick(MediaType.Common.NowPlaying) },
                 movies = movies[MediaType.Movie.NowPlaying].orEmpty(),
                 tvShows = tvShows[MediaType.TvShow.NowPlaying].orEmpty(),

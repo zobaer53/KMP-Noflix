@@ -1,35 +1,41 @@
 package com.zobaer53.zedmovies.navigation
 
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import com.zobaer53.zedmovies.ui.home.navigation.HomeDestination
 import com.zobaer53.zedmovies.ui.search.navigation.SearchDestination
 import com.zobaer53.zedmovies.ui.wishlist.navigation.WishlistDestination
-import com.zobaer53.zedmovies.R
+import com.zobaer53.zedmovies.resources.Res
+import com.zobaer53.zedmovies.resources.home
+import com.zobaer53.zedmovies.resources.ic_home
+import com.zobaer53.zedmovies.resources.ic_search
+import com.zobaer53.zedmovies.resources.ic_wishlist
+import com.zobaer53.zedmovies.resources.search
+import com.zobaer53.zedmovies.resources.wishlist
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.StringResource
 
 enum class TopLevelDestination(
     override val route: String,
     override val destination: String,
-    @DrawableRes val iconResourceId: Int,
-    @StringRes val textResourceId: Int
+    val iconResourceId: DrawableResource,
+    val textResourceId: StringResource
 ) : zedMoviesNavigationDestination {
     Home(
         route = HomeDestination.route,
         destination = HomeDestination.destination,
-        iconResourceId = R.drawable.ic_home,
-        textResourceId = R.string.home
+        iconResourceId = Res.drawable.ic_home,
+        textResourceId = Res.string.home
     ),
     Search(
         route = SearchDestination.route,
         destination = SearchDestination.destination,
-        iconResourceId = R.drawable.ic_search,
-        textResourceId = R.string.search
+        iconResourceId = Res.drawable.ic_search,
+        textResourceId = Res.string.search
     ),
     Wishlist(
         route = WishlistDestination.route,
         destination = WishlistDestination.destination,
-        iconResourceId = R.drawable.ic_wishlist,
-        textResourceId = R.string.wishlist
+        iconResourceId = Res.drawable.ic_wishlist,
+        textResourceId = Res.string.wishlist
     )
 
 }

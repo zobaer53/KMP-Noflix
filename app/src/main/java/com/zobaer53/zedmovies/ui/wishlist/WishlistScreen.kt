@@ -28,7 +28,10 @@ import com.zobaer53.zedmovies.ui.smallcomponent.VerticalMovieItem
 import com.zobaer53.zedmovies.ui.smallcomponent.VerticalMovieItemPlaceholder
 import com.zobaer53.zedmovies.ui.smallcomponent.VerticalTvShowItem
 import com.zobaer53.zedmovies.ui.smallcomponent.VerticalTvShowItemPlaceholder
-import com.zobaer53.zedmovies.R
+import com.zobaer53.zedmovies.resources.Res
+import com.zobaer53.zedmovies.resources.no_movie_wishlist
+import com.zobaer53.zedmovies.resources.no_tv_show_wishlist
+import com.zobaer53.zedmovies.resources.no_wishlist_results
 import com.zobaer53.zedmovies.ui.smallcomponent.mapper.asUserMessage
 
 @Composable
@@ -103,8 +106,8 @@ private fun MoviesContainer(
     emptyContent: @Composable LazyItemScope.() -> Unit = {
         zedMoviesMessage(
             modifier = Modifier.fillParentMaxSize(),
-            messageResourceId = R.string.no_movie_wishlist,
-            imageResourceId = R.drawable.no_wishlist_results
+            messageResourceId = Res.string.no_movie_wishlist,
+            imageResourceId = Res.drawable.no_wishlist_results
         )
     }
 ) {
@@ -143,8 +146,8 @@ private fun TvShowsContainer(
     emptyContent: @Composable LazyItemScope.() -> Unit = {
         zedMoviesMessage(
             modifier = Modifier.fillParentMaxSize(),
-            messageResourceId = R.string.no_tv_show_wishlist,
-            imageResourceId = R.drawable.no_wishlist_results
+            messageResourceId = Res.string.no_tv_show_wishlist,
+            imageResourceId = Res.drawable.no_wishlist_results
         )
     }
 ) {

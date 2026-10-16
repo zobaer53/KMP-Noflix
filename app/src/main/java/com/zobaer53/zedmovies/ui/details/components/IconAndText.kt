@@ -1,7 +1,6 @@
 
 package com.zobaer53.zedmovies.ui.details.components
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,15 +12,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesPlaceholder
 import com.zobaer53.zedmovies.ui.designsystem.theme.zedMoviesTheme
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 internal fun IconAndText(
-    @DrawableRes iconResourceId: Int,
+    iconResourceId: DrawableResource,
     text: String,
     modifier: Modifier = Modifier,
     color: Color = zedMoviesTheme.colors.textSecondary,
@@ -34,7 +34,7 @@ internal fun IconAndText(
     ) {
         Icon(
             modifier = Modifier.size(IconAndTextIconSize),
-            painter = painterResource(id = iconResourceId),
+            painter = painterResource(iconResourceId),
             contentDescription = text,
             tint = color
         )
@@ -58,7 +58,7 @@ internal fun IconAndText(
 
 @Composable
 internal fun IconAndTextPlaceholder(
-    @DrawableRes iconResourceId: Int,
+    iconResourceId: DrawableResource,
     modifier: Modifier = Modifier
 ) {
     IconAndText(

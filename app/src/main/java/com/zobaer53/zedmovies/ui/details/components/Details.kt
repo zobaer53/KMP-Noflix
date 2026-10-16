@@ -28,7 +28,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zobaer53.zedmovies.ui.designsystem.component.ZedMoviesCardNetworkImage
 import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesImagePlaceholder
@@ -39,7 +38,13 @@ import com.zobaer53.zedmovies.ui.designsystem.theme.zedMoviesTheme
 import com.zobaer53.zedmovies.data.model.Credits
 import com.zobaer53.zedmovies.data.model.ReleaseDate
 import com.zobaer53.zedmovies.ui.smallcomponent.RatingItem
-import com.zobaer53.zedmovies.R
+import com.zobaer53.zedmovies.resources.Res
+import com.zobaer53.zedmovies.resources.ic_calendar
+import com.zobaer53.zedmovies.resources.ic_clock
+import com.zobaer53.zedmovies.resources.ic_film
+import com.zobaer53.zedmovies.resources.no_genre
+import com.zobaer53.zedmovies.resources.no_release_date
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Suppress("LongParameterList")
@@ -143,19 +148,19 @@ internal fun DetailsItem(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             if (isPlaceholder) {
-                                IconAndTextPlaceholder(iconResourceId = R.drawable.ic_calendar)
-                                IconAndTextPlaceholder(iconResourceId = R.drawable.ic_clock)
-                                IconAndTextPlaceholder(iconResourceId = R.drawable.ic_film)
+                                IconAndTextPlaceholder(iconResourceId = Res.drawable.ic_calendar)
+                                IconAndTextPlaceholder(iconResourceId = Res.drawable.ic_clock)
+                                IconAndTextPlaceholder(iconResourceId = Res.drawable.ic_film)
                             } else {
                                 IconAndText(
-                                    iconResourceId = R.drawable.ic_calendar,
-                                    text = releaseDate.year.ifEmpty { stringResource(id = R.string.no_release_date) }
+                                    iconResourceId = Res.drawable.ic_calendar,
+                                    text = releaseDate.year.ifEmpty { stringResource(Res.string.no_release_date) }
                                 )
-                                IconAndText(iconResourceId = R.drawable.ic_clock, text = runtime)
+                                IconAndText(iconResourceId = Res.drawable.ic_clock, text = runtime)
                                 IconAndText(
-                                    iconResourceId = R.drawable.ic_film,
+                                    iconResourceId = Res.drawable.ic_film,
                                     text = genres.joinToString(separator = GenreSeparator)
-                                        .ifEmpty { stringResource(id = R.string.no_genre) }
+                                        .ifEmpty { stringResource(Res.string.no_genre) }
                                 )
                             }
                         }

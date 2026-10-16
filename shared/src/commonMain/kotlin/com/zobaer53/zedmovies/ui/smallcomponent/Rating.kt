@@ -1,0 +1,100 @@
+
+
+package com.zobaer53.zedmovies.ui.smallcomponent
+
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.zobaer53.zedmovies.resources.Res
+import com.zobaer53.zedmovies.resources.ic_play
+import com.zobaer53.zedmovies.resources.ic_star
+import com.zobaer53.zedmovies.resources.not_rated
+import com.zobaer53.zedmovies.resources.rating
+import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesIcon
+import com.zobaer53.zedmovies.ui.designsystem.theme.zedMoviesTheme
+import com.zobaer53.zedmovies.ui.playback.LocalMediaLauncher
+import com.zobaer53.zedmovies.ui.playback.PlayRequest
+import org.jetbrains.compose.resources.stringResource
+
+@Composable
+fun RatingItem(
+    type:String,
+    title: String,
+    releaseDate: String,
+    rating: Double,
+    modifier: Modifier = Modifier,
+    tmdbId: Int = 0
+) {
+    val mediaLauncher = LocalMediaLauncher.current
+    Card(
+        modifier = modifier,
+        shape = zedMoviesTheme.shapes.small,
+        // Rating 0 turns this into the Play button: the details screen's main action.
+        colors = if (rating == 0.0) {
+            CardDefaults.cardColors(
+                containerColor = zedMoviesTheme.colors.accent,
+                contentColor = zedMoviesTheme.colors.primary
+            )
+        } else {
+            CardDefaults.cardColors(
+                containerColor = zedMoviesTheme.colors.mediaScrim,
+                contentColor = zedMoviesTheme.colors.secondaryVariant
+            )
+        }
+    ) {
+        Row(
+            modifier = Modifier.padding(
+                horizontal = zedMoviesTheme.spacing.small,
+                vertical = zedMoviesTheme.spacing.extraSmall
+            )
+        ) {
+            if(rating == 0.0){
+                zedMoviesIcon(
+                    modifier = Modifier.size(RatingIconSize)
+                        // Placeholders and feed cards have no TMDB id: the tap goes to the card instead.
+                        .clickable(enabled = tmdbId > 0) {
+                            mediaLauncher.play(
+                                PlayRequest(tmdbId = tmdbId, type = type, name = title, year = releaseDate)
+                            )
+                        },
+                    iconResourceId = Res.drawable.ic_play,
+                    contentDescription = stringResource(Res.string.rating)
+                )
+                Spacer(modifier = Modifier.width(zedMoviesTheme.spacing.extraSmall))
+                Text(
+                    text = "Play",
+                    style = zedMoviesTheme.typography.semiBold.h6
+                )
+
+            }else{
+                zedMoviesIcon(
+                    modifier = Modifier.size(RatingIconSize),
+                    iconResourceId = Res.drawable.ic_star,
+                    contentDescription = stringResource(Res.string.rating)
+                )
+                Spacer(modifier = Modifier.width(zedMoviesTheme.spacing.extraSmall))
+                Text(
+                    text = if (rating == RatingNotRatedValue) {
+                        stringResource(Res.string.not_rated)
+                    } else {
+                        rating.toString()
+                    },
+                    style = zedMoviesTheme.typography.semiBold.h6
+                )
+            }
+
+        }
+    }
+}
+
+private val RatingIconSize = 16.dp
+private const val RatingNotRatedValue = 0.0

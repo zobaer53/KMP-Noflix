@@ -1,6 +1,5 @@
 package com.zobaer53.zedmovies.ui.search
 
-import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -40,13 +39,33 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.stringResource as androidStringResource
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
-import com.zobaer53.zedmovies.R
+import com.zobaer53.zedmovies.resources.Res
+import com.zobaer53.zedmovies.resources.filters
+import com.zobaer53.zedmovies.resources.filters_any_language
+import com.zobaer53.zedmovies.resources.filters_any_rating
+import com.zobaer53.zedmovies.resources.filters_any_year
+import com.zobaer53.zedmovies.resources.filters_genres
+import com.zobaer53.zedmovies.resources.filters_genres_all
+import com.zobaer53.zedmovies.resources.filters_genres_any
+import com.zobaer53.zedmovies.resources.filters_min_rating
+import com.zobaer53.zedmovies.resources.filters_more_languages
+import com.zobaer53.zedmovies.resources.filters_origin_country
+import com.zobaer53.zedmovies.resources.filters_original_language
+import com.zobaer53.zedmovies.resources.filters_rating_value
+import com.zobaer53.zedmovies.resources.filters_release_year
+import com.zobaer53.zedmovies.resources.filters_reset
+import com.zobaer53.zedmovies.resources.filters_show_results
+import com.zobaer53.zedmovies.resources.filters_sort
+import com.zobaer53.zedmovies.resources.filters_sort_disabled
+import com.zobaer53.zedmovies.resources.filters_year_from
+import com.zobaer53.zedmovies.resources.filters_year_range
+import com.zobaer53.zedmovies.resources.filters_year_to
 import com.zobaer53.zedmovies.data.model.FilterGenre
 import com.zobaer53.zedmovies.data.model.FilterOptions
 import com.zobaer53.zedmovies.data.model.FilterSort
@@ -56,12 +75,15 @@ import com.zobaer53.zedmovies.ui.util.capitalized
 import com.zobaer53.zedmovies.ui.util.currentYear
 import com.zobaer53.zedmovies.ui.util.displayCountryName
 import com.zobaer53.zedmovies.ui.util.displayLanguageName
+import com.zobaer53.zedmovies.ui.util.formatInteger
 import com.zobaer53.zedmovies.ui.util.formatRating
 import com.zobaer53.zedmovies.ui.util.isoCountryCodes
 import com.zobaer53.zedmovies.ui.util.isoLanguageCodes
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kotlin.math.roundToInt
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 
 /**
  * Edits a copy of [filters] and hands it to [onApply] on "Show results", so dragging a slider
@@ -105,12 +127,12 @@ internal fun FiltersSheet(
             ) {
                 Text(
                     modifier = Modifier.weight(1f),
-                    text = stringResource(id = R.string.filters),
+                    text = stringResource(Res.string.filters),
                     style = zedMoviesTheme.typography.semiBold.h3
                 )
                 TextButton(onClick = { draft = SearchFilters() }, enabled = draft.isActive) {
                     Text(
-                        text = stringResource(id = R.string.filters_reset),
+                        text = stringResource(Res.string.filters_reset),
                         style = zedMoviesTheme.typography.medium.h5,
                         color = if (draft.isActive) {
                             zedMoviesTheme.colors.accent
@@ -128,10 +150,10 @@ internal fun FiltersSheet(
                     .padding(horizontal = zedMoviesTheme.spacing.extraMedium),
                 verticalArrangement = Arrangement.spacedBy(zedMoviesTheme.spacing.extraMedium)
             ) {
-                FilterSection(titleResourceId = R.string.filters_sort) {
+                FilterSection(titleResourceId = Res.string.filters_sort) {
                     if (!isSortEnabled) {
                         Text(
-                            text = stringResource(id = R.string.filters_sort_disabled),
+                            text = stringResource(Res.string.filters_sort_disabled),
                             style = zedMoviesTheme.typography.regular.h6,
                             color = zedMoviesTheme.colors.textSecondary
                         )
@@ -139,7 +161,7 @@ internal fun FiltersSheet(
                     ChipFlow {
                         FilterSort.entries.forEach { sort ->
                             FilterOptionChip(
-                                label = stringResource(id = sort.labelResourceId),
+                                label = stringResource(sort.labelResourceId),
                                 selected = draft.sort == sort,
                                 enabled = isSortEnabled,
                                 onClick = { draft = draft.copy(sort = sort) }
@@ -148,7 +170,7 @@ internal fun FiltersSheet(
                     }
                 }
 
-                FilterSection(titleResourceId = R.string.filters_genres) {
+                FilterSection(titleResourceId = Res.string.filters_genres) {
                     ChipFlow {
                         FilterGenre.entries.forEach { genre ->
                             FilterOptionChip(
@@ -171,12 +193,12 @@ internal fun FiltersSheet(
                     AnimatedVisibility(visible = draft.genres.size > 1) {
                         ChipFlow {
                             FilterOptionChip(
-                                label = stringResource(id = R.string.filters_genres_any),
+                                label = stringResource(Res.string.filters_genres_any),
                                 selected = !draft.matchAllGenres,
                                 onClick = { draft = draft.copy(matchAllGenres = false) }
                             )
                             FilterOptionChip(
-                                label = stringResource(id = R.string.filters_genres_all),
+                                label = stringResource(Res.string.filters_genres_all),
                                 selected = draft.matchAllGenres,
                                 onClick = { draft = draft.copy(matchAllGenres = true) }
                             )
@@ -186,7 +208,7 @@ internal fun FiltersSheet(
 
                 val maxYear = remember { currentYear() + 1 }
                 FilterSection(
-                    titleResourceId = R.string.filters_release_year,
+                    titleResourceId = Res.string.filters_release_year,
                     value = yearsLabel(draft.yearFrom, draft.yearTo)
                 ) {
                     RangeSlider(
@@ -204,10 +226,10 @@ internal fun FiltersSheet(
                 }
 
                 FilterSection(
-                    titleResourceId = R.string.filters_min_rating,
+                    titleResourceId = Res.string.filters_min_rating,
                     value = draft.minRating?.let {
-                        stringResource(id = R.string.filters_rating_value, formatRating(it))
-                    } ?: stringResource(id = R.string.filters_any_rating)
+                        stringResource(Res.string.filters_rating_value, formatRating(it))
+                    } ?: stringResource(Res.string.filters_any_rating)
                 ) {
                     Slider(
                         modifier = Modifier.testTag(RATING_SLIDER_TAG),
@@ -222,10 +244,10 @@ internal fun FiltersSheet(
                     )
                 }
 
-                FilterSection(titleResourceId = R.string.filters_original_language) {
+                FilterSection(titleResourceId = Res.string.filters_original_language) {
                     ChipFlow {
                         FilterOptionChip(
-                            label = stringResource(id = R.string.filters_any_language),
+                            label = stringResource(Res.string.filters_any_language),
                             selected = draft.originalLanguage == null,
                             onClick = { draft = draft.copy(originalLanguage = null) }
                         )
@@ -243,7 +265,7 @@ internal fun FiltersSheet(
                             )
                         }
                         FilterOptionChip(
-                            label = stringResource(id = R.string.filters_more_languages),
+                            label = stringResource(Res.string.filters_more_languages),
                             selected = false,
                             onClick = { openCodeList = CodeList.LANGUAGES }
                         )
@@ -281,7 +303,7 @@ internal fun FiltersSheet(
                 )
             ) {
                 Text(
-                    text = stringResource(id = R.string.filters_show_results),
+                    text = stringResource(Res.string.filters_show_results),
                     style = zedMoviesTheme.typography.semiBold.h4
                 )
             }
@@ -309,15 +331,15 @@ internal enum class CodeList { LANGUAGES, COUNTRIES }
 /** [noteResourceId]: a short qualifier after the title, such as "TV only". */
 @Composable
 internal fun FilterSection(
-    @StringRes titleResourceId: Int,
+    titleResourceId: StringResource,
     value: String? = null,
-    @StringRes noteResourceId: Int? = null,
+    noteResourceId: StringResource? = null,
     content: @Composable () -> Unit
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(zedMoviesTheme.spacing.small)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = stringResource(id = titleResourceId),
+                text = stringResource(titleResourceId),
                 style = zedMoviesTheme.typography.semiBold.h4,
                 color = zedMoviesTheme.colors.textPrimary
             )
@@ -325,7 +347,7 @@ internal fun FilterSection(
                 modifier = Modifier
                     .weight(1f)
                     .padding(start = zedMoviesTheme.spacing.small),
-                text = noteResourceId?.let { stringResource(id = it) }.orEmpty(),
+                text = noteResourceId?.let { stringResource(it) }.orEmpty(),
                 style = zedMoviesTheme.typography.regular.h6,
                 color = zedMoviesTheme.colors.textSecondary
             )
@@ -414,15 +436,15 @@ private fun CodeListDialog(list: CodeList, onSelect: (String) -> Unit, onDismiss
         confirmButton = {},
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(text = stringResource(id = android.R.string.cancel), color = zedMoviesTheme.colors.accent)
+                Text(text = androidStringResource(android.R.string.cancel), color = zedMoviesTheme.colors.accent)
             }
         },
         title = {
             Text(
                 text = stringResource(
-                    id = when (list) {
-                        CodeList.LANGUAGES -> R.string.filters_original_language
-                        CodeList.COUNTRIES -> R.string.filters_origin_country
+                    when (list) {
+                        CodeList.LANGUAGES -> Res.string.filters_original_language
+                        CodeList.COUNTRIES -> Res.string.filters_origin_country
                     }
                 )
             )
@@ -448,14 +470,14 @@ private fun CodeListDialog(list: CodeList, onSelect: (String) -> Unit, onDismiss
 
 @Composable
 internal fun FilterGenre.displayName() =
-    stringResource(id = nameResourceId).capitalized()
+    stringResource(nameResourceId).capitalized()
 
 @Composable
 internal fun yearsLabel(from: Int?, to: Int?) = when {
-    from != null && to != null -> stringResource(id = R.string.filters_year_range, from, to)
-    from != null -> stringResource(id = R.string.filters_year_from, from)
-    to != null -> stringResource(id = R.string.filters_year_to, to)
-    else -> stringResource(id = R.string.filters_any_year)
+    from != null && to != null -> stringResource(Res.string.filters_year_range, formatInteger(from), formatInteger(to))
+    from != null -> stringResource(Res.string.filters_year_from, formatInteger(from))
+    to != null -> stringResource(Res.string.filters_year_to, formatInteger(to))
+    else -> stringResource(Res.string.filters_any_year)
 }
 
 private val SearchFiltersSaver = Saver<SearchFilters, String>(

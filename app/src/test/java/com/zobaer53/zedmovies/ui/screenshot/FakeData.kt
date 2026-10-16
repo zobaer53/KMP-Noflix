@@ -3,7 +3,6 @@ package com.zobaer53.zedmovies.ui.screenshot
 import androidx.paging.LoadState
 import androidx.paging.LoadStates
 import androidx.paging.PagingData
-import com.zobaer53.zedmovies.R
 import com.zobaer53.zedmovies.data.model.Cast
 import com.zobaer53.zedmovies.data.model.Credits
 import com.zobaer53.zedmovies.data.model.Crew
@@ -14,17 +13,23 @@ import com.zobaer53.zedmovies.data.model.MovieDetails
 import com.zobaer53.zedmovies.data.model.ReleaseDate
 import com.zobaer53.zedmovies.data.model.TvShow
 import com.zobaer53.zedmovies.data.model.TvShowDetails
+import com.zobaer53.zedmovies.resources.Res
+import com.zobaer53.zedmovies.resources.action
+import com.zobaer53.zedmovies.resources.adventure
+import com.zobaer53.zedmovies.resources.comedy
+import com.zobaer53.zedmovies.resources.crime
+import com.zobaer53.zedmovies.resources.drama
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
 // Fixed, made-up content for the screenshot tests. Posters are null, so Coil draws its placeholder
 // and nothing goes to the network.
 
-private val action = Genre(R.string.action)
-private val adventure = Genre(R.string.adventure)
-private val comedy = Genre(R.string.comedy)
-private val crime = Genre(R.string.crime)
-private val drama = Genre(R.string.drama)
+private val action = Genre(Res.string.action)
+private val adventure = Genre(Res.string.adventure)
+private val comedy = Genre(Res.string.comedy)
+private val crime = Genre(Res.string.crime)
+private val drama = Genre(Res.string.drama)
 
 internal val fakeMovies = listOf(
     fakeMovie(1, "The Long Night", "2024", 8.4, listOf(drama, crime)),
