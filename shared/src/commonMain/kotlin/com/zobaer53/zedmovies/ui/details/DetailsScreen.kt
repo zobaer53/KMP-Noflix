@@ -58,8 +58,9 @@ internal fun DetailsRoute(
     }
 }
 
+// Public (not internal) so :app's screenshot tests can render it.
 @Composable
-internal fun DetailsScreen(
+fun DetailsScreen(
     uiState: DetailsUiState,
     onShowMessage: (String) -> Unit,
     onRefresh: () -> Unit,

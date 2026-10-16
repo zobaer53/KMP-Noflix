@@ -47,9 +47,10 @@ internal fun ListRoute(
     )
 }
 
+// Public (not internal) so :app's screenshot tests can render it.
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-internal fun ListScreen(
+fun ListScreen(
     uiState: ListUiState,
     movies: LazyPagingItems<Movie>,
     tvShows: LazyPagingItems<TvShow>,

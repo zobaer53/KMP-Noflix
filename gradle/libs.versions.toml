@@ -14,6 +14,10 @@ composeBom = "2026.09.00"
 composeMultiplatform = "1.12.2"
 # The material3 release the 1.12.2 plugin pairs with (androidx material3 1.4.0 on Android).
 composeMultiplatformMaterial3 = "1.9.0"
+# :shared's screens (B6). On Android both are empty redirects to androidx: navigation-compose to
+# androidx 2.10.0 (the app pins 2.10.2), lifecycle to androidx 2.11.0.
+jetbrainsLifecycle = "2.11.0"
+jetbrainsNavigation = "2.10.0-rc01"
 navigation = "2.10.2"
 splashscreen = "1.2.0"
 paging = "3.5.3"
@@ -70,6 +74,14 @@ jetbrains-compose-material-ripple = { module = "org.jetbrains.compose.material:m
 jetbrains-compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "composeMultiplatformMaterial3" }
 jetbrains-compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "composeMultiplatform" }
 jetbrains-compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "composeMultiplatform" }
+# JVM UI smoke test only (runComposeUiTest).
+jetbrains-compose-ui-test = { module = "org.jetbrains.compose.ui:ui-test", version.ref = "composeMultiplatform" }
+
+# Multiplatform navigation and lifecycle for :shared's screens (androidx classes on every target).
+jetbrains-androidx-lifecycle-runtime-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "jetbrainsLifecycle" }
+jetbrains-androidx-lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "jetbrainsLifecycle" }
+jetbrains-androidx-lifecycle-viewmodel-savedstate = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-savedstate", version.ref = "jetbrainsLifecycle" }
+jetbrains-androidx-navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "jetbrainsNavigation" }
 
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigation" }
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }

@@ -46,8 +46,9 @@ internal fun HomeRoute(
     )
 }
 
+// Public (not internal) so :app's screenshot tests can render it.
 @Composable
-internal fun HomeScreen(
+fun HomeScreen(
     uiState: HomeUiState,
     onSeeAllClick: (MediaType.Common) -> Unit,
     onMovieClick: (Int) -> Unit,

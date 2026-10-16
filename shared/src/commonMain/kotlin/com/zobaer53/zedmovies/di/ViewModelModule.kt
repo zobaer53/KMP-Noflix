@@ -8,7 +8,7 @@ import com.zobaer53.zedmovies.ui.wishlist.WishlistViewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
-// Stays in :app while the ViewModels do; moves to :shared with them in Phase 4.
+// Not part of sharedModules: the app starts Koin with it next to its own androidAppModule.
 // viewModelOf passes the SavedStateHandle from the NavBackStackEntry's CreationExtras, so the
 // nav arguments (Details, List) and Search's saved filters keep working.
 val viewModelModule = module {

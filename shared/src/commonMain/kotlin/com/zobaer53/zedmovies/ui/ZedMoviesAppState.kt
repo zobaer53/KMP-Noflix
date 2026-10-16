@@ -110,7 +110,9 @@ class zedMoviesAppState(
                     // Pop up to the start destination of the graph to
                     // avoid building up a large stack of destinations
                     // on the back stack as users select items.
-                    popUpTo(graph.findStartDestination().id) {
+                    // Common NavOptionsBuilder has no popUpTo(id); the start route has no
+                    // arguments, so popping up to its route is the same thing.
+                    popUpTo(graph.findStartDestination().route ?: this@zedMoviesAppState.startDestination.route) {
                         saveState = true
                     }
                     // Avoid multiple copies of the same destination when

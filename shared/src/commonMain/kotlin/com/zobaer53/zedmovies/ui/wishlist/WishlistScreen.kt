@@ -54,8 +54,9 @@ internal fun WishlistRoute(
     )
 }
 
+// Public (not internal) so :app's screenshot tests can render it.
 @Composable
-internal fun WishlistScreen(
+fun WishlistScreen(
     uiState: WishlistUiState,
     onRefreshMovies: () -> Unit,
     onRefreshTvShows: () -> Unit,
