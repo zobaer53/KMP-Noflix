@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="noflix-ad-free-movies-app-icon.png" alt="NoFlix – ad-free movies and TV series app for Android" width="128"/>
+  <img src="images/noflix-ad-free-movies-app-icon.png" alt="NoFlix – ad-free movies and TV series app for Android" width="128"/>
 </p>
 
 <h1 align="center">NoFlix – Watch Movies &amp; TV Series Ad-Free on Android</h1>
@@ -22,7 +22,7 @@
   <a href="https://github.com/zobaer53/NoFlix/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/zobaer53/NoFlix?style=social"/></a>
 </p>
 
-![NoFlix ad-free movie streaming app for Android](<Product Card (1).png>)
+![NoFlix ad-free movie streaming app for Android](<images/Product Card (1).png>)
 
 ## What is NoFlix?
 
@@ -60,10 +60,10 @@ https://github.com/zobaer53/zeDMoviesApp/assets/61627836/3743cf43-8afc-4984-b392
 <table width="100%">
   <tbody>
     <tr>
-      <td width="25%"><img src="screenshot-1-home.png" alt="NoFlix home screen with trending movies"/></td>
-      <td width="25%"><img src="screenshot-2-home.png" alt="NoFlix TV series and popular movies"/></td>
-      <td width="25%"><img src="screenshot-4-details.png" alt="NoFlix movie details screen with Play button"/></td>
-      <td width="25%"><img src="screenshot-7-wishlist.png" alt="NoFlix watchlist of saved movies and TV shows"/></td>
+      <td width="25%"><img src="images/screenshot-1-home.png" alt="NoFlix home screen with trending movies"/></td>
+      <td width="25%"><img src="images/screenshot-2-home.png" alt="NoFlix TV series and popular movies"/></td>
+      <td width="25%"><img src="images/screenshot-4-details.png" alt="NoFlix movie details screen with Play button"/></td>
+      <td width="25%"><img src="images/screenshot-7-wishlist.png" alt="NoFlix watchlist of saved movies and TV shows"/></td>
     </tr>
   </tbody>
 </table>
@@ -89,7 +89,7 @@ No. See the [disclaimer](#disclaimer) below.
 
 NoFlix is a Kotlin Multiplatform project. It follows the [official Android architecture guidance](https://developer.android.com/topic/architecture) (data, domain and UI layers):
 
-![NoFlix architecture diagram](architecture-1-overall.png)
+![NoFlix architecture diagram](images/architecture-1-overall.png)
 
 ### Modules
 
