@@ -93,10 +93,11 @@ internal fun SearchRoute(
     )
 }
 
+// Public (not internal) so :app's screenshot tests can render it.
 @Suppress("LongParameterList")
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-internal fun SearchScreen(
+fun SearchScreen(
     uiState: SearchUiState,
     searchMovies: LazyPagingItems<Movie>,
     searchTvShows: LazyPagingItems<TvShow>,

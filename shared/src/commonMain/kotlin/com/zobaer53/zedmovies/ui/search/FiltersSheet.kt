@@ -39,11 +39,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource as androidStringResource
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
 import com.zobaer53.zedmovies.resources.Res
 import com.zobaer53.zedmovies.resources.filters
@@ -71,6 +67,7 @@ import com.zobaer53.zedmovies.data.model.FilterOptions
 import com.zobaer53.zedmovies.data.model.FilterSort
 import com.zobaer53.zedmovies.data.model.SearchFilters
 import com.zobaer53.zedmovies.ui.designsystem.theme.zedMoviesTheme
+import com.zobaer53.zedmovies.ui.util.cancelLabel
 import com.zobaer53.zedmovies.ui.util.capitalized
 import com.zobaer53.zedmovies.ui.util.currentYear
 import com.zobaer53.zedmovies.ui.util.displayCountryName
@@ -79,6 +76,7 @@ import com.zobaer53.zedmovies.ui.util.formatInteger
 import com.zobaer53.zedmovies.ui.util.formatRating
 import com.zobaer53.zedmovies.ui.util.isoCountryCodes
 import com.zobaer53.zedmovies.ui.util.isoLanguageCodes
+import com.zobaer53.zedmovies.ui.util.testTagsAsResourceId
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kotlin.math.roundToInt
@@ -92,7 +90,7 @@ import org.jetbrains.compose.resources.stringResource
  * order. [options] (age ratings, streaming services) come from TMDB; [onLoadOptions] fetches them.
  */
 @Suppress("LongParameterList")
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun FiltersSheet(
     filters: SearchFilters,
@@ -118,7 +116,7 @@ internal fun FiltersSheet(
         contentColor = zedMoviesTheme.colors.textPrimary
     ) {
         // Exposes the sliders' test tags to Maestro as resource ids.
-        Column(modifier = Modifier.semantics { testTagsAsResourceId = true }) {
+        Column(modifier = Modifier.testTagsAsResourceId()) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -436,7 +434,7 @@ private fun CodeListDialog(list: CodeList, onSelect: (String) -> Unit, onDismiss
         confirmButton = {},
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(text = androidStringResource(android.R.string.cancel), color = zedMoviesTheme.colors.accent)
+                Text(text = cancelLabel(), color = zedMoviesTheme.colors.accent)
             }
         },
         title = {
