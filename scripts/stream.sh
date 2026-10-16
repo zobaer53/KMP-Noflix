@@ -5,7 +5,7 @@
 #   scripts/stream.sh worktree <path> <branch> <stream> [device]  add another checkout for a second stream
 #   scripts/stream.sh start <branch>                              new branch from the latest origin/dev
 #   scripts/stream.sh sync                                        merge origin/dev into this branch (never rebase)
-#   scripts/stream.sh check [--maestro]                           unit tests + debug build (+ the Maestro suite)
+#   scripts/stream.sh check [--maestro]                           KMP guard, unit tests + debug build (+ Maestro)
 #   scripts/stream.sh test-merge [--maestro]                      sync, then check: run before a PR is merged
 #   scripts/stream.sh pr <title> <body-file> [--no-auto]          push, open a PR into dev, turn on auto-merge
 #   scripts/stream.sh with-device -- <command…>                   run a command while holding this stream's device
@@ -93,12 +93,10 @@ cmd_sync() {
 }
 
 cmd_check() {
-  echo "== unit tests + debug build"
-  ./gradlew :app:testDebugUnitTest :app:assembleDebug --console=plain -q
-  if [ -d shared/src/commonMain ] &&
-     grep -rnE '^import (android|androidx\.core|java|javax)\.' shared/src/commonMain; then
-    die "Android/JVM imports in shared/src/commonMain (see the KMP guard in CLAUDE.md)"
-  fi
+  echo "== KMP guard"
+  scripts/kmp-guard.sh || die "fix the KMP guard first"
+  echo "== unit tests (:shared on the JVM, :app) + debug build"
+  ./gradlew :shared:jvmTest :app:testDebugUnitTest :app:assembleDebug --console=plain -q
   if [ "${1:-}" = "--maestro" ]; then
     echo "== Maestro suite"
     .maestro/run.sh --no-build
