@@ -51,8 +51,17 @@ kotlin {
             implementation(libs.coil.compose)
             // Coil's network fetcher; its Ktor engine is the OkHttp one already in androidMain/jvmMain.
             implementation(libs.coil.network.ktor3)
+            // Screens (B6): navigation, ViewModels with SavedStateHandle, Koin injection.
+            implementation(libs.jetbrains.androidx.navigation.compose)
+            implementation(libs.jetbrains.androidx.lifecycle.runtime.compose)
+            implementation(libs.jetbrains.androidx.lifecycle.viewmodel.compose)
+            implementation(libs.jetbrains.androidx.lifecycle.viewmodel.savedstate)
+            implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel)
+            implementation(libs.koin.core.viewmodel)
         }
         androidMain.dependencies {
+            implementation(libs.androidx.core) // WindowCompat in SystemBarsAppearance's actual
             implementation(libs.ktor.client.okhttp)
             implementation(libs.koin.android)
             // AndroidSQLiteDriver: Room on the platform SQLite (never the bundled one in the APK).
@@ -72,6 +81,8 @@ kotlin {
         jvmTest.dependencies {
             implementation(libs.koin.test)
             implementation(libs.androidx.room.testing)
+            implementation(libs.jetbrains.compose.ui.test)
+            implementation(compose.desktop.currentOs) // skiko runtime for this host (macOS arm64, linux-x64 on CI)
         }
     }
 }
