@@ -40,13 +40,13 @@ import androidx.compose.ui.layout.MeasureResult
 import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.layoutId
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import com.zobaer53.zedmovies.ui.designsystem.theme.zedMoviesTheme
 import com.zobaer53.zedmovies.navigation.TopLevelDestination
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun zedMoviesBottomBar(
@@ -83,8 +83,8 @@ fun zedMoviesBottomBar(
                     }
                 )
 
-                val icon = painterResource(id = destination.iconResourceId)
-                val text = stringResource(id = destination.textResourceId)
+                val icon = painterResource(destination.iconResourceId)
+                val text = stringResource(destination.textResourceId)
 
                 zedMoviesBottomNavigationItem(
                     modifier = Modifier

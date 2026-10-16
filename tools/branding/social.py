@@ -6,7 +6,7 @@ from PIL import Image, ImageDraw, ImageFilter, ImageFont
 import render
 
 ROOT = str(Path(__file__).resolve().parents[2])
-FONT = f"{ROOT}/app/src/main/res/font/montserrat_%s.ttf"
+FONT = f"{ROOT}/shared/src/commonMain/composeResources/font/montserrat_%s.ttf"
 W, H = 1280, 640
 
 

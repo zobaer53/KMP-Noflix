@@ -2,7 +2,6 @@
 
 package com.zobaer53.zedmovies.ui.details.components
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -21,14 +20,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zobaer53.zedmovies.ui.designsystem.component.ZedMoviesCardNetworkImage
 import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesImagePlaceholder
 import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesPlaceholder
 import com.zobaer53.zedmovies.ui.designsystem.theme.zedMoviesTheme
 import com.zobaer53.zedmovies.data.model.Credits
-import com.zobaer53.zedmovies.R
+import com.zobaer53.zedmovies.resources.Res
+import com.zobaer53.zedmovies.resources.cast
+import com.zobaer53.zedmovies.resources.crew
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun CastAndCrew(
@@ -49,11 +51,11 @@ internal fun CastAndCrew(
                     CastAndCrewItemPlaceholder()
                 }
             }
-            CastAndCrewContainer(titleResourceId = R.string.cast, content = placeholderContent)
-            CastAndCrewContainer(titleResourceId = R.string.crew, content = placeholderContent)
+            CastAndCrewContainer(titleResourceId = Res.string.cast, content = placeholderContent)
+            CastAndCrewContainer(titleResourceId = Res.string.crew, content = placeholderContent)
         } else {
             if (cast.isNotEmpty()) {
-                CastAndCrewContainer(titleResourceId = R.string.cast) {
+                CastAndCrewContainer(titleResourceId = Res.string.cast) {
                     items(cast) { castItem ->
                         with(castItem) {
                             CastAndCrewItem(
@@ -66,7 +68,7 @@ internal fun CastAndCrew(
                 }
             }
             if (crew.isNotEmpty()) {
-                CastAndCrewContainer(titleResourceId = R.string.crew) {
+                CastAndCrewContainer(titleResourceId = Res.string.crew) {
                     items(crew) { crewItem ->
                         with(crewItem) {
                             CastAndCrewItem(
@@ -94,7 +96,7 @@ internal fun CastAndCrewPlaceholder(modifier: Modifier = Modifier) {
 @Suppress("ModifierParameterPosition", "ComposableParametersOrdering")
 @Composable
 private fun CastAndCrewContainer(
-    @StringRes titleResourceId: Int,
+    titleResourceId: StringResource,
     modifier: Modifier = Modifier,
     content: LazyListScope.() -> Unit
 ) {
@@ -104,7 +106,7 @@ private fun CastAndCrewContainer(
     ) {
         Text(
             modifier = Modifier.padding(horizontal = zedMoviesTheme.spacing.extraMedium),
-            text = stringResource(id = titleResourceId),
+            text = stringResource(titleResourceId),
             style = zedMoviesTheme.typography.semiBold.h4,
             color = zedMoviesTheme.colors.textPrimary
         )

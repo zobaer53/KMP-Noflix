@@ -21,20 +21,20 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.GraphicsLayerScope
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import com.zobaer53.zedmovies.resources.Res
 import com.zobaer53.zedmovies.resources.upcoming_movies
+import com.zobaer53.zedmovies.resources.no_release_date
 import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesImagePlaceholder
 import com.zobaer53.zedmovies.ui.designsystem.component.ZedMoviesNetworkImage
 import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesPlaceholder
 import com.zobaer53.zedmovies.ui.designsystem.theme.zedMoviesTheme
 import com.zobaer53.zedmovies.data.model.Movie
 import com.zobaer53.zedmovies.data.model.ReleaseDate
-import com.zobaer53.zedmovies.R
 import com.zobaer53.zedmovies.ui.smallcomponent.MoviesContainer
 import kotlin.math.absoluteValue
+import org.jetbrains.compose.resources.stringResource
 
 
 @Composable
@@ -152,7 +152,7 @@ private fun UpcomingMovieItem(
                     } else {
                         Modifier
                     },
-                    text = releaseDate.fullDate.ifEmpty { stringResource(id = R.string.no_release_date) },
+                    text = releaseDate.fullDate.ifEmpty { stringResource(Res.string.no_release_date) },
                     style = zedMoviesTheme.typography.medium.h6,
                     color = zedMoviesTheme.colors.textOnMediaVariant
                 )

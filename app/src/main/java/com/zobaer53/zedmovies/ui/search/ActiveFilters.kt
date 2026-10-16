@@ -16,16 +16,23 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.pluralStringResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.zobaer53.zedmovies.R
 import com.zobaer53.zedmovies.resources.Res
 import com.zobaer53.zedmovies.resources.filters_clear
 import com.zobaer53.zedmovies.resources.ic_close
 import com.zobaer53.zedmovies.resources.ic_filter
+import com.zobaer53.zedmovies.resources.filters
+import com.zobaer53.zedmovies.resources.filters_age_rating_chip
+import com.zobaer53.zedmovies.resources.filters_clear_all
+import com.zobaer53.zedmovies.resources.filters_excluded_genre_chip
+import com.zobaer53.zedmovies.resources.filters_no_results
+import com.zobaer53.zedmovies.resources.filters_not_a_movie_genre
+import com.zobaer53.zedmovies.resources.filters_not_a_tv_genre
+import com.zobaer53.zedmovies.resources.filters_rating_value
+import com.zobaer53.zedmovies.resources.filters_remove
+import com.zobaer53.zedmovies.resources.filters_votes_chip
+import com.zobaer53.zedmovies.resources.no_search_results
 import com.zobaer53.zedmovies.data.model.ActiveFilter
 import com.zobaer53.zedmovies.data.model.FilterGenre
 import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesIcon
@@ -37,6 +44,8 @@ import com.zobaer53.zedmovies.ui.util.displayLanguageName
 import com.zobaer53.zedmovies.ui.util.formatCount
 import com.zobaer53.zedmovies.ui.util.formatRating
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.pluralStringResource
 
 /** Opens the filters sheet; the badge counts the active filters. */
 @Composable
@@ -54,7 +63,7 @@ internal fun FiltersButton(activeCount: Int, onClick: () -> Unit, modifier: Modi
     ) {
         zedMoviesIconButton(
             iconResourceId = Res.drawable.ic_filter,
-            contentDescription = stringResource(id = R.string.filters),
+            contentDescription = stringResource(Res.string.filters),
             onClick = onClick,
             tint = if (activeCount > 0) zedMoviesTheme.colors.accent else zedMoviesTheme.colors.textSecondary
         )
@@ -84,7 +93,7 @@ internal fun ActiveFiltersRow(
                     zedMoviesIcon(
                         modifier = Modifier.size(16.dp),
                         iconResourceId = Res.drawable.ic_close,
-                        contentDescription = stringResource(id = R.string.filters_remove)
+                        contentDescription = stringResource(Res.string.filters_remove)
                     )
                 },
                 shape = zedMoviesTheme.shapes.small,
@@ -95,7 +104,7 @@ internal fun ActiveFiltersRow(
         item {
             TextButton(onClick = onClearAll) {
                 Text(
-                    text = stringResource(id = R.string.filters_clear_all),
+                    text = stringResource(Res.string.filters_clear_all),
                     style = zedMoviesTheme.typography.medium.h5,
                     color = zedMoviesTheme.colors.accent
                 )
@@ -109,13 +118,13 @@ private fun ActiveFilter.label(): String = when (this) {
     is ActiveFilter.Sort -> stringResource(sort.labelResourceId)
     is ActiveFilter.Genre -> genre.displayName()
     is ActiveFilter.Years -> yearsLabel(from, to)
-    is ActiveFilter.Rating -> stringResource(id = R.string.filters_rating_value, formatRating(minRating))
+    is ActiveFilter.Rating -> stringResource(Res.string.filters_rating_value, formatRating(minRating))
     is ActiveFilter.Language -> displayLanguageName(code)
-    is ActiveFilter.MinVotes -> stringResource(id = R.string.filters_votes_chip, formatCount(minVotes))
+    is ActiveFilter.MinVotes -> stringResource(Res.string.filters_votes_chip, formatCount(minVotes))
     is ActiveFilter.Runtime -> runtimeLabel(min, max)
     is ActiveFilter.Country -> displayCountryName(code)
-    is ActiveFilter.ExcludedGenre -> stringResource(id = R.string.filters_excluded_genre_chip, genre.displayName())
-    is ActiveFilter.Certification -> stringResource(id = R.string.filters_age_rating_chip, code)
+    is ActiveFilter.ExcludedGenre -> stringResource(Res.string.filters_excluded_genre_chip, genre.displayName())
+    is ActiveFilter.Certification -> stringResource(Res.string.filters_age_rating_chip, code)
     is ActiveFilter.Provider -> provider.name
     is ActiveFilter.Network -> network.displayName
     is ActiveFilter.TvStatus -> stringResource(status.labelResourceId)
@@ -131,12 +140,12 @@ internal fun NoFilterResults(
     isTvShows: Boolean = false
 ) {
     val message = if (unmatchableGenres.isEmpty()) {
-        stringResource(id = R.string.filters_no_results)
+        stringResource(Res.string.filters_no_results)
     } else {
         val names = unmatchableGenres.sorted().map { it.displayName() }.joinToString()
         pluralStringResource(
-            id = if (isTvShows) R.plurals.filters_not_a_tv_genre else R.plurals.filters_not_a_movie_genre,
-            count = unmatchableGenres.size,
+            if (isTvShows) Res.plurals.filters_not_a_tv_genre else Res.plurals.filters_not_a_movie_genre,
+            quantity = unmatchableGenres.size,
             names
         )
     }
@@ -145,7 +154,7 @@ internal fun NoFilterResults(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(zedMoviesTheme.spacing.medium, Alignment.CenterVertically)
     ) {
-        Image(painter = painterResource(id = R.drawable.no_search_results), contentDescription = null)
+        Image(painter = painterResource(Res.drawable.no_search_results), contentDescription = null)
         Text(
             text = message,
             style = zedMoviesTheme.typography.medium.h3,

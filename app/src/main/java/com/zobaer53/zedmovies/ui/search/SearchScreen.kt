@@ -32,7 +32,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import com.zobaer53.zedmovies.resources.Res
@@ -41,6 +40,8 @@ import com.zobaer53.zedmovies.resources.ic_close
 import com.zobaer53.zedmovies.resources.ic_search
 import com.zobaer53.zedmovies.resources.search_placeholder
 import com.zobaer53.zedmovies.resources.trending
+import com.zobaer53.zedmovies.resources.clear
+import com.zobaer53.zedmovies.resources.filters_search_ignored_hint
 import org.koin.compose.viewmodel.koinViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
@@ -55,12 +56,12 @@ import com.zobaer53.zedmovies.data.model.Movie
 import com.zobaer53.zedmovies.data.model.SearchFilters
 import com.zobaer53.zedmovies.data.model.TvShow
 import com.zobaer53.zedmovies.ui.smallcomponent.MediaTabPager
-import com.zobaer53.zedmovies.R
 import com.zobaer53.zedmovies.ui.smallcomponent.MoviesAndTvShowsContainer
 import com.zobaer53.zedmovies.ui.smallcomponent.MoviesContainer
 import com.zobaer53.zedmovies.ui.smallcomponent.TvShowsContainer
 import com.zobaer53.zedmovies.ui.smallcomponent.mapper.asUserMessage
 import com.zobaer53.zedmovies.ui.smallcomponent.zedMoviesCenteredError
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun SearchRoute(
@@ -147,7 +148,7 @@ internal fun SearchScreen(
                 if (uiState.query.isNotBlank() && uiState.filters.hasSearchIgnoredFilters) {
                     Text(
                         modifier = Modifier.padding(horizontal = zedMoviesTheme.spacing.extraMedium),
-                        text = stringResource(id = R.string.filters_search_ignored_hint),
+                        text = stringResource(Res.string.filters_search_ignored_hint),
                         style = zedMoviesTheme.typography.regular.h6,
                         color = zedMoviesTheme.colors.textSecondary
                     )
@@ -265,7 +266,7 @@ private fun SearchTextField(
                 ) {
                     zedMoviesIconButton(
                         iconResourceId = Res.drawable.ic_close,
-                        contentDescription = stringResource(id = R.string.clear),
+                        contentDescription = stringResource(Res.string.clear),
                         onClick = { onQueryChange("") }
                     )
                 }

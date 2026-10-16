@@ -9,10 +9,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesPlaceholder
 import com.zobaer53.zedmovies.ui.designsystem.theme.zedMoviesTheme
-import com.zobaer53.zedmovies.R
+import com.zobaer53.zedmovies.resources.Res
+import com.zobaer53.zedmovies.resources.no_overview
+import com.zobaer53.zedmovies.resources.overview
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun Overview(
@@ -27,7 +29,7 @@ internal fun Overview(
         verticalArrangement = Arrangement.spacedBy(zedMoviesTheme.spacing.small)
     ) {
         Text(
-            text = stringResource(id = R.string.overview),
+            text = stringResource(Res.string.overview),
             style = zedMoviesTheme.typography.semiBold.h4,
             color = zedMoviesTheme.colors.textPrimary
         )
@@ -39,7 +41,7 @@ internal fun Overview(
             } else {
                 Modifier
             },
-            text = overview.ifEmpty { stringResource(id = R.string.no_overview) },
+            text = overview.ifEmpty { stringResource(Res.string.no_overview) },
             style = zedMoviesTheme.typography.regular.h5,
             color = zedMoviesTheme.colors.textPrimaryVariant
         )
