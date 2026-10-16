@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.roborazzi)
+    alias(libs.plugins.androidx.baselineprofile)
 }
 
 
@@ -76,6 +77,9 @@ dependencies {
     implementation libs.androidx.activity.compose
     implementation libs.androidx.core.splashscreen
     implementation libs.androidx.webkit
+    // Applies the bundled Baseline Profile on installs that don't come from Play (GitHub APKs).
+    implementation libs.androidx.profileinstaller
+    baselineProfile project(':baselineprofile')
 
     // Compose comes from :shared (api). The BOM only versions the debug tooling (the same 1.12.1 as release).
     debugImplementation platform(libs.androidx.compose.bom)
