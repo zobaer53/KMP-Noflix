@@ -80,6 +80,8 @@ androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref =
 androidx-room-testing = { module = "androidx.room:room-testing", version.ref = "room" }
 # JVM tests only: Room in memory without a device. Never in the APK (native library, see the plan's 3.3).
 androidx-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
+# Android's own SQLite behind Room's driver API (no native library of its own).
+androidx-sqlite-framework = { module = "androidx.sqlite:sqlite-framework", version.ref = "sqlite" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastore" }
 
