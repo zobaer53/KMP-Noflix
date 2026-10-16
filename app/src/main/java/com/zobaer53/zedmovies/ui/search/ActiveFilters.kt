@@ -22,6 +22,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.zobaer53.zedmovies.R
+import com.zobaer53.zedmovies.resources.Res
+import com.zobaer53.zedmovies.resources.filters_clear
+import com.zobaer53.zedmovies.resources.ic_close
+import com.zobaer53.zedmovies.resources.ic_filter
 import com.zobaer53.zedmovies.data.model.ActiveFilter
 import com.zobaer53.zedmovies.data.model.FilterGenre
 import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesIcon
@@ -48,7 +52,7 @@ internal fun FiltersButton(activeCount: Int, onClick: () -> Unit, modifier: Modi
         }
     ) {
         zedMoviesIconButton(
-            iconResourceId = R.drawable.ic_filter,
+            iconResourceId = Res.drawable.ic_filter,
             contentDescription = stringResource(id = R.string.filters),
             onClick = onClick,
             tint = if (activeCount > 0) zedMoviesTheme.colors.accent else zedMoviesTheme.colors.textSecondary
@@ -78,7 +82,7 @@ internal fun ActiveFiltersRow(
                 trailingIcon = {
                     zedMoviesIcon(
                         modifier = Modifier.size(16.dp),
-                        iconResourceId = R.drawable.ic_close,
+                        iconResourceId = Res.drawable.ic_close,
                         contentDescription = stringResource(id = R.string.filters_remove)
                     )
                 },
@@ -147,6 +151,6 @@ internal fun NoFilterResults(
             color = zedMoviesTheme.colors.textPrimary,
             textAlign = TextAlign.Center
         )
-        zedMoviesOutlinedButton(textResourceId = R.string.filters_clear, onClick = onClearFilters)
+        zedMoviesOutlinedButton(textResourceId = Res.string.filters_clear, onClick = onClearFilters)
     }
 }

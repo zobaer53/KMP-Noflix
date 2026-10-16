@@ -2,7 +2,6 @@
 
 package com.zobaer53.zedmovies.ui.smallcomponent
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -25,7 +24,10 @@ import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesOutlinedButton
 import com.zobaer53.zedmovies.ui.designsystem.theme.zedMoviesTheme
 import com.zobaer53.zedmovies.ui.model.UserMessage
 import com.zobaer53.zedmovies.ui.smallcomponent.mapper.asString
-import com.zobaer53.zedmovies.R
+import com.zobaer53.zedmovies.resources.Res
+import com.zobaer53.zedmovies.resources.offline_mode
+import com.zobaer53.zedmovies.resources.retry
+import org.jetbrains.compose.resources.StringResource
 
 @Composable
 fun zedMoviesError(
@@ -37,11 +39,11 @@ fun zedMoviesError(
     errorTextColor: Color = zedMoviesTheme.colors.error,
     actionButtonColor: Color = zedMoviesTheme.colors.accent,
     errorTextStyle: TextStyle = zedMoviesTheme.typography.regular.h4,
-    @StringRes actionButtonTextResourceId: Int = R.string.retry,
+    actionButtonTextResourceId: StringResource = Res.string.retry,
     shouldShowOfflineMode: Boolean = false,
     onOfflineModeClick: () -> Unit = {},
     offlineModeButtonColor: Color = zedMoviesTheme.colors.secondary,
-    @StringRes offlineModeButtonTextResourceId: Int = R.string.offline_mode
+    offlineModeButtonTextResourceId: StringResource = Res.string.offline_mode
 ) {
     Column(
         modifier = modifier.windowInsetsPadding(WindowInsets.safeDrawing),
@@ -92,11 +94,11 @@ fun zedMoviesCenteredError(
     containerColor: Color = zedMoviesTheme.colors.primaryVariant,
     errorTextColor: Color = zedMoviesTheme.colors.error,
     actionButtonColor: Color = zedMoviesTheme.colors.accent,
-    @StringRes actionButtonTextResourceId: Int = R.string.retry,
+    actionButtonTextResourceId: StringResource = Res.string.retry,
     shouldShowOfflineMode: Boolean = false,
     onOfflineModeClick: () -> Unit = {},
     offlineModeButtonColor: Color = zedMoviesTheme.colors.secondary,
-    @StringRes offlineModeButtonTextResourceId: Int = R.string.offline_mode
+    offlineModeButtonTextResourceId: StringResource = Res.string.offline_mode
 ) {
     zedMoviesCenteredBox(
         modifier = modifier

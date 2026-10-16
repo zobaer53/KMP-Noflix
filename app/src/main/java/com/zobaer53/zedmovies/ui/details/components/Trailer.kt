@@ -15,6 +15,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zobaer53.zedmovies.R
+import com.zobaer53.zedmovies.resources.Res
+import com.zobaer53.zedmovies.resources.ic_film
 import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesIcon
 import com.zobaer53.zedmovies.ui.designsystem.theme.zedMoviesTheme
 import com.zobaer53.zedmovies.ui.playback.LocalMediaLauncher
@@ -45,7 +47,7 @@ internal fun TrailerItem(
         ) {
             zedMoviesIcon(
                 modifier = Modifier.size(TrailerIconSize),
-                iconResourceId = R.drawable.ic_film,
+                iconResourceId = Res.drawable.ic_film,
                 contentDescription = null
             )
             Spacer(modifier = Modifier.width(zedMoviesTheme.spacing.extraSmall))

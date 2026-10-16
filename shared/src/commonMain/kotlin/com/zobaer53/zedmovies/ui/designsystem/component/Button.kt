@@ -2,8 +2,6 @@
 
 package com.zobaer53.zedmovies.ui.designsystem.component
 
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
@@ -19,13 +17,15 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import com.zobaer53.zedmovies.ui.designsystem.theme.zedMoviesTheme
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun zedMoviesOutlinedButton(
-    @StringRes textResourceId: Int,
+    textResourceId: StringResource,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     shape: Shape = zedMoviesTheme.shapes.medium,
@@ -44,13 +44,13 @@ fun zedMoviesOutlinedButton(
         ),
         border = ButtonDefaults.outlinedButtonBorder(enabled = true).copy(brush = SolidColor(borderColor))
     ) {
-        Text(text = stringResource(id = textResourceId), style = textStyle)
+        Text(text = stringResource(textResourceId), style = textStyle)
     }
 }
 
 @Composable
 fun zedMoviesIconButton(
-    @DrawableRes iconResourceId: Int,
+    iconResourceId: DrawableResource,
     contentDescription: String?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,

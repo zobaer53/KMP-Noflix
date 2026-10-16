@@ -12,6 +12,8 @@ import androidx.compose.ui.unit.dp
 import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesIconButton
 import com.zobaer53.zedmovies.ui.designsystem.theme.zedMoviesTheme
 import com.zobaer53.zedmovies.R
+import com.zobaer53.zedmovies.resources.Res
+import com.zobaer53.zedmovies.resources.ic_arrow_back
 
 @Composable
 fun zedMoviesBackButton(
@@ -26,7 +28,7 @@ fun zedMoviesBackButton(
                 color = zedMoviesTheme.colors.primaryVariant,
                 shape = zedMoviesTheme.shapes.smallMedium
             ),
-        iconResourceId = R.drawable.ic_arrow_back,
+        iconResourceId = Res.drawable.ic_arrow_back,
         contentDescription = stringResource(id = R.string.back),
         onClick = onClick,
         tint = tint

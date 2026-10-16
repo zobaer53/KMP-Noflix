@@ -50,6 +50,10 @@ import com.zobaer53.zedmovies.data.model.SearchFilters
 import com.zobaer53.zedmovies.data.model.TvShow
 import com.zobaer53.zedmovies.ui.smallcomponent.MediaTabPager
 import com.zobaer53.zedmovies.R
+import com.zobaer53.zedmovies.resources.Res
+import com.zobaer53.zedmovies.resources.ic_close
+import com.zobaer53.zedmovies.resources.ic_search
+import com.zobaer53.zedmovies.resources.search_placeholder
 import com.zobaer53.zedmovies.ui.smallcomponent.MoviesAndTvShowsContainer
 import com.zobaer53.zedmovies.ui.smallcomponent.MoviesContainer
 import com.zobaer53.zedmovies.ui.smallcomponent.TvShowsContainer
@@ -245,8 +249,8 @@ private fun SearchTextField(
             .fillMaxWidth(),
         value = query,
         onValueChange = onQueryChange,
-        placeholderResourceId = R.string.search_placeholder,
-        iconResourceId = R.drawable.ic_search,
+        placeholderResourceId = Res.string.search_placeholder,
+        iconResourceId = Res.drawable.ic_search,
         trailingIcon = {
             Row(
                 modifier = Modifier.padding(end = zedMoviesTheme.spacing.small),
@@ -258,7 +262,7 @@ private fun SearchTextField(
                     exit = scaleOut() + fadeOut()
                 ) {
                     zedMoviesIconButton(
-                        iconResourceId = R.drawable.ic_close,
+                        iconResourceId = Res.drawable.ic_close,
                         contentDescription = stringResource(id = R.string.clear),
                         onClick = { onQueryChange("") }
                     )

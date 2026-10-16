@@ -24,6 +24,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.zobaer53.zedmovies.R
+import com.zobaer53.zedmovies.resources.Res
+import com.zobaer53.zedmovies.resources.ic_arrow_down
+import com.zobaer53.zedmovies.resources.ic_arrow_up
 import com.zobaer53.zedmovies.data.model.FilterGenre
 import com.zobaer53.zedmovies.data.model.FilterOptions
 import com.zobaer53.zedmovies.data.model.FilterTvNetwork
@@ -72,7 +75,7 @@ internal fun MoreFilters(
                 color = zedMoviesTheme.colors.accent
             )
             zedMoviesIcon(
-                iconResourceId = if (isExpanded) R.drawable.ic_arrow_up else R.drawable.ic_arrow_down,
+                iconResourceId = if (isExpanded) Res.drawable.ic_arrow_up else Res.drawable.ic_arrow_down,
                 contentDescription = null,
                 tint = zedMoviesTheme.colors.accent
             )

@@ -1,24 +1,24 @@
 
 package com.zobaer53.zedmovies.ui.designsystem.component
 
-import androidx.annotation.DrawableRes
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.painterResource
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun zedMoviesIcon(
-    @DrawableRes iconResourceId: Int,
+    iconResourceId: DrawableResource,
     contentDescription: String?,
     modifier: Modifier = Modifier,
     tint: Color = LocalContentColor.current
 ) {
     Icon(
-        painter = painterResource(id = iconResourceId),
+        painter = painterResource(iconResourceId),
         contentDescription = contentDescription,
         modifier = modifier,
         tint = tint

@@ -2,8 +2,6 @@
 
 package com.zobaer53.zedmovies.ui.designsystem.component
 
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.TextSelectionColors
@@ -16,24 +14,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.res.stringResource
 import com.zobaer53.zedmovies.ui.designsystem.theme.zedMoviesTheme
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun zedMoviesTextField(
     value: String,
     onValueChange: (String) -> Unit,
-    @StringRes placeholderResourceId: Int,
-    @DrawableRes iconResourceId: Int,
+    placeholderResourceId: StringResource,
+    iconResourceId: DrawableResource,
     modifier: Modifier = Modifier,
     placeholder: @Composable (() -> Unit) = {
-        Text(text = stringResource(id = placeholderResourceId))
+        Text(text = stringResource(placeholderResourceId))
     },
     leadingIcon: @Composable (() -> Unit) = {
         zedMoviesIcon(
             iconResourceId = iconResourceId,
-            contentDescription = stringResource(id = placeholderResourceId)
+            contentDescription = stringResource(placeholderResourceId)
         )
     },
     trailingIcon: @Composable (() -> Unit)? = null,

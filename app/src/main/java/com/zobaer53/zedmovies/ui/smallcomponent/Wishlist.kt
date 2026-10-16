@@ -10,6 +10,8 @@ import androidx.compose.ui.unit.dp
 import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesIconButton
 import com.zobaer53.zedmovies.ui.designsystem.theme.zedMoviesTheme
 import com.zobaer53.zedmovies.R
+import com.zobaer53.zedmovies.resources.Res
+import com.zobaer53.zedmovies.resources.ic_wishlist
 
 @Composable
 fun zedMoviesWishlistButton(
@@ -24,7 +26,7 @@ fun zedMoviesWishlistButton(
                 color = zedMoviesTheme.colors.primaryVariant,
                 shape = zedMoviesTheme.shapes.smallMedium
             ),
-        iconResourceId = R.drawable.ic_wishlist,
+        iconResourceId = Res.drawable.ic_wishlist,
         contentDescription = stringResource(id = R.string.wishlist),
         onClick = onClick,
         tint = zedMoviesTheme.colors.error.let { color ->

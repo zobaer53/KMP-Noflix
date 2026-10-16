@@ -20,6 +20,9 @@ import com.zobaer53.zedmovies.ui.designsystem.theme.zedMoviesTheme
 import com.zobaer53.zedmovies.ui.playback.LocalMediaLauncher
 import com.zobaer53.zedmovies.ui.playback.PlayRequest
 import com.zobaer53.zedmovies.R
+import com.zobaer53.zedmovies.resources.Res
+import com.zobaer53.zedmovies.resources.ic_play
+import com.zobaer53.zedmovies.resources.ic_star
 
 @Composable
 fun RatingItem(
@@ -62,7 +65,7 @@ fun RatingItem(
                                 PlayRequest(tmdbId = tmdbId, type = type, name = title, year = releaseDate)
                             )
                         },
-                    iconResourceId = R.drawable.ic_play,
+                    iconResourceId = Res.drawable.ic_play,
                     contentDescription = stringResource(id = R.string.rating)
                 )
                 Spacer(modifier = Modifier.width(zedMoviesTheme.spacing.extraSmall))
@@ -74,7 +77,7 @@ fun RatingItem(
             }else{
                 zedMoviesIcon(
                     modifier = Modifier.size(RatingIconSize),
-                    iconResourceId = R.drawable.ic_star,
+                    iconResourceId = Res.drawable.ic_star,
                     contentDescription = stringResource(id = R.string.rating)
                 )
                 Spacer(modifier = Modifier.width(zedMoviesTheme.spacing.extraSmall))

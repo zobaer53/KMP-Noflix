@@ -40,6 +40,10 @@ import com.zobaer53.zedmovies.data.model.Credits
 import com.zobaer53.zedmovies.data.model.ReleaseDate
 import com.zobaer53.zedmovies.ui.smallcomponent.RatingItem
 import com.zobaer53.zedmovies.R
+import com.zobaer53.zedmovies.resources.Res
+import com.zobaer53.zedmovies.resources.ic_calendar
+import com.zobaer53.zedmovies.resources.ic_clock
+import com.zobaer53.zedmovies.resources.ic_film
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Suppress("LongParameterList")
@@ -143,17 +147,17 @@ internal fun DetailsItem(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             if (isPlaceholder) {
-                                IconAndTextPlaceholder(iconResourceId = R.drawable.ic_calendar)
-                                IconAndTextPlaceholder(iconResourceId = R.drawable.ic_clock)
-                                IconAndTextPlaceholder(iconResourceId = R.drawable.ic_film)
+                                IconAndTextPlaceholder(iconResourceId = Res.drawable.ic_calendar)
+                                IconAndTextPlaceholder(iconResourceId = Res.drawable.ic_clock)
+                                IconAndTextPlaceholder(iconResourceId = Res.drawable.ic_film)
                             } else {
                                 IconAndText(
-                                    iconResourceId = R.drawable.ic_calendar,
+                                    iconResourceId = Res.drawable.ic_calendar,
                                     text = releaseDate.year.ifEmpty { stringResource(id = R.string.no_release_date) }
                                 )
-                                IconAndText(iconResourceId = R.drawable.ic_clock, text = runtime)
+                                IconAndText(iconResourceId = Res.drawable.ic_clock, text = runtime)
                                 IconAndText(
-                                    iconResourceId = R.drawable.ic_film,
+                                    iconResourceId = Res.drawable.ic_film,
                                     text = genres.joinToString(separator = GenreSeparator)
                                         .ifEmpty { stringResource(id = R.string.no_genre) }
                                 )

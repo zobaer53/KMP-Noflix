@@ -30,7 +30,9 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesTextField
 import com.zobaer53.zedmovies.ui.designsystem.theme.zedMoviesTheme
-import com.zobaer53.zedmovies.R
+import com.zobaer53.zedmovies.resources.Res
+import com.zobaer53.zedmovies.resources.ic_search
+import com.zobaer53.zedmovies.resources.search
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -97,8 +99,8 @@ fun zedMoviesSelectionDialog(
                                 ),
                                 value = query,
                                 onValueChange = { query = it },
-                                placeholderResourceId = R.string.search,
-                                iconResourceId = R.drawable.ic_search,
+                                placeholderResourceId = Res.string.search,
+                                iconResourceId = Res.drawable.ic_search,
                                 isError = isError
                             )
 

@@ -41,6 +41,10 @@ import com.zobaer53.zedmovies.ui.smallcomponent.util.isFinished
 import com.zobaer53.zedmovies.ui.smallcomponent.util.isLoading
 import com.zobaer53.zedmovies.ui.smallcomponent.util.isNotEmpty
 import com.zobaer53.zedmovies.R
+import com.zobaer53.zedmovies.resources.Res
+import com.zobaer53.zedmovies.resources.no_movie_results
+import com.zobaer53.zedmovies.resources.no_search_results
+import com.zobaer53.zedmovies.resources.no_tv_show_results
 import com.zobaer53.zedmovies.ui.designsystem.component.ZedMoviesSwipeRefresh
 
 @Composable
@@ -98,8 +102,8 @@ fun MoviesContainer(
     emptyContent: @Composable LazyItemScope.() -> Unit = {
         zedMoviesMessage(
             modifier = Modifier.fillParentMaxSize(),
-            messageResourceId = R.string.no_movie_results,
-            imageResourceId = R.drawable.no_search_results
+            messageResourceId = Res.string.no_movie_results,
+            imageResourceId = Res.drawable.no_search_results
         )
     },
     loadingContent: @Composable LazyItemScope.() -> Unit = { zedMoviesCircularProgressIndicator() },
@@ -177,8 +181,8 @@ fun TvShowsContainer(
     emptyContent: @Composable LazyItemScope.() -> Unit = {
         zedMoviesMessage(
             modifier = Modifier.fillParentMaxSize(),
-            messageResourceId = R.string.no_tv_show_results,
-            imageResourceId = R.drawable.no_search_results
+            messageResourceId = Res.string.no_tv_show_results,
+            imageResourceId = Res.drawable.no_search_results
         )
     },
     loadingContent: @Composable LazyItemScope.() -> Unit = { zedMoviesCircularProgressIndicator() },
