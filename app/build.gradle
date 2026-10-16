@@ -2,7 +2,6 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.roborazzi)
 }
 
@@ -76,51 +75,30 @@ android {
 dependencies {
     implementation libs.androidx.core
     implementation libs.androidx.activity.compose
-    implementation libs.androidx.lifecycle.runtime.ktx
-    implementation libs.androidx.lifecycle.runtime.compose
     implementation libs.androidx.core.splashscreen
     implementation libs.androidx.webkit
 
-    implementation platform(libs.androidx.compose.bom)
-    implementation libs.androidx.compose.ui
-    implementation libs.androidx.compose.ui.graphics
-    implementation libs.androidx.compose.ui.tooling.preview
-    implementation libs.androidx.compose.ui.util
-    implementation libs.androidx.compose.foundation
-    implementation libs.androidx.compose.material3
+    // Compose comes from :shared (api). The BOM only versions the debug tooling (the same 1.12.1 as release).
+    debugImplementation platform(libs.androidx.compose.bom)
     debugImplementation libs.androidx.compose.ui.tooling
     debugImplementation libs.androidx.compose.ui.test.manifest
 
+    // Version pin only, not used by :app's code: it makes every androidx.navigation:* on Android 2.10.2
+    // (:shared's JetBrains navigation-compose 2.10.0-rc01 maps to androidx 2.10.0).
     implementation libs.androidx.navigation.compose
     implementation platform(libs.koin.bom)
     implementation libs.koin.core
-    implementation libs.koin.core.viewmodel
     implementation libs.koin.android
-    implementation libs.koin.compose
-    implementation libs.koin.compose.viewmodel
 
-    implementation libs.androidx.paging.compose
-
-    implementation libs.kotlinx.coroutines.core
-    implementation libs.kotlinx.coroutines.android
-    implementation libs.kotlinx.serialization.json
-    implementation libs.kotlinx.datetime
-    implementation libs.kotlinx.io.core
-
-    // Ktor engine for Coil's network fetcher (:shared brings the same one for TMDB).
-    implementation libs.ktor.client.okhttp
-    implementation libs.coil.compose
-    implementation libs.coil.network.ktor3
     implementation libs.youtube.player.core
 
-    // Domain, data and the data DI modules (Kotlin Multiplatform)
+    // Domain, data, the UI and their DI modules (Kotlin Multiplatform)
     implementation project(':shared')
 
     // Ad blocker
     implementation project(':ad-filter')
 
     testImplementation libs.junit
-    testImplementation libs.kotlinx.coroutines.test
     testImplementation libs.koin.test
     testImplementation platform(libs.androidx.compose.bom)
     testImplementation libs.androidx.compose.ui.test.junit4

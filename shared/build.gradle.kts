@@ -31,7 +31,7 @@ kotlin {
             api(libs.kotlinx.coroutines.core)
             api(libs.androidx.paging.common)
             api(libs.kotlinx.datetime)
-            // The design system's public API (theme, components, Res), used by :app's screens until B6.
+            // Public API: :app's activity, WebView screens and screenshot tests use Compose directly.
             api(libs.jetbrains.compose.runtime)
             api(libs.jetbrains.compose.foundation)
             api(libs.jetbrains.compose.ui)
@@ -94,7 +94,7 @@ dependencies {
 
 compose.resources {
     packageOfResClass = "com.zobaer53.zedmovies.resources"
-    publicResClass = true // :app's screens use Res until B6; back to false once all UI is in :shared
+    publicResClass = false // all UI is in :shared since B6; :app's code and tests never use Res
 }
 
 room {
