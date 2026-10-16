@@ -726,7 +726,7 @@ Claim a row ("In progress") in the first commit of the package's branch. Edit on
 | B2 | B | Done (#4 merged) | #4 | test-merge --maestro green on the Pixel 6a; APK −6%, cold start 232 vs 235 ms (`doc/local/b2.md`) |
 | B3 | B | Done (#5 merged) | #5 | 12 screenshots, `verifyRoborazziDebug` green; test-merge --maestro green on the Pixel 6a |
 | B4 | B | Done (#9 merged) | #9 | run.sh with process death, upgrade, size and cold-start comparison green on the Pixel 6a; `upgrade.sh --content-language` not run end to end yet (skipped by the user) |
-| B5 | B | Not started | | |
+| B5 | B | In progress | | |
 | B6 | B | Not started | | |
 
 ## Risks (Android)
@@ -751,7 +751,7 @@ Claim a row ("In progress") in the first commit of the package's branch. Edit on
 ## Open decisions (Android)
 
 1. **Scraping fallback** (Jsoup + Lottie): delete it in Phase 0 (recommended), or keep it in `:app`? **Decided: deleted in B2.**
-2. **`values-night/strings.xml`:** delete it, or move it to `values-dark`?
+2. **`values-night/strings.xml`:** delete it, or move it to `values-dark`? **Decided: moved to `values-dark` in B5** (it only changes the casing of 5 strings in dark mode; the clean-up can come later).
 3. **Driver switch** (3.3b): do it right after Phase 3 (recommended), or leave Android on the compatibility path?
 4. **R8:** enable it in Phase 5, or leave it for later?
 5. **DI:** Koin (recommended) or Metro?
