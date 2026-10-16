@@ -41,7 +41,7 @@ If you've been looking for a way to **watch free movies without ads**, **stream 
 - 📶 **Offline browsing.** Lists and details are cached, so you can browse without a connection.
 - 🔒 **Private.** No account, no sign-up, no analytics.
 - 🎨 **Modern design.** Material 3, dark theme and a smooth Compose Multiplatform UI.
-- ⚡ **Small and fast.** The release APK is about 8 MB and starts in under 200 ms on a Pixel 6a.
+- ⚡ **Small and fast.** The release APK is about 8 MB and starts in under 200 ms on a Pixel 6a. A Baseline Profile makes the first launches after an install about 40% faster.
 
 ## Download
 
@@ -101,6 +101,7 @@ NoFlix is a Kotlin Multiplatform project. It follows the [official Android archi
 - **`:app`** is a thin Android shell: the activity and application class, the WebView player, the trailer player, `AndroidMediaLauncher` (starts both players from the shared UI) and the TMDB API key from `local.properties`.
 - **`:ad-filter`** downloads and installs the filter lists (WorkManager) and blocks requests and page elements in the WebView.
 - **`:adblock-client`** wraps Brave's C++ ad-block engine through JNI.
+- **`:baselineprofile`** generates the app's Baseline Profile and measures cold start (Macrobenchmark). It is a test module and isn't shipped.
 
 The JVM target exists only to run tests on the host and to keep Android APIs out of `commonMain`. There is no desktop app.
 
@@ -117,6 +118,7 @@ The JVM target exists only to run tests on the host and to keep Android APIs out
 - **Coil 3** loads the images, through Ktor
 - **WebView** with an AdGuard-compatible ad-blocking engine (C++ via JNI) for playback, and **android-youtube-player** (YouTube's IFrame player) for trailers
 - **R8** shrinks and optimizes the release build: the APK went from 18 MB to under 8 MB, and cold start got about a quarter faster (174 ms median on a Pixel 6a)
+- **Baseline Profile** (`:baselineprofile`, ProfileInstaller) precompiles the startup path: in a cold-start macrobenchmark on a fresh install, the median dropped from 369 ms to 224 ms
 
 ## Build from source
 
@@ -137,6 +139,7 @@ The JVM target exists only to run tests on the host and to keep Android APIs out
 ./gradlew :app:verifyRoborazziDebug    # screenshot tests: compares each screen with app/src/test/screenshots/
 scripts/kmp-guard.sh                   # checks that shared/src/commonMain uses no Android or JVM APIs
 .maestro/run.sh                        # builds and clean-installs the debug app, then runs the Maestro UI suite
+./gradlew :app:generateBaselineProfile # regenerates the Baseline Profile on a connected device
 ```
 
 **Note:** `.maestro/run.sh` uninstalls NoFlix from the device before it installs the debug build. The debug and release builds share the same app id, so running it on a phone with NoFlix from Releases deletes that install and its watchlist. With several devices attached, set `ANDROID_SERIAL` first.
