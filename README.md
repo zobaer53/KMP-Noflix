@@ -132,8 +132,10 @@ The JVM target exists only to run tests on the host and to keep Android APIs out
 ./gradlew :app:testDebugUnitTest       # :app's JVM tests (Koin graph; renders the screenshot tests without comparing)
 ./gradlew :app:verifyRoborazziDebug    # screenshot tests: compares each screen with app/src/test/screenshots/
 scripts/kmp-guard.sh                   # checks that shared/src/commonMain uses no Android or JVM APIs
-.maestro/run.sh                        # Maestro UI suite on a connected device
+.maestro/run.sh                        # builds and clean-installs the debug app, then runs the Maestro UI suite
 ```
+
+**Note:** `.maestro/run.sh` uninstalls NoFlix from the device before it installs the debug build. The debug and release builds share the same app id, so running it on a phone with NoFlix from Releases deletes that install and its watchlist. With several devices attached, set `ANDROID_SERIAL` first.
 
 ## Contributing
 
