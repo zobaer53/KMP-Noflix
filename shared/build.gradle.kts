@@ -39,6 +39,8 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.ktor.client.okhttp)
             implementation(libs.koin.android)
+            // AndroidSQLiteDriver: Room on the platform SQLite (never the bundled one in the APK).
+            implementation(libs.androidx.sqlite.framework)
             // Android's Context.preferencesDataStoreFile: the same file as before the move.
             implementation(libs.androidx.datastore.preferences)
         }
