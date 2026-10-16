@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="no_genre">no genre</string>
+    <string name="no_overview">no overview</string>
+    <string name="no_release_date">no release date</string>
+    <string name="wishlist">Wish list</string>
+    <string name="history">history</string>
+    <string name="horror">horror</string>
+    <string name="music">music</string>
+    <string name="romance">romance</string>
+    <string name="add_movie_wishlist">Add movies to wishlist</string>
+    <string name="remove_movie_wishlist">Remove movies from wishlist</string>
+    <string name="add_tv_show_wishlist">Add tv show to wish list</string>
+    <string name="remove_tv_show_wishlist">Remove tv show from wish list</string>
+    <string name="cast">Cast</string>
+    <string name="crew">Crew</string>
+    <string name="no_runtime">no runtime</string>
+    <string name="details_runtime_text">%1$s min</string>
+    <string name="overview">Overview</string>
+    <string name="top_rated">Top Rated</string>
+    <string name="now_playing">Now Playing</string>
+    <string name="upcoming_movies">Upcoming movies</string>
+    <string name="discover">Discover</string>
+    <string name="trending">Trending</string>
+    <string name="search_placeholder">search place holder</string>
+    <string name="clear">Clear</string>
+    <string name="no_movie_wishlist">Wish list is empty</string>
+    <string name="no_tv_show_wishlist">Wishlist is empty</string>
+    <string name="home">Home</string>
+</resources>
