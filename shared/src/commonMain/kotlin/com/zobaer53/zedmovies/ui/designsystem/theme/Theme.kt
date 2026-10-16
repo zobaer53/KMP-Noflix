@@ -1,5 +1,3 @@
-
-
 package com.zobaer53.zedmovies.ui.designsystem.theme
 
 import androidx.compose.foundation.LocalIndication
@@ -11,28 +9,33 @@ import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.remember
 
 @Composable
 fun zedMoviesTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
+    val montserrat = rememberMontserrat()
+    val typography = remember(montserrat) { zedMoviesTypography(montserrat) }
+    val materialTypography = remember(typography) { materialTypography(typography) }
     MaterialTheme(
         colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme,
         shapes = Shapes,
-        typography = Typography
-    ) { ProvidezedMoviesThemeDependencies(content = content) }
+        typography = materialTypography
+    ) { ProvidezedMoviesThemeDependencies(typography = typography, content = content) }
 }
 
 @Composable
 private fun ProvidezedMoviesThemeDependencies(
+    typography: zedMoviesTypography,
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
     CompositionLocalProvider(
         LocalzedMoviesColors provides if (darkTheme) DarkzedMoviesColors else LightzedMoviesColors,
         LocalzedMoviesShapes provides zedMoviesShapes(),
-        LocalzedMoviesTypography provides zedMoviesTypography(),
+        LocalzedMoviesTypography provides typography,
         LocalzedMoviesSpacing provides zedMoviesSpacing()
     ) { ProvideMaterialThemeDependencies(content = content) }
 }
