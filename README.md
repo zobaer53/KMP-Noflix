@@ -6,7 +6,7 @@
 
 <p align="center">
   <b>A free, open-source Android app to stream movies and TV shows with no ads, no pop-ups and no trackers.</b><br/>
-  Built-in ad blocker · Full-screen player · No sign-up · Made with Kotlin &amp; Jetpack Compose
+  Built-in ad blocker · Full-screen player · No sign-up · Made with Kotlin Multiplatform &amp; Compose Multiplatform (Jetpack Compose)
 </p>
 
 <p align="center">
@@ -85,18 +85,35 @@ No. See the [disclaimer](#disclaimer) below.
 
 ## Tech stack & architecture
 
-NoFlix follows the [official Android architecture guidance](https://developer.android.com/topic/architecture) (data, domain and UI layers):
+NoFlix is a Kotlin Multiplatform project. It follows the [official Android architecture guidance](https://developer.android.com/topic/architecture) (data, domain and UI layers):
+
+![NoFlix architecture diagram](architecture-1-overall.png)
+
+### Modules
+
+- **`:shared`** (Kotlin Multiplatform) holds almost the whole app:
+  - `commonMain`: domain (models, repository interfaces, use cases), data (TMDB API, Room database, DataStore, repositories, paging), the Koin modules, the ViewModels, navigation and the whole Compose UI with its strings, fonts and images (`composeResources`).
+  - `androidMain`: the Android parts: Room on the platform SQLite, the DataStore file, the OkHttp engine, device locale and region, system bar icons and date formatting.
+  - `jvmMain`: the same parts for the JVM target (Room on the bundled SQLite).
+  - `commonTest` and `jvmTest`: tests that run on the host.
+- **`:app`** is a thin Android shell: the activity and application class, the WebView player, the trailer player, `AndroidMediaLauncher` (starts both players from the shared UI) and the TMDB API key from `local.properties`.
+- **`:ad-filter`** downloads and installs the filter lists (WorkManager) and blocks requests and page elements in the WebView.
+- **`:adblock-client`** wraps Brave's C++ ad-block engine through JNI.
+
+The JVM target exists only to run tests on the host and to keep Android APIs out of `commonMain`. There is no desktop app.
+
+### Libraries
 
 - **Kotlin**, **Coroutines & Flow**
 - **Kotlin Multiplatform**: domain, data, ViewModels and UI live in the `:shared` module (Android, plus a JVM target for host tests)
-- **Compose Multiplatform** (Jetpack Compose on Android), Material 3, Navigation Compose, Compose resources
+- **Compose Multiplatform** (Jetpack Compose on Android), Material 3, and **Compose resources** for strings, fonts and images
+- **Navigation Compose** (multiplatform) for the screens, **Lifecycle ViewModel** for their state
 - **Koin** for dependency injection
 - **Ktor** (OkHttp engine) + **kotlinx.serialization** for the TMDB API
-- **Room** + **Paging 3** (RemoteMediator) for offline caching
-- **DataStore**, **Coil**
-- **WebView** with an AdGuard-compatible ad-blocking engine (C++ via JNI)
-
-![NoFlix architecture diagram](architecture-1-overall.png)
+- **Room** (KMP) + **Paging 3** (RemoteMediator) cache lists and details for offline browsing; search and filtered discover page straight from the network
+- **DataStore** (Preferences) stores the content language
+- **Coil 3** loads the images, through Ktor
+- **WebView** with an AdGuard-compatible ad-blocking engine (C++ via JNI) for playback, and **android-youtube-player** (YouTube's IFrame player) for trailers
 
 ## Build from source
 
@@ -107,6 +124,18 @@ NoFlix follows the [official Android architecture guidance](https://developer.an
    ```
 3. Install **CMake 3.22.1** and **NDK 28.2.13676358** (r28c) from *SDK Manager → SDK Tools*. The native ad-block library needs them. You also need JDK 17 or newer.
 4. Run `./gradlew :app:installDebug` or press Run in Android Studio.
+
+### Tests
+
+```bash
+./gradlew :shared:jvmTest              # :shared's tests on the JVM: data layer, Room DAOs and migration, Koin graph, screens
+./gradlew :app:testDebugUnitTest       # :app's JVM tests (Koin graph; renders the screenshot tests without comparing)
+./gradlew :app:verifyRoborazziDebug    # screenshot tests: compares each screen with app/src/test/screenshots/
+scripts/kmp-guard.sh                   # checks that shared/src/commonMain uses no Android or JVM APIs
+.maestro/run.sh                        # builds and clean-installs the debug app, then runs the Maestro UI suite
+```
+
+**Note:** `.maestro/run.sh` uninstalls NoFlix from the device before it installs the debug build. The debug and release builds share the same app id, so running it on a phone with NoFlix from Releases deletes that install and its watchlist. With several devices attached, set `ANDROID_SERIAL` first.
 
 ## Contributing
 
@@ -152,4 +181,4 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ```
 
-<!-- Keywords: ad free movies app, ad-free TV series app, watch movies without ads, free movie streaming app Android, no ads movie app APK, adblock movie player, open source Netflix alternative, Kotlin Jetpack Compose movie app, TMDB movie app -->
+<!-- Keywords: ad free movies app, ad-free TV series app, watch movies without ads, free movie streaming app Android, no ads movie app APK, adblock movie player, open source Netflix alternative, Kotlin Jetpack Compose movie app, Kotlin Multiplatform movie app, Compose Multiplatform app, TMDB movie app -->
