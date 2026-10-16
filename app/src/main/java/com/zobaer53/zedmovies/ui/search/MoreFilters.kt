@@ -61,6 +61,7 @@ import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesIcon
 import com.zobaer53.zedmovies.ui.designsystem.theme.zedMoviesTheme
 import com.zobaer53.zedmovies.ui.util.displayCountryName
 import com.zobaer53.zedmovies.ui.util.formatCount
+import com.zobaer53.zedmovies.ui.util.formatInteger
 import kotlin.math.roundToInt
 import org.jetbrains.compose.resources.stringResource
 
@@ -356,9 +357,9 @@ private fun FilterOptionsContent(
 
 @Composable
 internal fun runtimeLabel(min: Int?, max: Int?) = when {
-    min != null && max != null -> stringResource(Res.string.filters_runtime_range, min, max)
-    min != null -> stringResource(Res.string.filters_runtime_from, min)
-    max != null -> stringResource(Res.string.filters_runtime_to, max)
+    min != null && max != null -> stringResource(Res.string.filters_runtime_range, formatInteger(min), formatInteger(max))
+    min != null -> stringResource(Res.string.filters_runtime_from, formatInteger(min))
+    max != null -> stringResource(Res.string.filters_runtime_to, formatInteger(max))
     else -> stringResource(Res.string.filters_any_runtime)
 }
 

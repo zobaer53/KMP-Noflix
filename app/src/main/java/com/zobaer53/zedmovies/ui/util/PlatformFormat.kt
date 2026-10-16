@@ -32,3 +32,9 @@ internal fun String.capitalized(): String = replaceFirstChar { it.titlecase(Loca
 internal fun formatRating(rating: Double): String = String.format(Locale.getDefault(), "%.1f", rating)
 
 internal fun formatCount(value: Int): String = NumberFormat.getIntegerInstance().format(value)
+
+/**
+ * An integer in the device locale's digits, without grouping (years stay "2020"). Compose resources
+ * substitute %d with toString(), so Int arguments are formatted here and passed as %s.
+ */
+internal fun formatInteger(value: Int): String = String.format(Locale.getDefault(), "%d", value)

@@ -83,9 +83,9 @@
     <string name="filters_genres_any">Any of these</string>
     <string name="filters_genres_all">All of these</string>
     <string name="filters_release_year">Release year</string>
-    <string name="filters_year_range">%1$d–%2$d</string>
-    <string name="filters_year_from">From %1$d</string>
-    <string name="filters_year_to">Until %1$d</string>
+    <string name="filters_year_range">%1$s–%2$s</string>
+    <string name="filters_year_from">From %1$s</string>
+    <string name="filters_year_to">Until %1$s</string>
     <string name="filters_any_year">Any year</string>
     <string name="filters_min_rating">Minimum rating</string>
     <string name="filters_rating_value">%1$s+ ★</string>
@@ -104,9 +104,9 @@
     <string name="filters_votes_chip">%1$s+ votes</string>
     <string name="filters_runtime">Runtime</string>
     <string name="filters_any_runtime">Any length</string>
-    <string name="filters_runtime_range">%1$d–%2$d min</string>
-    <string name="filters_runtime_from">At least %1$d min</string>
-    <string name="filters_runtime_to">Up to %1$d min</string>
+    <string name="filters_runtime_range">%1$s–%2$s min</string>
+    <string name="filters_runtime_from">At least %1$s min</string>
+    <string name="filters_runtime_to">Up to %1$s min</string>
     <string name="filters_origin_country">Origin country</string>
     <string name="filters_any_country">Any country</string>
     <string name="filters_excluded_genres">Exclude genres</string>

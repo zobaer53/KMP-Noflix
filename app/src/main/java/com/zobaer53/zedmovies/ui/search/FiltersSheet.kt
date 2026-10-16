@@ -75,6 +75,7 @@ import com.zobaer53.zedmovies.ui.util.capitalized
 import com.zobaer53.zedmovies.ui.util.currentYear
 import com.zobaer53.zedmovies.ui.util.displayCountryName
 import com.zobaer53.zedmovies.ui.util.displayLanguageName
+import com.zobaer53.zedmovies.ui.util.formatInteger
 import com.zobaer53.zedmovies.ui.util.formatRating
 import com.zobaer53.zedmovies.ui.util.isoCountryCodes
 import com.zobaer53.zedmovies.ui.util.isoLanguageCodes
@@ -473,9 +474,9 @@ internal fun FilterGenre.displayName() =
 
 @Composable
 internal fun yearsLabel(from: Int?, to: Int?) = when {
-    from != null && to != null -> stringResource(Res.string.filters_year_range, from, to)
-    from != null -> stringResource(Res.string.filters_year_from, from)
-    to != null -> stringResource(Res.string.filters_year_to, to)
+    from != null && to != null -> stringResource(Res.string.filters_year_range, formatInteger(from), formatInteger(to))
+    from != null -> stringResource(Res.string.filters_year_from, formatInteger(from))
+    to != null -> stringResource(Res.string.filters_year_to, formatInteger(to))
     else -> stringResource(Res.string.filters_any_year)
 }
 
