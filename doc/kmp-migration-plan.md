@@ -1,6 +1,6 @@
 # NoFlix: Kotlin Multiplatform migration plan
 
-_Audited 2026-10-14 against the code in this folder. Follows JetBrains' guide [Migrating a Jetpack Compose app to Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform/migrate-from-android.html). Library versions are given as minimums or major lines only. Before each phase, check the latest stable release, and check items marked **verify** with a short spike._
+_Audited 2026-10-14 against the code before the migration. Status (2026-10-16): the Android part (phases 0–4 and the switch to `AndroidSQLiteDriver`) is merged into `dev`. The hardening clean-up (A6) is in progress. Phases 5–9 haven't started. Follows JetBrains' guide [Migrating a Jetpack Compose app to Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform/migrate-from-android.html). Library versions are given as minimums or major lines only. Before each phase, check the latest stable release, and check items marked **verify** with a short spike._
 
 > **Android-only detail:** phases 0–4 for Android (plus a hardening phase) are expanded step by step, with code, gates and risks, in [kmp-android-plan.md](kmp-android-plan.md). That document is the working plan for the Android migration. This one covers all platforms.
 
@@ -28,7 +28,7 @@ _Audited 2026-10-14 against the code in this folder. Follows JetBrains' guide [M
 | Trailers | ✅ in-app player (today) | ✅ YouTube TV app, in-app fallback | ✅ browser (v1) / embedded (v2) | ✅ YouTube iframe in page | ✅ YouTube app (v1) / in-app (v2) |
 | Playback | ✅ WebView + native ad-block (today) | ✅ same WebView + TV remote mode | ⚠️ v1: opens the system browser (no built-in ad-block). v2: embedded Chromium with blocking, **after a codec spike** | ⚠️ opens the stream page in a new tab. **The app can't block ads there.** | ⚠️ WKWebView + content-blocker rules. **App Store unlikely** |
 
-### Shareability of today's code
+### Shareability of the code before the migration
 
 | Area | Shareable? | Effort |
 | --- | --- | --- |
@@ -39,14 +39,14 @@ _Audited 2026-10-14 against the code in this folder. Follows JetBrains' guide [M
 | `ui/webview/`, `:ad-filter`, `:adblock-client` | **Android + Android TV only** (Android `WebView`, JNI, WorkManager) | Per-platform work |
 | `ui/trailer/` (android-youtube-player) | **Android only** | Low per platform |
 
-About 14,900 lines of Kotlin. Roughly **85% moves to `commonMain`**.
+Before the migration: about 14,900 lines of Kotlin, and roughly 85% was expected to move to `commonMain`. After Phase 4, about 13,700 of the 14,550 lines in the main source sets of `:app` and `:shared` (about 94%) are in `shared/src/commonMain`. The ad-block modules are not counted.
 
 ### Why this project is a good candidate
 
 - 100% Kotlin and 100% Compose. No Java, no RxJava, no View-based UI outside the two playback activities.
 - **Room 2.8.5, DataStore 1.2.1, Paging 3.5.3, Coil 3, kotlinx-serialization/-coroutines/-datetime and Material 3** already have multiplatform artifacts at the versions in `libs.versions.toml`.
 - The layers are clean: data → domain → ui, with mappers between them. The domain layer depends on **repository interfaces**, so web can use different repository implementations without touching ViewModels.
-- The `BuildConfig` values (API key, version name) already sit behind interfaces: `zedMoviesApiKeyProvider` and `zedMoviesVersionProvider`.
+- The API key from `BuildConfig` already sits behind an interface, `zedMoviesApiKeyProvider` (now in `:shared`, provided by `:app`'s `androidAppModule`). The unused `zedMoviesVersionProvider` was deleted in A1.
 - Every Room DAO already returns `Flow` or `PagingSource`, or is `suspend`. Room requires this in common code.
 - `adblock-client` doesn't set `abiFilters`, so the native library is built for `armeabi-v7a` as well. Many Android TV boxes run 32-bit userlands, so the ad blocker already works on them.
 
@@ -58,11 +58,11 @@ About 14,900 lines of Kotlin. Roughly **85% moves to `commonMain`**.
 4. **Web can't use the Android caching design unchanged.** Room on the web needs an OPFS worker plus cross-origin isolation headers (COOP/COEP), and COEP blocks cross-origin iframes such as YouTube embeds. Web therefore goes network-only, with the wish list in browser storage (Phase 8).
 5. **Distribution and exposure.** iOS: App Review will very likely reject in-app playback from a third-party site (guideline 5.2). Web: a public site that links to the stream site, hosted on GitHub Pages, is easier for rights holders to target than an APK. Decide where to host it (Phase 8).
 
-## Current state (audit)
+## State before the migration (audit, 2026-10-14)
 
 ### Android-only APIs outside playback
 
-Each of these needs a change before the file can move to `commonMain`:
+Each of these needed a change before the file could move to `commonMain`, and phases 0–4 made all of them. Where the result differs from the table: the logs were deleted and Kermit wasn't added; on Android, DataStore uses `PreferenceDataStoreFactory.create` with `preferencesDataStoreFile("preferences")`; number formatting uses `expect` helpers in `ui/util/PlatformFormat.kt` (`formatInteger`, `formatCount`, `formatRating`) instead of `formatNumber`; the ripple uses both CMP `material-ripple` (`RippleAlpha`) and M3 `RippleConfiguration`.
 
 | Where | Android/JVM API | Replacement |
 | --- | --- | --- |
@@ -103,15 +103,15 @@ Each of these needs a change before the file can move to `commonMain`:
 | Android `res/` | Target | Notes |
 | --- | --- | --- |
 | `values/strings.xml` (138 strings + plurals) | `shared/src/commonMain/composeResources/values/` | Keep `app_name` in `:app` as well (the manifest uses it) |
-| `values-night/strings.xml` (27 strings) | Decide | They look like accidental duplicates of day strings. Delete them, or move to `values-dark`. |
+| `values-night/strings.xml` (27 strings) | `composeResources/values-dark` (B5) | They only change the casing of 5 strings in dark mode. Whether to delete them is still open. |
 | `drawable/ic_*.xml`, `no_*_results.xml` | `composeResources/drawable` | Android vector XML works as is |
 | `font/montserrat_*.ttf` | `composeResources/font` | |
-| `raw/data.json` (Lottie) | Stays in `:app` | Only the scraping fallback uses it |
+| `raw/data.json` (Lottie) | Deleted | Removed with the scraping fallback in B2 |
 | `mipmap-*`, `zed_movies_round_*`, `themes.xml`, splash | Stay in `:app` | Add a **TV banner** (320×180). Desktop needs `.icns`/`.ico`/`.png`, web needs a favicon and PWA icons, iOS needs `AppIcon.appiconset`. Generate all of them from `tools/branding/generate.py`. |
 
 ### Tests
 
-There are 4 real JVM unit test classes (`SearchFiltersMapperTest`, `SearchFiltersMatcherTest`, `FilterOptionsMapperTest`, `TmdbPagingSourceTest`). They only use JUnit asserts, coroutines-test and `IOException`, so they move to `commonTest` (`kotlin.test`) and run on every target. Maestro stays the main regression check on Android and covers Android TV too (D-pad keys). Desktop and web get Compose UI tests (`runComposeUiTest`) plus a manual smoke checklist.
+Most unit tests now live in `:shared` and run on its JVM target (`./gradlew :shared:jvmTest`). `commonTest` (`kotlin.test`) has the search filter tests (`SearchFiltersMapperTest`, `SearchFiltersMatcherTest`, `FilterOptionsMapperTest`) and the `TmdbPagingSource`, `SafeRequest`, `MovieService` and `LocalDateSerializer` tests. `jvmTest` has the Room DAO and migration tests, the Koin graph tests (`SharedKoinGraphTest`, `ViewModelGraphTest`), `UserMessageMapperTest` and the screen smoke test. `:app` keeps `KoinGraphTest` and the Roborazzi screenshot tests. Maestro stays the main regression check on Android and covers Android TV too (D-pad keys). Desktop and web get Compose UI tests (`runComposeUiTest`) plus a manual smoke checklist.
 
 ## Target architecture
 
@@ -144,9 +144,9 @@ NoFlix_KMP/
 
 Why this layout:
 
-- **Keep `:app` as the Android module, and ship phone and TV in one APK.** CI, `.maestro/run.sh`, `upgrade.sh`, the `.gitignore` `/app/` rule and `CLAUDE.md` all assume `app/`. One APK means one release and one signing key, and users install the same `NoFlix.apk` on a phone or a TV. A separate `:tvApp` only pays off if the TV UI ever diverges completely. The shared adaptive UI below avoids that.
+- **Keep `:app` as the Android module, and ship phone and TV in one APK.** CI, `.maestro/run.sh`, `upgrade.sh` and `CLAUDE.md` all assume `app/`. One APK means one release and one signing key, and users install the same `NoFlix.apk` on a phone or a TV. A separate `:tvApp` only pays off if the TV UI ever diverges completely. The shared adaptive UI below avoids that.
 - **One `:shared` module first.** Today's app is a single module. Split it into `:shared:data`/`:shared:ui` later if build times call for it.
-- **Custom source-set hierarchy.** Room, DataStore and RemoteMediators go in a `cachedMain` set shared by `android`, `jvm` and (later) `ios`, but **not** `wasmJs`. Web gets `webMain`. Both sit under `commonMain`, which holds the repository interfaces, network code, mappers and UI. Set this up with `applyDefaultHierarchyTemplate { common { group("cached") { withAndroidTarget(); withJvm(); group("ios") }; group("web") { withWasmJs() } } }`. **Verify** the exact `withAndroid…` matcher for the AGP 9 Android KMP plugin.
+- **Custom source-set hierarchy (not set up yet).** With only `android` and `jvm`, Room, DataStore and the RemoteMediators sit in `commonMain`. When Phase 8 adds `wasmJs`, move them into a `cachedMain` set shared by `android`, `jvm` and (later) `ios`, but **not** `wasmJs`. Web gets `webMain`. Both sit under `commonMain`, which holds the repository interfaces, network code, mappers and UI. Set this up with `applyDefaultHierarchyTemplate { common { group("cached") { withAndroidTarget(); withJvm(); group("ios") }; group("web") { withWasmJs() } } }`. **Verify** the exact `withAndroid…` matcher for the AGP 9 Android KMP plugin.
 - **Add targets when their phase starts:** `android` + `jvm` in Phase 3 (JVM is cheap, runs tests fast, and is the desktop target), `wasmJs` in Phase 8, `iosArm64`/`iosSimulatorArm64` in Phase 9. That way you never wait on Kotlin/Native builds while Android is the focus.
 - **New build scripts in Kotlin DSL** (`shared/build.gradle.kts`, `desktopApp/build.gradle.kts`). The existing Groovy scripts can stay.
 - **Kotlin plugin wiring.** The root `buildscript` already puts KGP 2.4.21 on the classpath for AGP's built-in Kotlin. Apply `org.jetbrains.kotlin.multiplatform` in `:shared` without a version, or through an alias declared `apply false` at the root. If Gradle complains that the plugin is "already on the classpath with an unknown version", drop the version. `:app` keeps built-in Kotlin, and `kotlin-android` is never re-added.
@@ -154,7 +154,7 @@ Why this layout:
 
 ### Playback architecture
 
-The shared UI only knows this interface. Each host app provides its own implementation:
+The shared UI only knows this interface (`ui/playback/MediaLauncher.kt` in `:shared`). Each host app provides its own implementation through `LocalMediaLauncher` (Android: `playback/AndroidMediaLauncher.kt` in `:app`). The interface has only `play()` and `playTrailer()` so far. `canPlay` below gets added with the first host that can't play:
 
 ```kotlin
 interface MediaLauncher {
@@ -196,8 +196,8 @@ Shared building blocks go in `ui/designsystem`, built only on **Compose foundati
 | Hilt + `hilt-lifecycle-viewmodel-compose` | **Koin 4** (`koin-core`, `koin-compose`, `koin-compose-viewmodel`, `koin-android`) | ✅ | ✅ | ✅ | ✅ |
 | Retrofit 3 + OkHttp 5 | **Ktor 3 client** + content negotiation + kotlinx-json | OkHttp engine | OkHttp or CIO engine | Js engine (`fetch`) | Darwin engine |
 | Coil 3 + `coil-network-okhttp` | Coil 3 + **`coil-network-ktor3`** | ✅ | ✅ | ✅ | ✅ |
-| Room 2.8.5 | Room KMP (in `cachedMain`) | `AndroidSQLiteDriver` (platform SQLite, no new `.so`) | `BundledSQLiteDriver` | ❌ not used (see Phase 8) | `BundledSQLiteDriver` |
-| DataStore 1.2.1 | `datastore-preferences-core` (in `cachedMain`) | ✅ | ✅ | ❌ → `multiplatform-settings` (localStorage) | ✅ |
+| Room 2.8.5 | Room KMP (in `commonMain` for now; `cachedMain` once `wasmJs` is added) | `AndroidSQLiteDriver` (platform SQLite, no new `.so`) | `BundledSQLiteDriver` | ❌ not used (see Phase 8) | `BundledSQLiteDriver` |
+| DataStore 1.2.1 | `datastore-preferences-core` (in `commonMain` for now; `cachedMain` once `wasmJs` is added) | ✅ | ✅ | ❌ → `multiplatform-settings` (localStorage) | ✅ |
 | Paging 3.5.3 | `paging-common` + `paging-compose` | ✅ | ✅ | **verify** wasmJs artifacts. Otherwise a small common "load more" pager for web. | ✅ |
 | `navigation-compose` | `org.jetbrains.androidx.navigation:navigation-compose` | ✅ | ✅ | ✅ (can bind to browser history) | ✅ |
 | `lifecycle-*` | `org.jetbrains.androidx.lifecycle:*` | ✅ | ✅ | ✅ | ✅ |
@@ -206,8 +206,8 @@ Shared building blocks go in `ui/designsystem`, built only on **Compose foundati
 | `android.util.Log` / Timber | **Kermit** | ✅ | ✅ | ✅ | ✅ |
 | `Dispatchers.IO` | `expect val ioDispatcher` | `IO` | `IO` | `Default` | `IO` |
 | JUnit 4 | `kotlin.test` + coroutines-test | ✅ | ✅ | ✅ | ✅ |
-| Jsoup, Lottie, android-youtube-player, `androidx.webkit`, splashscreen, `:ad-filter` | Stay in `:app` | ✅ | — | — | — |
-| `BuildConfig.API_KEY` / `VERSION_NAME` | Provided by each host through the existing provider interfaces | `BuildConfig` | Gradle-generated constant from `local.properties` / CI secret | Build-time constant **or a proxy** (Phase 8) | `.xcconfig` → `Info.plist` |
+| android-youtube-player, `androidx.webkit`, splashscreen, `:ad-filter` (Jsoup and Lottie were deleted in B2) | Stay in `:app` | ✅ | — | — | — |
+| `BuildConfig.API_KEY` | Provided by each host through `zedMoviesApiKeyProvider` | `BuildConfig` | Gradle-generated constant from `local.properties` / CI secret | Build-time constant **or a proxy** (Phase 8) | `.xcconfig` → `Info.plist` |
 
 Desktop also needs `kotlinx-coroutines-swing` on the classpath for `Dispatchers.Main`. `compose.desktop.currentOs` normally brings it in (**verify**).
 
@@ -215,10 +215,10 @@ Desktop also needs `kotlinx-coroutines-swing` on the classpath for `Dispatchers.
 
 Rules for every phase:
 
-- **Work on a branch, never directly on `master`.** A push to `master` publishes a public release.
-- **The Android app stays shippable after every phase.** Gates: unit tests (`:app:testDebugUnitTest`, later `:shared:allTests`), the full `.maestro/run.sh`, and **`.maestro/upgrade.sh`** with the previous release APK. The upgrade test proves the wish list (Room) and content language (DataStore) survive the update.
-- CI checks stay green: release signature, `zipalign -P 16`, and 16 KB alignment of every 64-bit `.so`.
-- Add a CI guard: `grep -rE '^import (android|java|javax)\.' shared/src/commonMain` must find nothing. With only Android and JVM targets at first, nothing else would stop `java.*` imports from creeping into `commonMain` before web and iOS exist.
+- **Work on a branch from `dev`, never directly on `main` or `dev`.** This repository has no release workflow yet. In the original repository, a push to `master` publishes a public release.
+- **The Android app stays shippable after every phase.** Gates: unit tests (`:shared:jvmTest` and `:app:testDebugUnitTest`, as in `pr-checks.yml`), the full `.maestro/run.sh`, and **`.maestro/upgrade.sh`** with the previous release APK. The upgrade test proves the wish list (Room) and content language (DataStore) survive the update.
+- CI checks stay green (`pr-checks.yml`: unit tests, debug build, KMP guard). `.maestro/run.sh` checks the 16 KB alignment of every 64-bit `.so`. The release signature and `zipalign -P 16` checks come back with the release workflow.
+- CI guard: `scripts/kmp-guard.sh`, run by `pr-checks.yml`, fails on `android.*`, `androidx.core.*`, `java.*` or `javax.*` imports in `shared/src/commonMain`, and on fully qualified `java.`/`javax.` names. It can't see `java.lang` names (`System`, `Thread`), so review those by hand. With only Android and JVM targets at first, nothing else would stop `java.*` imports from creeping into `commonMain` before web and iOS exist.
 - Don't name the streaming site in commits, file names or identifiers.
 
 ### Phase 0: Android clean-up (no KMP yet)
@@ -234,7 +234,7 @@ Behavior-neutral changes inside `:app`. This phase can ship as a normal release.
 7. `UserMessage`: remove `@StringRes` from the data layer.
 8. Add `MediaLauncher` and route the Play button (`Rating.kt`) and the trailer chip (`Trailer.kt`) through it. The Android implementation runs today's `Intent` code.
 9. Replace the 3 `material-icons-core` icons with vector drawables and drop the dependency.
-10. Optional: delete the Jsoup/Lottie scraping fallback if `tmdbId == 0` never happens.
+10. Delete the Jsoup/Lottie scraping fallback (done in B2: without a `tmdbId`, `WebViewActivity` closes at once).
 
 **Done when:** Maestro passes, the upgrade test passes, and no `android.*`/`java.*` imports remain in `data/` or `domain/`.
 
@@ -260,8 +260,8 @@ Behavior-neutral changes inside `:app`. This phase can ship as a normal release.
 
 ### Phase 3: `:shared` with domain + data (targets: android, jvm)
 
-1. `shared/build.gradle.kts`: `kotlin { android { namespace = "com.zobaer53.zedmovies.shared"; compileSdk = 37; minSdk = 26 }; jvm(); jvmToolchain(17) }`, plus the custom hierarchy (`cachedMain`) from "Target architecture". Add `include ':shared'` and have `:app` depend on `project(':shared')`.
-2. Move code bottom-up and compile after each step: `domain/` → `data/common`, `data/model`, `data/mapper` → `data/network` → `data/database` → `data/datastore` → `data/paging`, `data/repository` → Koin modules. Keep the package names so `:app` imports don't change. Room/DataStore/RemoteMediator code and the cached repositories go to `cachedMain`. Interfaces, network code, mappers and `TmdbPagingSource` go to `commonMain`.
+1. `shared/build.gradle.kts`: `kotlin { android { namespace = "com.zobaer53.zedmovies.shared"; compileSdk = 37; minSdk = 26 }; jvm(); jvmToolchain(17) }`. No custom hierarchy yet: it comes with `wasmJs` (Phase 8). Add `include ':shared'` and have `:app` depend on `project(':shared')`.
+2. Move code bottom-up and compile after each step: `domain/` → `data/common`, `data/model`, `data/mapper` → `data/network` → `data/database` → `data/datastore` → `data/paging`, `data/repository` → Koin modules. Keep the package names so `:app` imports don't change. All of it went to `commonMain`, since both targets support Room and DataStore. Only the platform actuals sit in `androidMain`/`jvmMain`.
 3. **Room:**
    - Add `@ConstructedBy(zedMoviesDatabaseConstructor::class)` + `expect object zedMoviesDatabaseConstructor : RoomDatabaseConstructor<zedMoviesDatabase>`.
    - KSP per target: `kspAndroid`, `kspJvm`, later `kspIosArm64`/`kspIosSimulatorArm64`. Don't use `kspCommonMainMetadata`.
@@ -269,12 +269,12 @@ Behavior-neutral changes inside `:app`. This phase can ship as a normal release.
    - **The Android builder must open the same file:** `context.getDatabasePath("zedMovies.db").absolutePath`. If the name or path changes, users lose their wish list.
    - Drivers: Android → `AndroidSQLiteDriver` (no new `.so`, so the 16 KB check stays green). JVM → `BundledSQLiteDriver`. `setQueryCoroutineContext(ioDispatcher)` on both.
    - `zedMoviesDatabaseTransactionProvider` → `useWriterConnection { it.immediateTransaction { … } }`. Drop `room-ktx`.
-4. **DataStore:** `PreferenceDataStoreFactory.createWithPath` as a Koin `single`.
+4. **DataStore:** `PreferenceDataStoreFactory.create` as a Koin `single` in each `platformModule`.
    - Android path: `filesDir/datastore/preferences.preferences_pb`. That's exactly where today's `preferencesDataStore(name = "preferences")` delegate writes.
    - JVM path: the OS app-data dir (see Phase 7).
-5. `expect`/`actual`: `platformModule` (DB builder, DataStore path, `DeviceLocaleProvider`, `RegionProvider`), `formatNumber`, `ioDispatcher`.
-6. `:app` keeps an Android Koin module for `apiKeyProvider`/`versionProvider` from `BuildConfig`.
-7. Move the 4 test classes to `commonTest` (`kotlin.test`) and run `./gradlew :shared:allTests`.
+5. `expect`/`actual`: `platformModule` (DB builder, DataStore, `DeviceLocaleProvider`, `RegionProvider`) and the HTTP engine (`httpEngine()`). The number and locale formatting in `ui/util/PlatformFormat.kt` became `expect` functions in Phase 4. There is no `ioDispatcher` yet: the platform modules use `Dispatchers.IO`, and web will need the `expect`.
+6. `:app` keeps an Android Koin module (`di/AndroidAppModule.kt`) for `apiKeyProvider` from `BuildConfig`.
+7. Move the 7 data test classes to `commonTest` (`kotlin.test`), add JVM tests for the Room DAOs, the 2→3 migration and the Koin graph in `jvmTest`, and run `./gradlew :shared:jvmTest`.
 
 **Done when:** `:app` contains only UI, navigation, activities and Android DI; `:shared:jvmTest` passes; Maestro passes; and the **upgrade test** shows the wish list and language intact.
 
@@ -283,7 +283,7 @@ Behavior-neutral changes inside `:app`. This phase can ship as a normal release.
 1. Add `org.jetbrains.compose` + `kotlin.plugin.compose` to `:shared`, with foundation, material3, components.resources, ui.tooling.preview, the JetBrains navigation/lifecycle artifacts, paging-compose and coil-compose.
 2. Resources → `composeResources`. Switch `stringResource(R.string.x)` → `stringResource(Res.string.x)`, and the same for `painterResource`/`pluralStringResource`. That's about 150 call sites in 30 files.
 3. Move code in this order: design system → `ui/smallcomponent` → screens (**Wishlist → Home → List → Details → Search**) → `navigation/` and `ZedMoviesApp`/`ZedMoviesAppState`.
-4. `SystemBarsAppearance` → `expect` composable. `MediaLauncher` is passed in by the host.
+4. `SystemBarsAppearance` → a common interface plus `@Composable expect fun rememberSystemBarsAppearance()`. The host provides `MediaLauncher` through `LocalMediaLauncher`.
 5. Keep every `testTag` and `testTagsAsResourceId`, since Maestro relies on them.
 6. `zedMoviesActivity` shrinks to `enableEdgeToEdge()` + splash + `setContent { zedMoviesApp(...) }`.
 7. Add a JVM Compose UI smoke test (`runComposeUiTest`) that renders each screen with fake repositories. It runs in seconds, and desktop and web reuse it later.
@@ -390,7 +390,7 @@ Build this in `commonMain` once, test it on Android tablets and in a desktop win
 
 | Job | Trigger | Runs | Publishes |
 | --- | --- | --- | --- |
-| Android (existing) | push to `master` | `:app` build, signature check, 16 KB check, unit tests | `NoFlix.apk` (phone + TV) |
+| Android (release, to be restored from the original repository) | push to `master` | `:app` build, signature check, 16 KB check, unit tests | `NoFlix.apk` (phone + TV) |
 | Shared tests | every push / PR | `:shared:jvmTest` (+ `wasmJsBrowserTest`, `iosSimulatorArm64Test` once added), Koin `verify()`, `commonMain` import guard | — |
 | Desktop | push to `master` | matrix `packageDistributionForCurrentOS` | `.dmg`, `.msi`, `.deb` on the same release |
 | Web | push to `master` | `wasmJsBrowserDistribution` | deploy to the chosen host |
@@ -427,7 +427,7 @@ Phases 0–2 are worth doing even if no other platform ships: less code, no refl
 | Risk | Impact | Mitigation |
 | --- | --- | --- |
 | Room or DataStore path changes in Phase 3 | Android users lose their wish list and language | Hard-code today's paths. Run `.maestro/upgrade.sh` against the last public APK at the end of every phase. |
-| Mixed Compose versions after CMP (AGP 9 doesn't align them) | `NoSuchMethodError` crashes | Match the CMP version to the BOM, inspect `:app:dependencies`, then remove the BOM |
+| Mixed Compose versions after CMP (AGP 9 doesn't align them) | `NoSuchMethodError` crashes | Match the CMP version to the BOM and inspect `:app:dependencies`. `:app` keeps the BOM only for debug tooling and tests, at the same versions. |
 | `java.*` creeping into `commonMain` while only JVM targets exist | Surprise rewrite when web or iOS is added | The CI import guard |
 | Missing Koin binding | Runtime crash | Koin `verify()` test, plus Maestro on every screen |
 | Ktor error mapping differs from `ResultCall` | Wrong error states | `MockEngine` tests; manual airplane-mode check |
@@ -447,9 +447,9 @@ Phases 0–2 are worth doing even if no other platform ships: less code, no refl
 ## Open decisions
 
 1. **Android TV:** the same APK (recommended) or a separate TV app?
-2. **DI:** Koin (recommended, used by the official guide) or Metro (compile-time checks)?
+2. **DI:** Koin (recommended, used by the official guide) or Metro (compile-time checks)? **Decided: Koin (A2).**
 3. **Desktop playback:** system browser only (7a, recommended to start), or invest in the embedded Chromium player with ad-blocking (7b) after the codec spike?
 4. **Web hosting:** a separate host with a key-adding proxy (recommended) or a sub-path of the existing GitHub Pages site?
 5. **iOS distribution:** a browse-only App Store app, or full playback outside the App Store?
-6. **Scraping fallback:** delete Jsoup + Lottie (recommended) or keep it Android-only?
-7. **`values-night/strings.xml`:** delete it, or keep it as `values-dark`?
+6. **Scraping fallback:** delete Jsoup + Lottie (recommended) or keep it Android-only? **Decided: deleted in B2.**
+7. **`values-night/strings.xml`:** delete it, or keep it as `values-dark`? **Decided: moved to `values-dark` in B5** (deleting it can come later).
