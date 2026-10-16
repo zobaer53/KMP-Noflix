@@ -20,20 +20,20 @@ Move the Android app onto a Kotlin Multiplatform structure **without users notic
 
 | Check | How | Pass |
 | --- | --- | --- |
-| Functional | `.maestro/run.sh` (flows 01–07) on a 16 KB API 36+ emulator and a real device | All pass, no logcat crash |
+| Functional | `.maestro/run.sh` (flows 01–07, then the process-death check on Search) on the shared Pixel 6a (Android 17, 4 KB pages). 16 KB page support is covered by the static alignment check below. | All pass, no logcat crash |
 | Data survives update | `.maestro/upgrade.sh <last public APK>` (`1_add_wishlist` → install over → `2_check_wishlist`) | Wish list intact, no Room crash |
-| Content language survives update | Set the device to a non-English locale before the old APK's first start, then install over and open Home | Titles still in that language |
+| Content language survives update | `.maestro/upgrade.sh --content-language <last public APK> <release build>`: it waits while you set the phone to German before the old APK's first start and back to English before the new build starts | A movie's details, never opened before, load in German |
 | Unit tests | `./gradlew :app:testDebugUnitTest` (later `:shared:allTests`) | All pass |
 | 16 KB alignment | `zipalign -c -P 16 -v 4` + `llvm-objdump -p` on every 64-bit `.so`, as in CI | Aligned |
-| APK size | Compare with the baseline | ≤ +10% (target: smaller once Retrofit and Hilt are gone) |
-| Cold start | `adb shell am start -W -n com.zobaer53.zedmovies/.zedMoviesActivity`, median of 10 | ≤ baseline + 10% |
-| Visual | Screenshots of home, see-all, search + filter sheet, details (movie and TV), wish list | Matches the baseline |
+| APK size | `.maestro/baseline.sh --name <package>` compares with `doc/local/baseline.json` | ≤ +10% (target: smaller once Retrofit and Hilt are gone) |
+| Cold start | `adb shell am start -W -n com.zobaer53.zedmovies/.zedMoviesActivity`, median of 10, by `.maestro/baseline.sh --name <package>` | ≤ baseline + 10% (or ≤ +10% vs the public release in the same run) |
+| Visual | `./gradlew :app:verifyRoborazziDebug` (B3), plus the device screenshots of `baseline.sh` | No diff |
 
 ## Baseline (do this first, before any change)
 
 1. Build the current `master` as release and as debug. Record APK size, `.so` list, cold start (median of 10) and `./gradlew :app:dependencies --configuration releaseRuntimeClasspath > doc/local/deps-baseline.txt`.
 2. Save the **last public release APK** (from GitHub Releases) as `doc/local/baseline.apk`. Every upgrade test installs over it.
-3. Take the baseline screenshots on one emulator profile (Pixel, API 36, 16 KB, en-US, dark theme as the app ships) and save them in `doc/local/screens-baseline/`.
+3. Take the baseline screenshots on the shared Pixel 6a (Android 17, 4 KB pages, en-US, dark theme) and save them in `doc/local/screens-baseline/`. 16 KB page support is covered by the static alignment check, not on this device.
 4. Run `.maestro/run.sh` and `.maestro/upgrade.sh doc/local/baseline.apk` and record that both pass.
 
 `doc/local/` is for files that aren't committed. Check that it's ignored.
@@ -72,10 +72,11 @@ Each package is one branch and one PR into `dev`. **Exceptions** are the only li
 | **A6** | `feat/a-hardening` | Phase 5 items 2–5 (catalog/leftover clean-up, optional R8 + Baseline Profile, docs) | B6 | none |
 | **B1** | `feat/b-baseline` | Baseline section, automated as `.maestro/baseline.sh` (APK size, `.so` list, cold start ×10, dependency snapshot, screenshot flow) → results in `doc/local/` | — | none |
 | **B2** | `feat/b-ui-cleanup` | 0.1 UI rows (`"error1"`/`"error2"` logs), `UserMessage` → `ui/` as a sealed type (incl. `IOException` → `kotlinx.io` in `UserMessageMapper`), 0.3 (`PlatformFormat`, `MediaLauncher`, icon drawables), 0.4 if decided, 0.5 `UserMessageMapperTest` | B1 | Delete `data/model/UserMessage.kt` (moved to `ui/`) |
-| **B3** | `feat/b-screenshot-tests` | **Addition:** JVM screenshot tests (Roborazzi + Robolectric) of every screen's stateless composable with fake UI state. They automate the "Visual" success criterion for B5/B6 and later move to `:shared`. | B2 | none |
+| **B3** | `feat/b-screenshot-tests` | **Addition:** JVM screenshot tests (Roborazzi + Robolectric) of every screen's stateless composable with fake UI state. They automate the "Visual" success criterion for B5/B6 and later move to `:shared`. | B2 | Approved by the user: Roborazzi plugin line in the root `build.gradle`; in `app/build.gradle` the plugin line, the test dependency lines and `testOptions { unitTests { includeAndroidResources = true } }`; catalog entries |
 | **B4** | `feat/b-gate-checks` | **Addition:** automate the remaining success criteria. `upgrade.sh` also checks that the content language survives (non-English locale before the old APK's first start). A process-death check (`am kill` on Search with filters, then reopen) for A2's gate. A cold-start comparison against the B1 baseline. | B1 | none |
-| **B5** | `feat/b-cmp-foundation` | 4.1 (Compose Multiplatform in `:shared`), 4.2 (resources), 4.3 steps 1–3 (design system, `ui/smallcomponent`) | **A4** | `shared/build.gradle.kts`: the compose plugin, the compose dependency lines and the `compose.resources {}` block only |
-| **B6** | `feat/b-cmp-screens` | 4.3 steps 4–8, 4.4, 4.5 (screens, navigation, `SystemBarsAppearance`, `MediaLauncher` → commonMain, slim `zedMoviesActivity`, JVM UI smoke test) | B5 | Move `di/ViewModelModule.kt` into `:shared` |
+| **B5** | `feat/b-cmp-foundation` | 4.1 (Compose Multiplatform in `:shared`), 4.2 (resources), 4.3 steps 1–3 (design system, `ui/smallcomponent`) | **A4** | `shared/build.gradle.kts`: the compose plugin, the compose dependency lines (incl. paging-compose and Coil), the `compose.resources {}` block and `androidResources { enable = true }` (AGP 9's KMP library only packages assets with it). Approved by the user: move `data/model` to `shared/commonMain` (its `R.string` ids become `StringResource`; stream A agreed), `publicResClass = true` until B6, `MediaLauncher` → commonMain pulled forward from B6 (`Rating.kt` needs it), the font path in `tools/branding/social.py` |
+| **B6** | `feat/b-cmp-screens` | 4.3 steps 4–8, 4.4, 4.5 (screens, navigation, `SystemBarsAppearance`, slim `zedMoviesActivity`, JVM UI smoke test; `MediaLauncher` already moved in B5; set `publicResClass = false` once no `:app` code uses `Res`) | B5 | Move `di/ViewModelModule.kt` into `:shared`. Also taken in B6 (the user delegated the call): in `shared/build.gradle.kts` the JetBrains navigation-compose 2.10.0-rc01 / lifecycle 2.11.0 / koin-compose lines, `androidx.core` in androidMain, `ui-test` + `compose.desktop.currentOs` in jvmTest, `publicResClass = false`; their catalog entries; `app/build.gradle` trimmed to what `:app` uses (androidx navigation 2.10.2 kept as the version pin); an apt step in `pr-checks.yml` only if skiko's Linux libraries are missing on CI |
+| **B7** | `feat/b-baseline-profile` | Phase 5 item 4 (Baseline Profile), moved from A6 at the user's request: a `:baselineprofile` module (generator + startup macrobenchmark), the generated profile in `:app`, `profileinstaller` for sideloaded installs | A6 | Taken (the user delegated the call): `include ':baselineprofile'` in `settings.gradle`, the `android-test`/`androidx.baselineprofile` plugin lines in the root `build.gradle`, the plugin + `profileinstaller` + `baselineProfile project(':baselineprofile')` in `app/build.gradle`, catalog entries |
 
 ### Waves
 
@@ -716,18 +717,19 @@ Claim a row ("In progress") in the first commit of the package's branch. Edit on
 | ID | Stream | Status | PR | Gates |
 | --- | --- | --- | --- | --- |
 | Setup | — | Done (2026-10-15): repository, `main`/`dev`, worktrees, device lock, pre-push hook, PR checks | — | Lock tested: concurrent, stale, nested and killed runs |
-| A1 | A | Not started | | |
-| A2 | A | Not started | | |
-| A3 | A | Not started | | |
-| A4 | A | Not started | | |
-| A5 | A | Not started | | |
-| A6 | A | Not started | | |
-| B1 | B | Not started | | |
-| B2 | B | Not started | | |
-| B3 | B | Not started | | |
-| B4 | B | Not started | | |
-| B5 | B | Not started | | |
-| B6 | B | Not started | | |
+| A1 | A | Done (#6 merged) | #6 | test-merge --maestro green on the Pixel 6a (7/7 flows); per-PR phone APK check waived by the owner (auto-merged 2026-10-16); unit tests green; Timber kept (used by `:ad-filter`/`:adblock-client`) |
+| A2 | A | Done (#7 merged) | #7 | test-merge --maestro green on the Pixel 6a (7/7 flows); per-PR phone APK check waived by the owner (auto-merged 2026-10-16); process death on Search with filters restores the chip; KoinGraphTest green; no dagger/hilt in the APK |
+| A3 | A | Done (#8 auto-merge) | #8 | test-merge --maestro green on the Pixel 6a (7/7 flows); per-PR phone APK check waived by the owner (auto-merged 2026-10-16); no retrofit2 in the APK; airplane mode: Search shows "No Internet" (Home never did: its error view is commented out since the original app) |
+| A4 | A | Done (#11 merged; auto-merge chosen by the owner, stream B wave-4 gates passed) | #11 | test-merge on the Pixel 6a: 7/7 flows, process death restores the filter chip; baseline: APK +4.0%, cold start +1.7%; upgrade over 3.0.1 passed, also with a 12-item wish list (6 movies, 6 TV); `:shared:jvmTest` green incl. DAO and 2→3 migration tests; 3.json unchanged; `data/model` stays in `:app` until Phase 4 |
+| A5 | A | Done (#12, merged without human review, at the owner's request, 2026-10-16) | #12 | Gated on the Pixel 6a: run.sh 7/7 + process death, 6 filter lists; upgrade over 3.0.1 passed, also with a 12-item wish list; APK as A4 (+4.0%), cold start +2.6%; no new native library |
+| A6 | A | Done, auto-merge (items 2 and 5 in #17; item 3, R8, in #19, merged without human review; item 4, Baseline Profile, moved to B7 at the user's request) | #17, #19 | test-merge --maestro on the Pixel 6a: 7/7, process death, 6 filter lists; release runtime classpath identical before and after the catalog clean-up; 51 stale doc statements fixed (audited, each verified against the code); R8: release APK 7.8 MB (−55.1% vs baseline), cold start 174 ms (−26%), all 7 flows + process death on the R8 release APK, upgrade over 3.0.1 and a 12-item install-over passed |
+| B1 | B | Done (#3 merged) | #3 | test-merge --maestro green on the Pixel 6a; baseline in `doc/local/baseline.md` |
+| B2 | B | Done (#4 merged) | #4 | test-merge --maestro green on the Pixel 6a; APK −6%, cold start 232 vs 235 ms (`doc/local/b2.md`) |
+| B3 | B | Done (#5 merged) | #5 | 12 screenshots, `verifyRoborazziDebug` green; test-merge --maestro green on the Pixel 6a |
+| B4 | B | Done (#9 merged) | #9 | run.sh with process death, upgrade, size and cold-start comparison green on the Pixel 6a; `upgrade.sh --content-language` not run end to end yet (skipped by the user) |
+| B5 | B | Done (#14 merged) | #14 | test-merge --maestro green on the Pixel 6a (7/7, process death restores the filter); `verifyRoborazziDebug` 12/12 unchanged; release APK +4.3% vs baseline (+47 KB vs A5), cold start 246 vs 235 ms (+4.7%); upgrade over 3.0.1 passed; every `androidx.compose.*` unchanged (1.12.1, material3 1.4.0) |
+| B6 | B | Done (#15 merged) | #15 | test-merge --maestro green on the Pixel 6a (7/7, process death restores the filter; a first run failed only the 6-filter-lists check on a slow AdGuard CDN); `verifyRoborazziDebug` 12/12 unchanged; JVM screen smoke test (8) and ViewModelGraphTest pass; release APK +4.3% vs baseline (+3.6 KB vs B5), cold start 246 ms (= B5); upgrade over 3.0.1 passed; phone screenshots byte-identical to B5 except live data. navigation-compose 2.10.0-rc01 is a pre-release: on Android it is an empty redirect to androidx 2.10.2 (pinned in `:app`), so no RC code ships; bump to the stable 2.10.x when it is out. Navigation: JetBrains navigation-compose 2.10.0-rc01 in commonMain, `:app` keeps androidx 2.10.2 (user decision; `popUpTo` by the start destination's route, as common `NavOptionsBuilder` has no id overload). Deviations from the Phase 4 text: step 6 keeps the imperative shape (common `SystemBarsAppearance` interface + `@Composable expect fun rememberSystemBarsAppearance()`) instead of `expect fun SystemBarsAppearance(color)`; `compose.desktop.currentOs` is in jvmTest, not jvmMain; `zedMoviesActivity` is kept as is (4.4's snippet would drop `SystemBarStyle.auto(TRANSPARENT, TRANSPARENT)` and `isNavigationBarContrastEnforced = false`); `testTagsAsResourceId` is an `expect fun Modifier.testTagsAsResourceId()` at the same place (Android-only API, Maestro 07 needs it), and the Cancel label an expect that keeps `android.R.string.cancel` on Android. Screenshot tests stay in `:app` (the 5 stateless screens are public, `FakeData` uses `FilterGenre`), 12/12 unchanged; JVM smoke test `ui/ScreensSmokeTest` in `:shared:jvmTest` |
+| B7 | B | Done (#21 merged, auto-merge, without human review) | #21 | Profile generated on the Pixel 6a from Home (pager + feed), details, Search + filter sheet and the wish list (36,440 rules, also the startup profile); `assets/dexopt/baseline.prof` is in the release APK. StartupBenchmark (benchmarkRelease, R8, COLD, 10 iterations, timeToInitialDisplay): median 369 ms without the profile (`CompilationMode.None`), 224 ms with it (`Partial(BaselineProfileMode.Require)`), −39%. test-merge --maestro green (7/7, process death, 6 filter lists, 16 KB aligned); baseline.sh --name b7: release APK 7.9 MB (−54.4%), cold start 173 ms (−26.4%, `am start -W` after `adb install`, not comparable with the macrobenchmark), upgrade over 3.0.1 passed. Regenerate after big UI changes: `scripts/stream.sh with-device -- ./gradlew :app:generateBaselineProfile` |
 
 ## Risks (Android)
 
@@ -750,8 +752,8 @@ Claim a row ("In progress") in the first commit of the package's branch. Edit on
 
 ## Open decisions (Android)
 
-1. **Scraping fallback** (Jsoup + Lottie): delete it in Phase 0 (recommended), or keep it in `:app`?
-2. **`values-night/strings.xml`:** delete it, or move it to `values-dark`?
+1. **Scraping fallback** (Jsoup + Lottie): delete it in Phase 0 (recommended), or keep it in `:app`? **Decided: deleted in B2.**
+2. **`values-night/strings.xml`:** delete it, or move it to `values-dark`? **Decided: moved to `values-dark` in B5** (it only changes the casing of 5 strings in dark mode; the clean-up can come later).
 3. **Driver switch** (3.3b): do it right after Phase 3 (recommended), or leave Android on the compatibility path?
 4. **R8:** enable it in Phase 5, or leave it for later?
 5. **DI:** Koin (recommended) or Metro?

@@ -1,0 +1,39 @@
+// Generates :app's Baseline Profile and measures its effect on cold start (B7). Runs on a connected
+// device: ./gradlew :app:generateBaselineProfile, or the StartupBenchmark through
+// :baselineprofile:connectedBenchmarkReleaseAndroidTest. Both install the app, so wrap them in
+// scripts/stream.sh with-device.
+plugins {
+    alias(libs.plugins.android.test)
+    alias(libs.plugins.androidx.baselineprofile)
+}
+
+android {
+    namespace 'com.zobaer53.zedmovies.baselineprofile'
+    compileSdk libs.versions.compileSdk.get().toInteger()
+
+    defaultConfig {
+        // Baseline Profile generation needs API 28+ (API 33+ on a device without root).
+        minSdk 28
+        targetSdk 37
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    targetProjectPath = ":app"
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+baselineProfile {
+    // The shared Pixel 6a (ANDROID_SERIAL from .stream.env), not a Gradle managed emulator.
+    useConnectedDevices = true
+}
+
+dependencies {
+    implementation libs.androidx.test.ext.junit
+    implementation libs.androidx.test.runner
+    implementation libs.androidx.test.uiautomator
+    implementation libs.androidx.benchmark.macro.junit4
+}

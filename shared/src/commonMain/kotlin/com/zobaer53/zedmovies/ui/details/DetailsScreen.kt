@@ -1,0 +1,167 @@
+
+
+package com.zobaer53.zedmovies.ui.details
+
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import org.koin.compose.viewmodel.koinViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.zobaer53.zedmovies.ui.designsystem.component.ZedMoviesSwipeRefresh
+import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesTopAppBar
+import com.zobaer53.zedmovies.data.model.MediaType
+import com.zobaer53.zedmovies.ui.model.UserMessage
+import com.zobaer53.zedmovies.ui.smallcomponent.zedMoviesBackButton
+import com.zobaer53.zedmovies.ui.smallcomponent.zedMoviesCenteredError
+import com.zobaer53.zedmovies.ui.smallcomponent.SnackbarUserMessageHandler
+import com.zobaer53.zedmovies.ui.details.components.MovieDetailsItem
+import com.zobaer53.zedmovies.ui.details.components.MovieDetailsItemPlaceholder
+import com.zobaer53.zedmovies.ui.details.components.TvShowDetailsItem
+import com.zobaer53.zedmovies.ui.details.components.TvShowDetailsItemPlaceholder
+
+@Composable
+internal fun DetailsRoute(
+    onBackButtonClick: () -> Unit,
+    onShowMessage: (String) -> Unit,
+    onSetSystemBarsColorTransparent: () -> Unit,
+    onResetSystemBarsColor: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: DetailsViewModel = koinViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    DetailsScreen(
+        uiState = uiState,
+        onShowMessage = onShowMessage,
+        onRefresh = { viewModel.onEvent(DetailsEvent.Refresh) },
+        onBackButtonClick = onBackButtonClick,
+        onWishlistMovieClick = { viewModel.onEvent(DetailsEvent.WishlistMovie) },
+        onWishlistTvShowClick = { viewModel.onEvent(DetailsEvent.WishlistTvShow) },
+        onRetry = { viewModel.onEvent(DetailsEvent.Retry) },
+        onOfflineModeClick = { viewModel.onEvent(DetailsEvent.ClearError) },
+        onUserMessageDismiss = { viewModel.onEvent(DetailsEvent.ClearUserMessage) },
+        modifier = modifier
+    )
+
+    DisposableEffect(onSetSystemBarsColorTransparent, onResetSystemBarsColor) {
+        onSetSystemBarsColorTransparent()
+        onDispose { onResetSystemBarsColor() }
+    }
+}
+
+// Public (not internal) so :app's screenshot tests can render it.
+@Composable
+fun DetailsScreen(
+    uiState: DetailsUiState,
+    onShowMessage: (String) -> Unit,
+    onRefresh: () -> Unit,
+    onBackButtonClick: () -> Unit,
+    onWishlistMovieClick: () -> Unit,
+    onWishlistTvShowClick: () -> Unit,
+    onRetry: () -> Unit,
+    onOfflineModeClick: () -> Unit,
+    onUserMessageDismiss: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    SnackbarUserMessageHandler(
+        userMessage = uiState.userMessage,
+        onShowMessage = onShowMessage,
+        onDismiss = onUserMessageDismiss
+    )
+    ZedMoviesSwipeRefresh(
+        modifier = modifier,
+        isRefreshing = uiState.isLoading,
+        onRefresh = onRefresh,
+        indicatorPadding = WindowInsets.safeDrawing.asPaddingValues()
+    ) {
+        DetailsContent(
+            uiState = uiState,
+            onBackButtonClick = onBackButtonClick,
+            onWishlistMovieClick = onWishlistMovieClick,
+            onWishlistTvShowClick = onWishlistTvShowClick
+        )
+    }
+}
+
+@Composable
+private fun DetailsContent(
+    uiState: DetailsUiState,
+    onBackButtonClick: () -> Unit,
+    onWishlistMovieClick: () -> Unit,
+    onWishlistTvShowClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Surface(modifier = modifier) {
+        when (uiState.mediaType) {
+            is MediaType.Details.Movie -> {
+                if (uiState.movie == null) {
+                    MovieDetailsItemPlaceholder(
+                        onBackButtonClick = onBackButtonClick,
+                        onWishlistButtonClick = onWishlistMovieClick
+                    )
+                } else {
+                    MovieDetailsItem(
+                        movieDetails = uiState.movie,
+                        onBackButtonClick = onBackButtonClick,
+                        onWishlistButtonClick = onWishlistMovieClick
+                    )
+                }
+            }
+
+            is MediaType.Details.TvShow -> {
+                if (uiState.tvShow == null) {
+                    TvShowDetailsItemPlaceholder(
+                        onBackButtonClick = onBackButtonClick,
+                        onWishlistButtonClick = onWishlistMovieClick
+                    )
+                } else {
+                    TvShowDetailsItem(
+                        tvShowDetails = uiState.tvShow,
+                        onBackButtonClick = onBackButtonClick,
+                        onWishlistButtonClick = onWishlistTvShowClick
+                    )
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@Composable
+private fun ErrorContent(
+    errorMessage: UserMessage,
+    isOfflineModeAvailable: Boolean,
+    onBackButtonClick: () -> Unit,
+    onRetry: () -> Unit,
+    onOfflineModeClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            zedMoviesTopAppBar(
+                title = {},
+                navigationIcon = { zedMoviesBackButton(onClick = onBackButtonClick) }
+            )
+        }
+    ) { innerPadding ->
+        zedMoviesCenteredError(
+            modifier = Modifier
+                .padding(innerPadding)
+                .consumeWindowInsets(innerPadding),
+            errorMessage = errorMessage,
+            onRetry = onRetry,
+            shouldShowOfflineMode = isOfflineModeAvailable,
+            onOfflineModeClick = onOfflineModeClick
+        )
+    }
+}

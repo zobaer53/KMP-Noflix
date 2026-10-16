@@ -6,7 +6,7 @@
 
 <p align="center">
   <b>A free, open-source Android app to stream movies and TV shows with no ads, no pop-ups and no trackers.</b><br/>
-  Built-in ad blocker · Full-screen player · No sign-up · Made with Kotlin &amp; Jetpack Compose
+  Built-in ad blocker · Full-screen player · No sign-up · Made with Kotlin Multiplatform &amp; Compose Multiplatform (Jetpack Compose)
 </p>
 
 <p align="center">
@@ -35,11 +35,13 @@ If you've been looking for a way to **watch free movies without ads**, **stream 
 - 🚫 **Ad-free streaming.** A built-in ad blocker (AdGuard / EasyPrivacy filter lists and a native ad-block engine) removes ads, pop-ups, redirects and crypto-miners.
 - 🎬 **Movies and TV series.** Trending, popular, top-rated, now playing, upcoming and discover lists, powered by [The Movie Database (TMDB)](https://www.themoviedb.org/).
 - ▶️ **One-tap full-screen player.** Videos open in landscape full screen; the rest of the app stays portrait.
-- 🔍 **Search** any movie or TV show by title.
+- 🔍 **Search and filters.** Search by title, or filter movies and TV shows by genre, year, rating, language, runtime, country, age rating, streaming service and TV network, and sort the results.
+- 🎞️ **Trailers.** Play a movie's or series' YouTube trailer from its details page.
 - ❤️ **Watchlist.** Save movies and series to watch later.
 - 📶 **Offline browsing.** Lists and details are cached, so you can browse without a connection.
 - 🔒 **Private.** No account, no sign-up, no analytics.
-- 🎨 **Modern design.** Material 3, dark theme and smooth Jetpack Compose UI.
+- 🎨 **Modern design.** Material 3, dark theme and a smooth Compose Multiplatform UI.
+- ⚡ **Small and fast.** The release APK is about 8 MB and starts in under 200 ms on a Pixel 6a. A Baseline Profile makes the first launches after an install about 40% faster.
 
 ## Download
 
@@ -85,27 +87,62 @@ No. See the [disclaimer](#disclaimer) below.
 
 ## Tech stack & architecture
 
-NoFlix follows the [official Android architecture guidance](https://developer.android.com/topic/architecture) (data, domain and UI layers):
-
-- **Kotlin**, **Coroutines & Flow**
-- **Jetpack Compose**, Material 3, Navigation Compose
-- **Hilt** for dependency injection
-- **Retrofit** + **kotlinx.serialization** for the TMDB API
-- **Room** + **Paging 3** (RemoteMediator) for offline caching
-- **DataStore**, **Coil**, **Lottie**
-- **WebView** with an AdGuard-compatible ad-blocking engine (C++ via JNI)
+NoFlix is a Kotlin Multiplatform project. It follows the [official Android architecture guidance](https://developer.android.com/topic/architecture) (data, domain and UI layers):
 
 ![NoFlix architecture diagram](architecture-1-overall.png)
+
+### Modules
+
+- **`:shared`** (Kotlin Multiplatform) holds almost the whole app:
+  - `commonMain`: domain (models, repository interfaces, use cases), data (TMDB API, Room database, DataStore, repositories, paging), the Koin modules, the ViewModels, navigation and the whole Compose UI with its strings, fonts and images (`composeResources`).
+  - `androidMain`: the Android parts: Room on the platform SQLite, the DataStore file, the OkHttp engine, device locale and region, system bar icons and date formatting.
+  - `jvmMain`: the same parts for the JVM target (Room on the bundled SQLite).
+  - `commonTest` and `jvmTest`: tests that run on the host.
+- **`:app`** is a thin Android shell: the activity and application class, the WebView player, the trailer player, `AndroidMediaLauncher` (starts both players from the shared UI) and the TMDB API key from `local.properties`.
+- **`:ad-filter`** downloads and installs the filter lists (WorkManager) and blocks requests and page elements in the WebView.
+- **`:adblock-client`** wraps Brave's C++ ad-block engine through JNI.
+- **`:baselineprofile`** generates the app's Baseline Profile and measures cold start (Macrobenchmark). It is a test module and isn't shipped.
+
+The JVM target exists only to run tests on the host and to keep Android APIs out of `commonMain`. There is no desktop app.
+
+### Libraries
+
+- **Kotlin**, **Coroutines & Flow**
+- **Kotlin Multiplatform**: domain, data, ViewModels and UI live in the `:shared` module (Android, plus a JVM target for host tests)
+- **Compose Multiplatform** (Jetpack Compose on Android), Material 3, and **Compose resources** for strings, fonts and images
+- **Navigation Compose** (multiplatform) for the screens, **Lifecycle ViewModel** for their state
+- **Koin** for dependency injection
+- **Ktor** (OkHttp engine) + **kotlinx.serialization** for the TMDB API
+- **Room** (KMP) + **Paging 3** (RemoteMediator) cache lists and details for offline browsing; search and filtered discover page straight from the network
+- **DataStore** (Preferences) stores the content language
+- **Coil 3** loads the images, through Ktor
+- **WebView** with an AdGuard-compatible ad-blocking engine (C++ via JNI) for playback, and **android-youtube-player** (YouTube's IFrame player) for trailers
+- **R8** shrinks and optimizes the release build: the APK went from 18 MB to under 8 MB, and cold start got about a quarter faster (174 ms median on a Pixel 6a)
+- **Baseline Profile** (`:baselineprofile`, ProfileInstaller) precompiles the startup path: in a cold-start macrobenchmark on a fresh install, the median dropped from 369 ms to 224 ms
 
 ## Build from source
 
 1. Clone the repo and open it in Android Studio.
 2. Get a free API key from [The Movie DB](https://www.themoviedb.org/settings/api) and add it to `local.properties`:
    ```properties
-   API_KEY="yourApiKey"
+   API_KEY=yourApiKey
    ```
-3. Install **CMake 3.10.2** and the **NDK** from *SDK Manager → SDK Tools* (needed by the native ad-block library; see [this Stack Overflow answer](https://stackoverflow.com/questions/71853200/cmake-3-10-2-not-found-in-sdk-path-or-by-cmake-dir-prop) if CMake isn't found).
+3. Install **CMake 3.22.1** and **NDK 28.2.13676358** (r28c) from *SDK Manager → SDK Tools*. The native ad-block library needs them. You also need JDK 17 or newer.
 4. Run `./gradlew :app:installDebug` or press Run in Android Studio.
+5. For a release build, run `./gradlew :app:assembleRelease`. R8 minifies it. To sign it, add `RELEASE_STORE_FILE`, `RELEASE_STORE_PASSWORD`, `RELEASE_KEY_ALIAS` and `RELEASE_KEY_PASSWORD` to `local.properties`; without them the APK is unsigned.
+
+### Tests
+
+```bash
+./gradlew :shared:jvmTest              # :shared's tests on the JVM: data layer, Room DAOs and migration, Koin graph, screens
+./gradlew :app:testDebugUnitTest       # :app's JVM tests (Koin graph; renders the screenshot tests without comparing)
+./gradlew :app:verifyRoborazziDebug    # screenshot tests: compares each screen with app/src/test/screenshots/
+scripts/kmp-guard.sh                   # checks that shared/src/commonMain uses no Android or JVM APIs
+.maestro/run.sh                        # builds and clean-installs the debug app, then runs the Maestro UI suite
+./gradlew :app:generateBaselineProfile # regenerates the Baseline Profile on a connected device
+```
+
+**Note:** `.maestro/run.sh` uninstalls NoFlix from the device before it installs the debug build. The debug and release builds share the same app id, so running it on a phone with NoFlix from Releases deletes that install and its watchlist. With several devices attached, set `ANDROID_SERIAL` first.
 
 ## Contributing
 
@@ -151,4 +188,4 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ```
 
-<!-- Keywords: ad free movies app, ad-free TV series app, watch movies without ads, free movie streaming app Android, no ads movie app APK, adblock movie player, open source Netflix alternative, Kotlin Jetpack Compose movie app, TMDB movie app -->
+<!-- Keywords: ad free movies app, ad-free TV series app, watch movies without ads, free movie streaming app Android, no ads movie app APK, adblock movie player, open source Netflix alternative, Kotlin Jetpack Compose movie app, Kotlin Multiplatform movie app, Compose Multiplatform app, TMDB movie app -->

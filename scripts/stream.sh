@@ -5,8 +5,9 @@
 #   scripts/stream.sh worktree <path> <branch> <stream> [device]  add another checkout for a second stream
 #   scripts/stream.sh start <branch>                              new branch from the latest origin/dev
 #   scripts/stream.sh sync                                        merge origin/dev into this branch (never rebase)
-#   scripts/stream.sh check [--maestro]                           unit tests + debug build (+ the Maestro suite)
+#   scripts/stream.sh check [--maestro]                           KMP guard, unit tests + debug build (+ Maestro)
 #   scripts/stream.sh test-merge [--maestro]                      sync, then check: run before a PR is merged
+#   scripts/stream.sh pr <title> <body-file> [--no-auto]          push, open a PR into dev, turn on auto-merge
 #   scripts/stream.sh with-device -- <command…>                   run a command while holding this stream's device
 #   scripts/stream.sh status                                      worktrees, streams and device locks
 #
@@ -92,12 +93,10 @@ cmd_sync() {
 }
 
 cmd_check() {
-  echo "== unit tests + debug build"
-  ./gradlew :app:testDebugUnitTest :app:assembleDebug --console=plain -q
-  if [ -d shared/src/commonMain ] &&
-     grep -rnE '^import (android|androidx\.core|java|javax)\.' shared/src/commonMain; then
-    die "Android/JVM imports in shared/src/commonMain (see the KMP guard in CLAUDE.md)"
-  fi
+  echo "== KMP guard"
+  scripts/kmp-guard.sh || die "fix the KMP guard first"
+  echo "== unit tests (:shared on the JVM, :app) + debug build"
+  ./gradlew :shared:jvmTest :app:testDebugUnitTest :app:assembleDebug --console=plain -q
   if [ "${1:-}" = "--maestro" ]; then
     echo "== Maestro suite"
     .maestro/run.sh --no-build
@@ -108,7 +107,30 @@ cmd_check() {
 cmd_test_merge() {
   cmd_sync
   cmd_check "$@"
-  echo "merged the latest $BASE and the checks pass: push, then merge the PR"
+  echo "merged the latest $BASE and the checks pass: push (scripts/stream.sh pr …) and let auto-merge merge it"
+}
+
+# Push this branch, open its PR into dev (or reuse the open one) and turn on auto-merge: GitHub merges it once
+# the build check is green on a branch that is up to date with dev (the dev ruleset).
+cmd_pr() {
+  [ $# -ge 2 ] || die "usage: pr <title> <body-file> [--no-auto]"
+  local title=$1 body=$2 auto=${3:-} branch number
+  branch=$(git branch --show-current)
+  case "$branch" in main | "$BASE") die "open PRs from a feature branch, not $branch" ;; esac
+  [ -f "$body" ] || die "no PR body file: $body"
+  [ -z "$(git status --porcelain)" ] || die "commit your changes first"
+  git push -u origin "$branch"
+  number=$(gh pr view "$branch" --json number,state -q 'select(.state == "OPEN") | .number' 2> /dev/null || true)
+  if [ -z "$number" ]; then
+    gh pr create --base "$BASE" --head "$branch" --title "$title" --body-file "$body"
+    number=$(gh pr view "$branch" --json number -q .number)
+  fi
+  if [ "$auto" = "--no-auto" ]; then
+    echo "PR #$number open without auto-merge (merge it by hand once approved)"
+  else
+    gh pr merge "$number" --auto --merge
+    echo "PR #$number: auto-merge on; it merges once the build check passes on an up-to-date branch"
+  fi
 }
 
 cmd_with_device() {
@@ -145,7 +167,8 @@ case "${1:-}" in
   sync) shift; cmd_sync ;;
   check) shift; cmd_check "$@" ;;
   test-merge) shift; cmd_test_merge "$@" ;;
+  pr) shift; cmd_pr "$@" ;;
   with-device) shift; cmd_with_device "$@" ;;
   status) cmd_status ;;
-  *) sed -n '2,15s/^# \{0,1\}//p' "$0"; exit 1 ;;
+  *) sed -n '2,16s/^# \{0,1\}//p' "$0"; exit 1 ;;
 esac

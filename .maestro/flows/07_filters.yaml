@@ -43,6 +43,7 @@ name: 07_filters
     text: "Rating"
     below: "Tv Shows"
     index: 0
+    retryTapIfNoChange: false
 - extendedWaitUntil:
     visible: "Overview"
     timeout: 20000

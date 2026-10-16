@@ -11,10 +11,12 @@ name: upgrade_1_add_wishlist
 - extendedWaitUntil:
     visible: "Top Rated"
     timeout: 30000
+# No retap: when details load slowly Maestro sees "no change", taps again and hits the Play chip.
 - tapOn:
     text: "Rating"
     below: "Movies"
     index: 0
+    retryTapIfNoChange: false
 - extendedWaitUntil:
     visible: "Overview"
     timeout: 20000

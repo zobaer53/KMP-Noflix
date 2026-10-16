@@ -1,0 +1,69 @@
+
+
+package com.zobaer53.zedmovies.data.repository
+
+import com.zobaer53.zedmovies.data.common.result.ZedMoviesResult
+import com.zobaer53.zedmovies.data.mapper.asTvShowDetailsEntity
+import com.zobaer53.zedmovies.data.mapper.asTvShowDetailsModel
+import com.zobaer53.zedmovies.data.mapper.listMap
+import com.zobaer53.zedmovies.data.database.source.TvShowDetailsDatabaseDataSource
+import com.zobaer53.zedmovies.data.database.source.WishlistDatabaseDataSource
+import com.zobaer53.zedmovies.data.datastore.PreferencesDataStoreDataSource
+import com.zobaer53.zedmovies.domain.model.TvShowDetailsModel
+import com.zobaer53.zedmovies.domain.repository.TvShowDetailsRepository
+import com.zobaer53.zedmovies.data.network.common.networkBoundResource
+import com.zobaer53.zedmovies.data.network.source.TvShowDetailsNetworkDataSource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+
+class TvShowDetailsRepositoryImpl(
+    private val databaseDataSource: TvShowDetailsDatabaseDataSource,
+    private val networkDataSource: TvShowDetailsNetworkDataSource,
+    private val wishlistDatabaseDataSource: WishlistDatabaseDataSource,
+    private val preferencesDataStoreDataSource: PreferencesDataStoreDataSource
+) : TvShowDetailsRepository {
+    override fun getById(id: Int): Flow<ZedMoviesResult<TvShowDetailsModel?>> = networkBoundResource(
+        query = {
+            databaseDataSource.getById(id).map {
+                it?.asTvShowDetailsModel(
+                    isWishlisted = wishlistDatabaseDataSource.isTvShowWishlisted(it.id)
+                )
+            }
+        },
+        fetch = {
+            networkDataSource.getById(
+                id = id,
+                language = preferencesDataStoreDataSource.getContentLanguage().first()
+            )
+        },
+        saveFetchResult = { response ->
+            databaseDataSource.deleteAndInsert(
+                response.asTvShowDetailsEntity(preferencesDataStoreDataSource.getContentLanguage().first())
+            )
+        }
+    )
+
+    override fun getByIds(ids: List<Int>): Flow<ZedMoviesResult<List<TvShowDetailsModel>>> =
+        networkBoundResource(
+            query = {
+                databaseDataSource.getByIds(ids).listMap {
+                    it.asTvShowDetailsModel(
+                        isWishlisted = wishlistDatabaseDataSource.isTvShowWishlisted(it.id)
+                    )
+                }
+            },
+            fetch = {
+                networkDataSource.getByIds(
+                    ids = ids,
+                    language = preferencesDataStoreDataSource.getContentLanguage().first()
+                )
+            },
+            saveFetchResult = { response ->
+                val language = preferencesDataStoreDataSource.getContentLanguage().first()
+                databaseDataSource.deleteAndInsertAll(
+                    response.map { it.asTvShowDetailsEntity(language) }
+                )
+            }
+        )
+}
