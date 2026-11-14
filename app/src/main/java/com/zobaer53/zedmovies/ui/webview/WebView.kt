@@ -22,6 +22,8 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.webkit.WebSettingsCompat
 import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature
+import com.zobaer53.zedmovies.ui.playback.STREAM_BASE_URL
+import com.zobaer53.zedmovies.ui.playback.STREAM_DOCUMENT_START_SCRIPT
 import io.github.edsuns.adfilter.AdFilter
 
 // RestrictedApi: addDocumentStartJavaScript is still marked internal in androidx.webkit 1.4.0;
