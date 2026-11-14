@@ -608,10 +608,10 @@ Each package edits only its own row (in its first commit: "In progress").
 | --- | --- | --- | --- |
 | Plan | Done (2026-11-14): audit + spike (iOS compile/link/tests/app launch), fixes F1–F4 found | `feat/a-ios-migration` | Spike reverted; Home loaded on `NoFlix iPhone 17` |
 | I0 | Done (2026-11-14): iOS targets + static `Shared` framework, KSP, Darwin + bundled SQLite (iosMain only), F1–F4, Appendix A actuals, frozen seams, Swift stubs | `feat/a-ios-i0-foundation` (committed on the orchestrator's checkout) | iOS compile (sim + device) OK; `linkDebugFrameworkIosSimulatorArm64` OK (`Shared.h` has `IosPlaybackHost`, `IosPlayerRequest`, `startKoinIos(apiKey:)`, `MainViewController(host:)`); `iosSimulatorArm64Test` 45/45; `swiftc -typecheck` of `Playback/*.swift` OK; `:shared:jvmTest :app:testDebugUnitTest :app:assembleDebug` green; `kmp-guard.sh` OK; `shared/schemas` unchanged; APK `.so` list identical to a build without the I0 changes (12 files) |
-| I1 | Not started | `feat/a-ios-i1-actuals` | |
-| I2 | Not started | `feat/a-ios-i2-xcode` | |
-| I3 | Not started | `feat/a-ios-i3-playback` | |
-| I4 | Not started | `feat/a-ios-i4-ci-docs` | |
+| I1 | Implemented (2026-11-14), merged into `feat/a-ios-migration`; integration test pending | `feat/a-ios-i1` | `iosSimulatorArm64Test` 66/66, `:shared:jvmTest` 70/70, framework link OK, `kmp-guard.sh` OK, schemas unchanged. Status bar uses the deprecated `ComposeUIViewControllerDelegate` (`@Suppress`); icon flip not yet seen on the simulator |
+| I2 | Implemented (2026-11-14), merged into `feat/a-ios-migration`; integration test pending | `feat/a-ios-i2` | `xcodegen generate` deterministic (no diff after regenerate); `xcodebuild` simulator build OK; installs and launches, Home shows TMDB data; `kmp-guard.sh` OK. No `createIntermediateGroups` (random group ids); version 1.0.0 (1) |
+| I3 | Implemented (2026-11-14), merged into `feat/a-ios-migration`; integration test pending | `feat/a-ios-i3` | `iosSimulatorArm64Test` 60/60, `:shared:jvmTest` 75/75, `:app:testDebugUnitTest` 14/14 incl. `StreamPageScriptParityTest`, `:app:assembleDebug` OK, Swift typechecks, `BlockRules.json` (64 hosts) compiles with `WKContentRuleListStore`. Deviation: `org.json` escapes every `/`, so the shared quoting does too (byte parity) |
+| I4 | Implemented (2026-11-14), merged into `feat/a-ios-migration`; integration test pending | `feat/a-ios-i4` | `kmp-guard.sh` OK and catches the probe; `ios-checks.yml` parses (not run on a macOS runner yet); `maestro check-syntax` OK for 7 iOS flows; docs updated |
 | Test | Not started (Opus tester, after integration) | `feat/a-ios-migration` | S1–S12 |
 
 ## Appendix A: verified spike code for I0
