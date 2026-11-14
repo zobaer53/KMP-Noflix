@@ -5,6 +5,7 @@ package com.zobaer53.zedmovies.data.mapper
 import com.zobaer53.zedmovies.data.database.model.common.Genre
 import com.zobaer53.zedmovies.data.network.model.common.NetworkGenre
 import com.zobaer53.zedmovies.data.network.model.common.NetworkGenreWithId
+import kotlin.jvm.JvmName
 
 // Unknown genre ids are skipped, so a genre TMDB adds later doesn't crash the lists.
 internal fun List<NetworkGenre>.asGenres() = mapNotNull { it.id.asGenre() }

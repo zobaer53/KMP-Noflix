@@ -21,6 +21,13 @@ kotlin {
         androidResources { enable = true }
     }
     jvm()
+    // iOS (doc/kmp-ios-plan.md): Apple silicon only, no iosX64. Static framework for embedAndSignAppleFrameworkForXcode.
+    listOf(iosArm64(), iosSimulatorArm64()).forEach { target ->
+        target.binaries.framework {
+            baseName = "Shared"
+            isStatic = true
+        }
+    }
     jvmToolchain(17)
 
     sourceSets {
@@ -73,6 +80,10 @@ kotlin {
             implementation(libs.ktor.client.okhttp)
             implementation(libs.androidx.sqlite.bundled)
         }
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
+            implementation(libs.androidx.sqlite.bundled) // Room's driver on iOS (no system SQLite driver for KMP)
+        }
         commonTest.dependencies {
             implementation(kotlin("test"))
             implementation(libs.kotlinx.coroutines.test)
@@ -90,6 +101,8 @@ kotlin {
 dependencies {
     add("kspAndroid", libs.androidx.room.compiler)
     add("kspJvm", libs.androidx.room.compiler)
+    add("kspIosArm64", libs.androidx.room.compiler)
+    add("kspIosSimulatorArm64", libs.androidx.room.compiler)
 }
 
 compose.resources {

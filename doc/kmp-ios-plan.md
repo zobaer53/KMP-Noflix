@@ -607,7 +607,7 @@ Each package edits only its own row (in its first commit: "In progress").
 | ID | Status | Branch / merge | Gates |
 | --- | --- | --- | --- |
 | Plan | Done (2026-11-14): audit + spike (iOS compile/link/tests/app launch), fixes F1–F4 found | `feat/a-ios-migration` | Spike reverted; Home loaded on `NoFlix iPhone 17` |
-| I0 | Not started | `feat/a-ios-i0-foundation` | |
+| I0 | Done (2026-11-14): iOS targets + static `Shared` framework, KSP, Darwin + bundled SQLite (iosMain only), F1–F4, Appendix A actuals, frozen seams, Swift stubs | `feat/a-ios-i0-foundation` (committed on the orchestrator's checkout) | iOS compile (sim + device) OK; `linkDebugFrameworkIosSimulatorArm64` OK (`Shared.h` has `IosPlaybackHost`, `IosPlayerRequest`, `startKoinIos(apiKey:)`, `MainViewController(host:)`); `iosSimulatorArm64Test` 45/45; `swiftc -typecheck` of `Playback/*.swift` OK; `:shared:jvmTest :app:testDebugUnitTest :app:assembleDebug` green; `kmp-guard.sh` OK; `shared/schemas` unchanged; APK `.so` list identical to a build without the I0 changes (12 files) |
 | I1 | Not started | `feat/a-ios-i1-actuals` | |
 | I2 | Not started | `feat/a-ios-i2-xcode` | |
 | I3 | Not started | `feat/a-ios-i3-playback` | |

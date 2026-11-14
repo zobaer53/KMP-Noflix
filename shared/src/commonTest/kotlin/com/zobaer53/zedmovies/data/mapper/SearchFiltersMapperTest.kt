@@ -112,7 +112,7 @@ class SearchFiltersMapperTest {
     }
 
     @Test
-    fun `runtime, origin country and excluded genres apply to both types`() {
+    fun `runtime origin country and excluded genres apply to both types`() {
         val filters = SearchFiltersModel(
             runtimeMin = 90,
             runtimeMax = 150,
@@ -148,7 +148,7 @@ class SearchFiltersMapperTest {
     }
 
     @Test
-    fun `TV network, status and type apply to TV only`() {
+    fun `TV network status and type apply to TV only`() {
         val filters = SearchFiltersModel(
             tvNetworks = setOf(213, 49),
             tvStatuses = setOf(TvStatusModel.RETURNING, TvStatusModel.ENDED),
