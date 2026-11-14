@@ -1,0 +1,41 @@
+# "See all" opens the paged list; scrolling loads more pages; the on-screen back button returns home.
+# iOS copy of ../../flows/02_see_all.yaml: `back` (Android system back) becomes a tap on the back button.
+appId: com.zobaer53.zedmovies
+name: 02_see_all
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Upcoming Movies"
+    timeout: 30000
+- tapOn:
+    text: "See all"
+    index: 0
+- extendedWaitUntil:
+    visible: "Rating"
+    timeout: 20000
+- assertNotVisible: "Top Rated"
+- takeScreenshot: list
+# Pull to refresh (Material 3 PullToRefreshBox), then the list is shown again.
+- swipe:
+    start: "50%, 25%"
+    end: "50%, 75%"
+- extendedWaitUntil:
+    visible: "Rating"
+    timeout: 20000
+- swipe:
+    direction: UP
+- swipe:
+    direction: UP
+- swipe:
+    direction: UP
+- assertVisible: "Rating"
+# The back button's accessibility label is the `back` string. After scrolling it may be off screen
+# (the top bar scrolls away or not, depending on the screen): scroll up first.
+- scrollUntilVisible:
+    element: "back"
+    direction: UP
+    timeout: 20000
+- tapOn: "back"
+- extendedWaitUntil:
+    visible: "Top Rated"
+    timeout: 10000

@@ -5,11 +5,18 @@
 # depth (java.io.File, java.util.concurrent.ConcurrentHashMap). It can't see java.lang names, which
 # need no prefix (System, Thread): review those by hand.
 # androidx.room, androidx.paging, androidx.datastore and androidx.lifecycle are multiplatform: allowed.
+# Second rule (iOS, doc/kmp-ios-plan.md F4): Kotlin/Native rejects , . : ; / < > [ ] in backtick function
+# names ("Name contains illegal characters"). The JVM accepts them, so a test named `a, b` in commonMain or
+# commonTest passes every Linux job and only breaks the iOS test link on macOS. Catch it here.
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
 [ -d shared/src/commonMain ] || exit 0
 if grep -rnE '^import (android|androidx\.core|java|javax)\.|(^|[^.[:alnum:]_])(java|javax)\.([a-z0-9_]+\.)+[A-Z]' \
     shared/src/commonMain; then
   echo "kmp-guard: Android/JVM APIs in shared/src/commonMain (see the KMP guard in CLAUDE.md)" >&2
+  exit 1
+fi
+if grep -rnE 'fun[[:space:]]+(<[^>]*>[[:space:]]+)?`[^`]*[][,.:;/<>][^`]*`' shared/src/common*; then
+  echo "kmp-guard: backtick function names in shared/src/common* contain , . : ; / < > [ ] (Kotlin/Native rejects them; see the KMP guard in CLAUDE.md)" >&2
   exit 1
 fi

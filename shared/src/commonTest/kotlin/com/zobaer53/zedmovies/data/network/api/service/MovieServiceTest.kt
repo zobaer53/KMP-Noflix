@@ -30,7 +30,7 @@ class MovieServiceTest {
     )
 
     @Test
-    fun `discover sends the filters, language, page and api key`() = runTest {
+    fun `discover sends the filters language page and api key`() = runTest {
         val filters = mapOf("sort_by" to "popularity.desc", "with_genres" to "28|12", "vote_average.gte" to "7.5")
         val result = service.discover(filters, language = "de", page = 2)
         assertTrue(result is ZedMoviesResult.Success)

@@ -374,17 +374,13 @@ Build this in `commonMain` once, test it on Android tablets and in a desktop win
 
 ### Phase 9: iOS (later)
 
-**Decision gate first:** decide how iOS is distributed. App Review will very likely reject in-app playback from a third-party site. The options are a browse-only App Store app, or full playback distributed outside the App Store (sideloading, AltStore, EU alternative marketplaces).
+**Detailed plan: [kmp-ios-plan.md](kmp-ios-plan.md)** (audit, spike results, work packages I0–I4, seams, test plan).
 
-1. **Shell.** Add `iosArm64()`/`iosSimulatorArm64()` with a static `Shared` framework, plus `kspIos*` for Room. Create `iosApp/` (SwiftUI `@main`) linked through the `embedAndSignAppleFrameworkForXcode` build phase, and commit the shared scheme. Add `MainViewController() = ComposeUIViewController { zedMoviesApp(mediaLauncher = IosMediaLauncher) }`, with `startKoin` called from Swift. API key: `Secrets.xcconfig` (gitignored) → `Info.plist`. Minimum iOS 16. Lock the main UI to portrait (iPhone). Add `AppIcon` to `generate.py`. Check the bottom bar against the safe area.
-2. **Trailers v1:** open the YouTube app or Safari. **v2:** the IFrame API in `WKWebView` via `loadHTMLString(html, baseURL: https://<bundle-id>)`, which avoids error 153.
-3. **Playback (optional, high risk):**
-   - A `WKWebView` controller with `allowsInlineMediaPlayback`, injecting `StreamPageStyle` as `WKUserScript`.
-   - **Pop-up/navigation blocking first:** `createWebViewWith` returns `nil`, and cross-origin top-level navigations are cancelled. That catches most visible ads with little code.
-   - Then cosmetic scripts, then `WKContentRuleList` network rules. Convert the AdGuard lists in CI (for example with AdGuard's SafariConverterLib at build time; check its license against Apache-2.0) and download the JSON at runtime. Each list is capped at about 150k rules.
-   - Landscape on `/watch/` via `requestGeometryUpdate` (iOS 16+).
-4. **CI:** a macOS job runs `:shared:iosSimulatorArm64Test` + `xcodebuild … -sdk iphonesimulator build`. Release artifacts depend on the distribution decision.
-5. **Maestro on iOS:** flows 01–04 and 07 can run against the simulator. CMP maps `testTag` to the accessibility identifier.
+**Decided (2026-11-14): sideload/personal build with full in-app playback**, not a browse-only App Store app. App Review guideline 5.2 (intellectual property, third-party streaming) would reject in-app playback, and a browse-only app drops the main feature. Simulator builds first. Device signing is a later, optional step (no Apple developer team yet).
+
+In short: `iosArm64` + `iosSimulatorArm64` (no `iosX64`), a static `Shared` framework through `embedAndSignAppleFrameworkForXcode`, `iosApp/` from XcodeGen (generated project committed), minimum iOS 16, iPhone, portrait. The player is a Swift `WKWebView` that injects the shared `StreamPageStyle` scripts (moved to `commonMain`), blocks pop-ups and off-site navigations, uses a small bundled `WKContentRuleList` and goes landscape on `/watch/`. Trailers open the YouTube app or Safari. The API key goes `Secrets.xcconfig` → `Info.plist` → `startKoinIos(apiKey)`. The spike compiled, linked and ran `:shared` on the iPhone 17 simulator with no library bumps, and found four common-code fixes (F1–F4 in the iOS plan). Full AdGuard conversion for WebKit and in-app trailers are v2.
+
+**Progress (2026-11-14):** I0 (foundation) done. I4 (`ios-checks.yml`, the `kmp-guard.sh` rule for Native-illegal test names, `.maestro/ios` flows, docs) written, with I1 to I3 (actuals and tests, Xcode project, playback) in parallel on branches off `feat/a-ios-migration`; integration and the simulator test pass come next. Per-package status is in the Progress table of [kmp-ios-plan.md](kmp-ios-plan.md).
 
 ## CI overview (end state)
 
@@ -394,7 +390,7 @@ Build this in `commonMain` once, test it on Android tablets and in a desktop win
 | Shared tests | every push / PR | `:shared:jvmTest` (+ `wasmJsBrowserTest`, `iosSimulatorArm64Test` once added), Koin `verify()`, `commonMain` import guard | — |
 | Desktop | push to `master` | matrix `packageDistributionForCurrentOS` | `.dmg`, `.msi`, `.deb` on the same release |
 | Web | push to `master` | `wasmJsBrowserDistribution` | deploy to the chosen host |
-| iOS (later) | every push | simulator build + tests | depends on the distribution decision |
+| iOS | PRs into `dev`/`main` and pushes to `dev` that touch iOS files (`ios-checks.yml`, macOS, not a required check) | `:shared:iosSimulatorArm64Test`, XcodeGen drift check, simulator build | — (sideload build, simulator only) |
 
 All jobs share the version computed by the existing release workflow (passed as `-PappVersionName`). Update the `paths-ignore` rules so desktop- and web-only changes still trigger their jobs.
 
@@ -450,6 +446,6 @@ Phases 0–2 are worth doing even if no other platform ships: less code, no refl
 2. **DI:** Koin (recommended, used by the official guide) or Metro (compile-time checks)? **Decided: Koin (A2).**
 3. **Desktop playback:** system browser only (7a, recommended to start), or invest in the embedded Chromium player with ad-blocking (7b) after the codec spike?
 4. **Web hosting:** a separate host with a key-adding proxy (recommended) or a sub-path of the existing GitHub Pages site?
-5. **iOS distribution:** a browse-only App Store app, or full playback outside the App Store?
+5. **iOS distribution:** a browse-only App Store app, or full playback outside the App Store? **Decided: full playback as a sideload/personal build (App Store guideline 5.2); see [kmp-ios-plan.md](kmp-ios-plan.md).**
 6. **Scraping fallback:** delete Jsoup + Lottie (recommended) or keep it Android-only? **Decided: deleted in B2.**
 7. **`values-night/strings.xml`:** delete it, or keep it as `values-dark`? **Decided: moved to `values-dark` in B5** (deleting it can come later).

@@ -2,6 +2,9 @@
 
 package com.zobaer53.zedmovies.data.database.model.common
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 enum class Genre(val genreName: String) {
     ACTION(ACTION_NAME),
     ADVENTURE(ADVENTURE_NAME),

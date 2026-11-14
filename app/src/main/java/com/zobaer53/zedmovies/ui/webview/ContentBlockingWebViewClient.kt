@@ -7,6 +7,7 @@ import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.zobaer53.zedmovies.BuildConfig
+import com.zobaer53.zedmovies.ui.playback.STREAM_PAGE_SCRIPT
 import io.github.edsuns.adfilter.AdFilter
 
 class MyWebClient(private val onUrlChange: (String) -> Unit = {}) : WebViewClient() {

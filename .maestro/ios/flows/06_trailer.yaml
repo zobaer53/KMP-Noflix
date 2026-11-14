@@ -1,0 +1,35 @@
+# Trailer opens the YouTube app, else Safari (the simulator has no YouTube app) on youtube.com/watch?v=<key>.
+# iOS-specific and best effort: assertions on another app's UI depend on Maestro's iOS driver seeing Safari,
+# so the Safari checks are optional. The details screen must still be there when NoFlix is brought back.
+appId: com.zobaer53.zedmovies
+name: 06_trailer
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Top Rated"
+    timeout: 30000
+- tapOn:
+    text: "Rating"
+    below: "Movies"
+    index: 0
+    retryTapIfNoChange: false
+- extendedWaitUntil:
+    visible: "Trailer"
+    timeout: 20000
+- tapOn: "Trailer"
+# Safari (or the YouTube app) came to the front: NoFlix's details are no longer on screen.
+- extendedWaitUntil:
+    notVisible: "Overview"
+    timeout: 15000
+- waitForAnimationToEnd:
+    timeout: 5000
+- assertVisible:
+    text: ".*[yY]ou[tT]ube.*"
+    optional: true
+- takeScreenshot: trailer_safari
+# Back to NoFlix without restarting it, so the details screen is still shown.
+- launchApp:
+    stopApp: false
+- extendedWaitUntil:
+    visible: "Overview"
+    timeout: 15000

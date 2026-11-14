@@ -21,7 +21,7 @@ class FilterOptionsMapperTest {
     )
 
     @Test
-    fun `certifications of the region, mildest first`() {
+    fun `certifications of the region mildest first`() {
         val model = certifications.asCertificationsModel(region = "US", fallbackRegion = "US")
         assertEquals("US", model.country)
         assertEquals(listOf("G", "PG-13", "R"), model.certifications.map { it.code })

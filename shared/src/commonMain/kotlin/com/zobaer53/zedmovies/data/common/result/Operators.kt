@@ -7,7 +7,7 @@ import kotlin.contracts.contract
 @OptIn(ExperimentalContracts::class)
 fun <T> ZedMoviesResult<T>.isLoading(): Boolean {
     contract {
-        returns() implies (this@isLoading is ZedMoviesResult.Loading<T>)
+        returns(true) implies (this@isLoading is ZedMoviesResult.Loading<T>)
     }
     return this is ZedMoviesResult.Loading<T>
 }
@@ -15,7 +15,7 @@ fun <T> ZedMoviesResult<T>.isLoading(): Boolean {
 @OptIn(ExperimentalContracts::class)
 fun <T> ZedMoviesResult<T>.isSuccess(): Boolean {
     contract {
-        returns() implies (this@isSuccess is ZedMoviesResult.Success<T>)
+        returns(true) implies (this@isSuccess is ZedMoviesResult.Success<T>)
     }
     return this is ZedMoviesResult.Success<T>
 }
@@ -23,7 +23,7 @@ fun <T> ZedMoviesResult<T>.isSuccess(): Boolean {
 @OptIn(ExperimentalContracts::class)
 fun <T> ZedMoviesResult<T>.isFailure(): Boolean {
     contract {
-        returns() implies (this@isFailure is ZedMoviesResult.Failure<T>)
+        returns(true) implies (this@isFailure is ZedMoviesResult.Failure<T>)
     }
     return this is ZedMoviesResult.Failure<T>
 }

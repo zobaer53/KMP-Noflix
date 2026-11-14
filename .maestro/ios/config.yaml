@@ -1,0 +1,15 @@
+# iOS Maestro workspace (doc/kmp-ios-plan.md, I4): `maestro --device <UDID> test .maestro/ios` runs every flow in
+# flows/ in order, stopping at the first failure. Use run.sh. The Android flows in ../flows use `back` and
+# Android-only checks, so the iOS suite has its own copies (01-05, 07 adapted, 06 iOS-specific).
+flows:
+  - flows/*
+executionOrder:
+  continueOnFailure: false
+  flowsOrder:
+    - 01_home
+    - 02_see_all
+    - 03_search
+    - 04_details_wishlist
+    - 05_play
+    - 06_trailer
+    - 07_filters

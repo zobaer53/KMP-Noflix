@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-NoFlix (Gradle root project `zeDMovies`, package `com.zobaer53.zedmovies`) is an Android app that browses movies/TV shows from The Movie DB and plays them ad-free in a WebView pointed at a third-party streaming site. The Android app module (`:app`: activities, WebView playback, trailer player, Android DI) sits on top of a Kotlin Multiplatform module (`:shared`: domain, data, DI, ViewModels, navigation and the Compose Multiplatform UI). Two vendored ad-blocking library modules complete the project (`:ad-filter`, `:adblock-client`, originally Edsuns/AdblockAndroid).
+NoFlix (Gradle root project `zeDMovies`, package `com.zobaer53.zedmovies`) is an Android app that browses movies/TV shows from The Movie DB and plays them ad-free in a WebView pointed at a third-party streaming site. The Android app module (`:app`: activities, WebView playback, trailer player, Android DI) sits on top of a Kotlin Multiplatform module (`:shared`: domain, data, DI, ViewModels, navigation and the Compose Multiplatform UI). `iosApp/` is a SwiftUI shell that hosts the same `:shared` UI on iOS (simulator build, sideload; `doc/kmp-ios-plan.md`). Two vendored ad-blocking library modules complete the project (`:ad-filter`, `:adblock-client`, originally Edsuns/AdblockAndroid).
 
 ## Build & run
 
@@ -14,7 +14,7 @@ NoFlix (Gradle root project `zeDMovies`, package `com.zobaer53.zedmovies`) is an
 ./gradlew :app:assembleRelease      # signed release APK (needs signing keys in local.properties)
 ./gradlew :app:testDebugUnitTest    # JVM unit tests (also renders the screenshot tests, without comparing)
 ./gradlew :shared:jvmTest           # :shared's tests on its JVM target (commonTest + jvmTest: data layer, Room DAOs + migration on the bundled SQLite, Koin/ViewModel graphs, screen smoke test)
-scripts/kmp-guard.sh                # no Android/JVM APIs in shared/src/commonMain (CI runs it too)
+scripts/kmp-guard.sh                # no Android/JVM APIs in shared/src/commonMain, no Native-illegal backtick test names in shared/src/common* (CI runs it too)
 ./gradlew :app:verifyRoborazziDebug   # screenshot tests: compare the screens with app/src/test/screenshots/
 ./gradlew :app:recordRoborazziDebug   # re-record those reference images after an intended UI change
 ./gradlew :ad-filter:connectedDebugAndroidTest :adblock-client:connectedDebugAndroidTest   # the ad-block modules' instrumented tests (device required; :app has none)
@@ -34,9 +34,29 @@ Requirements:
 - `local.properties` must contain `API_KEY=<TMDB key>`; `app/build.gradle` reads it into `BuildConfig.API_KEY` and fails to configure without the file. Optional `RELEASE_STORE_FILE`, `RELEASE_STORE_PASSWORD`, `RELEASE_KEY_ALIAS`, `RELEASE_KEY_PASSWORD` enable release signing; without them the release build is unsigned.
 - Repositories are only `google()`, `mavenCentral()` and `gradlePluginPortal()`. JCenter, the Aliyun mirror and JitPack are gone (Anko, Mezzanine and Edsuns HttpRequest were removed).
 
+### iOS (simulator only)
+
+`:shared` also targets `iosArm64` and `iosSimulatorArm64` (no `iosX64`) and builds a static `Shared.framework`; `iosApp/` is the SwiftUI app around it (XcodeGen spec `iosApp/project.yml`, generated `iosApp/iosApp.xcodeproj` committed, scheme `iosApp`, bundle id `com.zobaer53.zedmovies` as on Android, display name NoFlix, iOS 16+, iPhone, portrait). It needs a Mac with Xcode 26. There is no signing setup, so it only runs on the simulator. Plan, decisions and spike results: `doc/kmp-ios-plan.md`.
+
+```bash
+./gradlew :shared:iosSimulatorArm64Test      # :shared's common + iOS tests on the simulator (CI: ios-checks.yml)
+./gradlew :shared:linkDebugFrameworkIosSimulatorArm64   # Shared.framework only
+scripts/ios-secrets.sh                       # TMDB key (local.properties API_KEY, or $TMDB_API_KEY) -> gitignored iosApp/Secrets.xcconfig
+(cd iosApp && xcodegen generate)             # after editing iosApp/project.yml; commit the regenerated project
+xcodebuild -project iosApp/iosApp.xcodeproj -scheme iosApp -sdk iphonesimulator \
+  -destination 'platform=iOS Simulator,name=NoFlix iPhone 17' -derivedDataPath iosApp/build build
+.maestro/ios/run.sh [--no-build] [flow.yaml ...]   # iOS Maestro suite on the simulator (below)
+```
+
+- **Simulator:** `NoFlix iPhone 17` (iPhone 17, iOS 26.5, UDID `2E6CF691-424D-4045-B5AF-DEB4C78D2C9F`) was created for this project; use it by name or UDID, never another project's simulator. `xcrun simctl boot/install/launch` as usual; the app is `iosApp/build/Build/Products/Debug-iphonesimulator/NoFlix.app`.
+- **API key:** `local.properties` `API_KEY` → `scripts/ios-secrets.sh` → `iosApp/Secrets.xcconfig` (`TMDB_API_KEY = …`, gitignored) → `#include?` in the committed `iosApp/Config.xcconfig` → `Info.plist` `TMDBApiKey` → `startKoinIos(apiKey:)`. Without the file the app builds with an empty key and TMDB's 401 shows as an error state. The Xcode "Compile Kotlin framework" build phase runs `./gradlew :shared:embedAndSignAppleFrameworkForXcode`, so `xcodebuild` rebuilds the framework itself.
+- **XcodeGen:** `project.yml` is the source of truth; `ios-checks.yml` fails if regenerating changes `iosApp/`. `sources: [iosApp]` is the whole folder, so new Swift files need no `project.yml` edit.
+- **Maestro on iOS:** `.maestro/ios/flows/` (01-05 and 07 are the Android flows with the system `back` replaced by a tap on the on-screen back button and no 16 KB check; 05 plays and closes through `player_close`, 06 checks that Safari or the YouTube app opened) and `.maestro/ios/config.yaml`. `run.sh` clean-installs on the simulator (`IOS_SIMULATOR_UDID` overrides it), streams the app log to `build/maestro-ios/app.log` (the player logs `NoFlixPlayer: …` lines for blocked pop-ups and cancelled navigations), and fails on an `Uncaught Kotlin exception` or a new `NoFlix-*.ips` crash report. If `NOFLIX_BUILD_LOCK` names a lock wrapper script, the whole run goes under it. Maestro drives iOS through its XCTest driver; the Android `.maestro/run.sh` checks (logcat, 16 KB, process death) have no iOS equivalent.
+- Never put the real TMDB key in a committed file (`Secrets.xcconfig` is gitignored).
+
 ## Releases / CI
 
-**This repository (`zobaer53/KMP-Noflix`, the KMP migration) has no release workflow yet.** Its only workflow is `.github/workflows/pr-checks.yml` (unit tests + debug build + the KMP guard on every PR into `dev`/`main` and every push to `dev`; needs the `TMDB_API_KEY` repository secret). Pushing to `main` does **not** publish anything here. The paragraph below describes the original NoFlix repository's release pipeline, which comes back once this migration ships.
+**This repository (`zobaer53/KMP-Noflix`, the KMP migration) has no release workflow yet.** Its only workflow is `.github/workflows/pr-checks.yml` (unit tests + debug build + the KMP guard on every PR into `dev`/`main` and every push to `dev`; needs the `TMDB_API_KEY` repository secret). Pushing to `main` does **not** publish anything here. `.github/workflows/ios-checks.yml` is a second, non-required workflow: on a `macos-26` runner (Xcode 26) it runs `:shared:iosSimulatorArm64Test`, checks that `xcodegen generate` leaves `iosApp/` unchanged and builds `iosApp` for the generic iOS Simulator (`ARCHS=arm64`). It runs on PRs into `dev`/`main`, pushes to `dev` and `workflow_dispatch`, only when `shared/**`, `iosApp/**`, the Gradle files, `scripts/ios-secrets.sh` or the workflow itself change, and writes `local.properties` and `Secrets.xcconfig` from the same `TMDB_API_KEY` secret (an empty key still builds). The required `build` check stays `pr-checks.yml` (Linux; `kotlin.native.ignoreDisabledTargets=true` in `gradle.properties` keeps the iOS targets from breaking it). The paragraph below describes the original NoFlix repository's release pipeline, which comes back once this migration ships.
 
 `.github/workflows/release.yml` (original repo) runs on every push to `master` (except pushes that only touch `docs/`, `tools/` or Markdown): it computes the next version (latest `X.Y.Z` git tag with patch +1, or `versionName` from `app/build.gradle` if that is higher), passes `-PappVersionCode`/`-PappVersionName` to Gradle (versionCode = `X*10000 + Y*100 + Z`), verifies the APK is signed with the release cert (`CN=zeD, O=NoFlix`) and that it's 16 KB page-size aligned (`zipalign -P 16` + `llvm-objdump` on every 64-bit `.so`), and publishes a GitHub release with `NoFlix.apk`. To start a new minor/major line, bump `versionName` in `app/build.gradle`. Pushing to `master` therefore ships a public release.
 
@@ -89,6 +109,8 @@ scripts/stream.sh status                                                # worktr
 
 Follows Google's recommended layered architecture (data → domain → ui) with Koin DI. Domain, data and the data DI modules live in the Kotlin Multiplatform module **`:shared`** (`shared/src/commonMain`, targets Android and a JVM target that is only used for host tests), under the same package names as before. Phase 4 (B5) also moved the UI models (`data/model`, which carry Compose `StringResource`s), the design system and `ui/smallcomponent` there, with the strings, icons and fonts in `shared/src/commonMain/composeResources` (`Res` in `com.zobaer53.zedmovies.resources`, internal to `:shared`). B6 moved the screens, ViewModels, navigation, the app shell (`zedMoviesApp`, `ZedMoviesAppState`) and `di/ViewModelModule.kt` too; their Android-only bits are `expect`/`actual` under `ui/` (`SystemBarsAppearance`, `ui/util/PlatformFormat.kt`, `ui/util/PlatformUi.kt`: `testTagsAsResourceId`, the system Cancel label; `ui/smallcomponent/mapper/ReleaseDateMapper.kt`: localized date format). `:app` keeps only the activities (`zedMoviesActivity`, `ui/webview`, `ui/trailer`), `zedMoviesApplication`, `playback/AndroidMediaLauncher.kt` and `di/AndroidAppModule.kt` (API key).
 
+The iOS port (`doc/kmp-ios-plan.md`) adds `shared/src/iosMain` (the iOS `actual`s: Darwin Ktor engine, Room on the bundled SQLite in `Documents/`, DataStore, `NSDateFormatter`/`NSNumberFormatter` formatting, status bar style, plus `ios/`: `IosKoin.kt` `startKoinIos(apiKey)`, `MainViewController.kt`, `IosMediaLauncher.kt`, `IosPlaybackHost.kt`) and `shared/src/iosTest`, and `iosApp/` (SwiftUI shell, below). `:app` is untouched by it apart from importing the playback constants that moved to `commonMain`; the APK gets no new native library (`sqlite-bundled` is `iosMain` only).
+
 - **data/** (`:shared`) — Ktor (OkHttp engine, kotlinx-serialization) TMDB services in `data/network`, Room KMP DB in `data/database` (schemas in `shared/schemas/`), Preferences DataStore in `data/datastore`. Repositories (`data/repository/*Impl`) combine them:
   - Lists use Paging 3 `RemoteMediator`s (`data/paging`) that cache TMDB pages into Room with remote-key tables; search and filtered discover (Search tab filters, `doc/search-filters-plan.md`) use `TmdbPagingSource` (network only).
   - Details use `networkBoundResource` (`data/network/common/NetworkBoundResource.kt`): emit cached Room data, fetch, save, re-emit from Room.
@@ -106,11 +128,19 @@ Naming quirk: many classes/functions use a lowercase `zedMovies` prefix (`zedMov
 Playback is separate from the Compose nav graph:
 
 1. The "Play" button (`ui/smallcomponent/Rating.kt`, in `:shared`) calls `LocalMediaLauncher` (`ui/playback/MediaLauncher.kt`, commonMain); the app's `playback/AndroidMediaLauncher` starts `ui/webview/WebViewActivity` with extras `movieName`, `movieYear`, `type`, `tmdbId`.
-2. `buildStreamUrl()` (`ui/webview/StreamUrl.kt`) builds `STREAM_BASE_URL/watch/<id>` (movies) or `/tv/<id>` (TV) from the `tmdbId`. The site is a client-rendered SPA keyed by TMDB id. Without a `tmdbId` the activity closes at once (the old Jsoup scraping fallback was removed).
+2. `buildStreamUrl()` (`ui/playback/StreamPage.kt` in `:shared`, shared with iOS) builds `STREAM_BASE_URL/watch/<id>` (movies) or `/tv/<id>` (TV) from the `tmdbId`. The site is a client-rendered SPA keyed by TMDB id. Without a `tmdbId` the activity closes at once (the old Jsoup scraping fallback was removed).
 3. `VideoWebView` (`ui/webview/WebView.kt`) hosts an Android `WebView` in Compose: installs AdGuard filter subscriptions on first run, wires `AdFilter` into `MyWebClient` (`ContentBlockingWebViewClient.kt`) for request blocking and cosmetic scripts, handles HTML5 full-screen via `onShowCustomView`, and locks orientation: landscape on `/watch/` pages and full-screen video, portrait everywhere else.
-4. `StreamPageStyle.kt` injects CSS/JS into the site: a document-start script (sets the site's welcome-popup flag before its scripts run) and an idempotent page script that hides site chrome and stretches the player iframe on `/watch/` pages. Because the site is an SPA, it hooks `history.pushState`/`replaceState` and uses a `MutationObserver`. Selectors depend on the live site's DOM and break when it changes.
+4. The scripts in `ui/playback/StreamPage.kt` (`STREAM_DOCUMENT_START_SCRIPT`, `STREAM_PAGE_CSS`, `STREAM_PAGE_SCRIPT`; `:app`'s `ui/webview/StreamPageStyle.kt` keeps only the `android.net.Uri` helpers `isStreamSiteUrl`/`isStreamWatchUrl`, and `StreamPageScriptParityTest` pins the moved script byte for byte) inject CSS/JS into the site: a document-start script (sets the site's welcome-popup flag before its scripts run) and an idempotent page script that hides site chrome and stretches the player iframe on `/watch/` pages. Because the site is an SPA, it hooks `history.pushState`/`replaceState` and uses a `MutationObserver`. Selectors depend on the live site's DOM and break when it changes.
 
 `WebViewActivity` declares `configChanges` for orientation/screen size in the manifest so rotation doesn't recreate it and reload the page.
+
+### iOS app shell and playback seam
+
+`iosApp/` (SwiftUI, UIKit for the player): `NoFlixApp.swift` (`@main`, reads `TMDBApiKey` from `Info.plist`, calls `IosKoinKt.startKoinIos(apiKey:)`), `AppDelegate.swift` (returns `OrientationLock.mask` from `supportedInterfaceOrientationsFor`, portrait except the player), `ComposeRootView.swift` (hosts `MainViewControllerKt.MainViewController(host:)` full-screen, with one `PlayerPresenter`) and `Playback/`. The frozen Kotlin → Swift seam is `IosPlaybackHost` (`presentPlayer(request: IosPlayerRequest)`; `IosPlayerRequest` = URL, title and the two scripts) in `shared/src/iosMain/…/ios/IosPlaybackHost.kt`:
+
+1. The Play button reaches `LocalMediaLauncher` as on Android; `IosMediaLauncher` builds the request with `buildStreamUrl` and the shared scripts and calls `host.presentPlayer`. Trailers: `UIApplication.openURL(youtubeWatchUrl(key))`, universal links first (YouTube app), else Safari.
+2. `PlayerPresenter` presents `PlayerViewController` full-screen: a `WKWebView` with the two scripts as `WKUserScript`s (main frame only; the page script is re-run in `didFinish`), a small bundled `WKContentRuleList` (`BlockRules.json`: third-party ad/pop-under hosts only; `-NoFlixDisableBlockRules YES` turns it off), `createWebViewWith` returning `nil` (no pop-ups), `isStreamNavigationAllowed` (`commonMain`) as the navigation policy, landscape on `/watch/` pages through `OrientationLock`, a `player_close` button, and `NoFlixPlayer:` log lines. The decisions (which URL is allowed, which page is a watch page) live in Kotlin common and are unit-tested there; the full AdGuard filter conversion is not part of v1.
+3. Swift sees the framework as `Shared` (static, via `embedAndSignAppleFrameworkForXcode`). Don't name Kotlin entry points `init…` (Objective-C export renames them). Kotlin/Native rejects `, . : ; / < > [ ]` in backtick function names (test names), which `scripts/kmp-guard.sh` checks for `shared/src/common*`.
 
 ### Trailers
 
