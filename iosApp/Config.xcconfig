@@ -1,0 +1,4 @@
+// TMDB key: empty by default. scripts/ios-secrets.sh writes the real one to the gitignored Secrets.xcconfig,
+// and the optional include below overrides this value (a fresh checkout still builds; TMDB then answers 401).
+TMDB_API_KEY =
+#include? "Secrets.xcconfig"

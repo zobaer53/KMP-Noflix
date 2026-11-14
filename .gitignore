@@ -109,3 +109,9 @@ lint/tmp/
 .stream.env
 .kotlin/
 .claude/settings.local.json
+
+# iOS
+iosApp/Secrets.xcconfig
+xcuserdata/
+*.xcuserstate
+iosApp/build/
