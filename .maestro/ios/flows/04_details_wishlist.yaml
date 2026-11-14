@@ -1,0 +1,44 @@
+# Details screen loads; adding to the wish list shows it on the Wish list tab; removing empties it again.
+# iOS copy of ../../flows/04_details_wishlist.yaml: `back` becomes a tap on the on-screen back button.
+appId: com.zobaer53.zedmovies
+name: 04_details_wishlist
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: "Top Rated"
+    timeout: 30000
+- tapOn:
+    text: "Rating"
+    below: "Movies"
+    index: 0
+    retryTapIfNoChange: false
+- extendedWaitUntil:
+    visible: "Overview"
+    timeout: 20000
+- assertVisible: "Cast"
+- assertVisible: "Play"
+- takeScreenshot: details
+# The heart in the top bar (the bottom bar isn't shown on details).
+- tapOn: "Wish list"
+- tapOn: "back"
+- extendedWaitUntil:
+    visible: "Upcoming Movies"
+    timeout: 10000
+- tapOn:
+    text: "Wish list"
+    index: 0
+- assertNotVisible: "Wish list is empty"
+- takeScreenshot: wishlist
+# Open the saved item and remove it again.
+- tapOn:
+    text: "Rating"
+    index: 0
+- extendedWaitUntil:
+    visible: "Overview"
+    timeout: 20000
+- tapOn: "Wish list"
+- tapOn: "back"
+- extendedWaitUntil:
+    visible: "Wish list is empty"
+    timeout: 10000

@@ -1,0 +1,42 @@
+# Play opens the full-screen web player (WKWebView, landscape on /watch/); the player's close button
+# (accessibility id player_close) returns to details in portrait.
+# iOS-specific: there is no Android system back and no "Viewing full screen" hint. The player's pop-up and
+# navigation blocking is checked by the tester through the `NoFlixPlayer:` log lines (see run.sh).
+appId: com.zobaer53.zedmovies
+name: 05_play
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Top Rated"
+    timeout: 30000
+- tapOn:
+    text: "Rating"
+    below: "Movies"
+    index: 0
+    retryTapIfNoChange: false
+- extendedWaitUntil:
+    visible: "Overview"
+    timeout: 20000
+# Only the play icon is clickable (its accessibility label is "Rating").
+- assertVisible: "Play"
+- tapOn:
+    text: "Rating"
+    above: "Overview"
+- extendedWaitUntil:
+    visible:
+      id: "player_close"
+    timeout: 20000
+- assertNotVisible: "Overview"
+# Give the page time to load, rotate to landscape and run the page script.
+- waitForAnimationToEnd:
+    timeout: 15000
+- takeScreenshot: play_webview
+# The close button always dismisses the player.
+- tapOn:
+    id: "player_close"
+- extendedWaitUntil:
+    visible: "Overview"
+    timeout: 15000
+- assertNotVisible:
+    id: "player_close"
+- takeScreenshot: play_closed
