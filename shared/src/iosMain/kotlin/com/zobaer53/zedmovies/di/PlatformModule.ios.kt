@@ -20,8 +20,11 @@ import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
 
+// The app's Documents directory (created if missing): the same files as on Android, backed up with the device so
+// the wish list survives a restore, and invisible in the Files app (no UIFileSharingEnabled in Info.plist).
+// Internal so the iOS tests can find and delete their files.
 @OptIn(ExperimentalForeignApi::class)
-private fun documentsDirectory(): String {
+internal fun documentsDirectory(): String {
     val url = NSFileManager.defaultManager.URLForDirectory(
         directory = NSDocumentDirectory,
         inDomain = NSUserDomainMask,
@@ -32,6 +35,8 @@ private fun documentsDirectory(): String {
     return requireNotNull(url?.path)
 }
 
+internal const val PREFERENCES_FILE_NAME = "preferences.preferences_pb"
+
 actual val platformModule: Module = module {
     single {
         Room.databaseBuilder<zedMoviesDatabase>(name = documentsDirectory() + "/" + zedMoviesDatabase.zedMovies_DATABASE)
@@ -40,7 +45,7 @@ actual val platformModule: Module = module {
             .build()
     }
     single<DataStore<Preferences>> {
-        PreferenceDataStoreFactory.createWithPath(produceFile = { (documentsDirectory() + "/preferences.preferences_pb").toPath() })
+        PreferenceDataStoreFactory.createWithPath(produceFile = { (documentsDirectory() + "/" + PREFERENCES_FILE_NAME).toPath() })
     }
     single<DeviceLocaleProvider> { IosDeviceLocaleProvider() }
     single<RegionProvider> { IosRegionProvider() }
