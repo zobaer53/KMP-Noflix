@@ -22,3 +22,9 @@ render.masked(512, 0.5).save(f"{ROOT}/app/src/main/zed_movies_round-playstore.pn
 # README logo and the repository's social preview (GitHub settings). The website lives in another project.
 render.masked(256, 0.22).save(f"{IMAGES}/noflix-ad-free-movies-app-icon.png", optimize=True)
 social.social_preview().save(f"{IMAGES}/social-preview.png", optimize=True)
+
+# iOS app icon (opaque and square: iOS applies its own mask) and launch logo (doc/kmp-ios-plan.md).
+IOS_ASSETS = f"{ROOT}/iosApp/iosApp/Assets.xcassets"
+render.full(1024).convert("RGB").save(f"{IOS_ASSETS}/AppIcon.appiconset/AppIcon-1024.png", optimize=True)
+for scale in (1, 2, 3):
+    render.masked(240 * scale, 0.22).save(f"{IOS_ASSETS}/LaunchLogo.imageset/LaunchLogo@{scale}x.png", optimize=True)
