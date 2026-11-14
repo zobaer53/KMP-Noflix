@@ -131,6 +131,10 @@ The JVM target exists only to run tests on the host and to keep Android APIs out
 4. Run `./gradlew :app:installDebug` or press Run in Android Studio.
 5. For a release build, run `./gradlew :app:assembleRelease`. R8 minifies it. To sign it, add `RELEASE_STORE_FILE`, `RELEASE_STORE_PASSWORD`, `RELEASE_KEY_ALIAS` and `RELEASE_KEY_PASSWORD` to `local.properties`; without them the APK is unsigned.
 
+### iOS (simulator only)
+
+`:shared` also builds for iOS (`iosArm64`, `iosSimulatorArm64`), and `iosApp/` is a SwiftUI shell around the same Compose UI, with a `WKWebView` player and trailers that open in the YouTube app or Safari. It is a sideload/personal build, not an App Store app, and there is no signing setup yet, so it runs on the iOS Simulator only. Ad blocking is lighter than on Android: pop-ups and off-site navigations are blocked and a small WebKit content-rule list drops third-party ad hosts. You need a Mac with Xcode 26. Put the TMDB key in `local.properties` as above, run `scripts/ios-secrets.sh`, then `xcodebuild -project iosApp/iosApp.xcodeproj -scheme iosApp -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 17' build` (or open `iosApp/iosApp.xcodeproj` in Xcode). `./gradlew :shared:iosSimulatorArm64Test` runs the shared tests on the simulator, and `.maestro/ios/run.sh` runs the UI flows. [`doc/kmp-ios-plan.md`](doc/kmp-ios-plan.md) has the details.
+
 ### Tests
 
 ```bash

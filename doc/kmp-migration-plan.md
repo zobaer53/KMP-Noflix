@@ -380,6 +380,8 @@ Build this in `commonMain` once, test it on Android tablets and in a desktop win
 
 In short: `iosArm64` + `iosSimulatorArm64` (no `iosX64`), a static `Shared` framework through `embedAndSignAppleFrameworkForXcode`, `iosApp/` from XcodeGen (generated project committed), minimum iOS 16, iPhone, portrait. The player is a Swift `WKWebView` that injects the shared `StreamPageStyle` scripts (moved to `commonMain`), blocks pop-ups and off-site navigations, uses a small bundled `WKContentRuleList` and goes landscape on `/watch/`. Trailers open the YouTube app or Safari. The API key goes `Secrets.xcconfig` → `Info.plist` → `startKoinIos(apiKey)`. The spike compiled, linked and ran `:shared` on the iPhone 17 simulator with no library bumps, and found four common-code fixes (F1–F4 in the iOS plan). Full AdGuard conversion for WebKit and in-app trailers are v2.
 
+**Progress (2026-11-14):** I0 (foundation) done. I4 (`ios-checks.yml`, the `kmp-guard.sh` rule for Native-illegal test names, `.maestro/ios` flows, docs) written, with I1 to I3 (actuals and tests, Xcode project, playback) in parallel on branches off `feat/a-ios-migration`; integration and the simulator test pass come next. Per-package status is in the Progress table of [kmp-ios-plan.md](kmp-ios-plan.md).
+
 ## CI overview (end state)
 
 | Job | Trigger | Runs | Publishes |
@@ -388,7 +390,7 @@ In short: `iosArm64` + `iosSimulatorArm64` (no `iosX64`), a static `Shared` fram
 | Shared tests | every push / PR | `:shared:jvmTest` (+ `wasmJsBrowserTest`, `iosSimulatorArm64Test` once added), Koin `verify()`, `commonMain` import guard | — |
 | Desktop | push to `master` | matrix `packageDistributionForCurrentOS` | `.dmg`, `.msi`, `.deb` on the same release |
 | Web | push to `master` | `wasmJsBrowserDistribution` | deploy to the chosen host |
-| iOS (later) | every push | simulator build + tests | depends on the distribution decision |
+| iOS | PRs into `dev`/`main` and pushes to `dev` that touch iOS files (`ios-checks.yml`, macOS, not a required check) | `:shared:iosSimulatorArm64Test`, XcodeGen drift check, simulator build | — (sideload build, simulator only) |
 
 All jobs share the version computed by the existing release workflow (passed as `-PappVersionName`). Update the `paths-ignore` rules so desktop- and web-only changes still trigger their jobs.
 
