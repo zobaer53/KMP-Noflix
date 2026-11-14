@@ -107,18 +107,47 @@ The JVM target exists only to run tests on the host and to keep Android APIs out
 
 ### Libraries
 
+**App**
+
 - **Kotlin**, **Coroutines & Flow**
 - **Kotlin Multiplatform**: domain, data, ViewModels and UI live in the `:shared` module (Android, plus a JVM target for host tests)
 - **Compose Multiplatform** (Jetpack Compose on Android), Material 3, and **Compose resources** for strings, fonts and images
 - **Navigation Compose** (multiplatform) for the screens, **Lifecycle ViewModel** for their state
 - **Koin** for dependency injection
 - **Ktor** (OkHttp engine) + **kotlinx.serialization** for the TMDB API
-- **Room** (KMP) + **Paging 3** (RemoteMediator) cache lists and details for offline browsing; search and filtered discover page straight from the network
+- **Room** (KMP, with the SQLite driver API) + **Paging 3** (RemoteMediator) cache lists and details for offline browsing; search and filtered discover page straight from the network
 - **DataStore** (Preferences) stores the content language
+- **kotlinx-datetime** for release dates, **kotlinx-io** for I/O errors in common code
 - **Coil 3** loads the images, through Ktor
-- **WebView** with an AdGuard-compatible ad-blocking engine (C++ via JNI) for playback, and **android-youtube-player** (YouTube's IFrame player) for trailers
+- **AndroidX SplashScreen** for the launch screen, **Activity Compose** with edge-to-edge system bars
+
+**Playback and ad blocking**
+
+- **WebView** with **AndroidX WebKit** for playback
+- An AdGuard-compatible ad-blocking engine: Brave's C++ ad-block engine through **JNI** (NDK + CMake), filter lists downloaded and installed with **WorkManager**, **Timber** for logging
+- **android-youtube-player** (YouTube's IFrame player) for trailers
+
+**Performance**
+
 - **R8** shrinks and optimizes the release build: the APK went from 18 MB to under 8 MB, and cold start got about a quarter faster (174 ms median on a Pixel 6a)
-- **Baseline Profile** (`:baselineprofile`, ProfileInstaller) precompiles the startup path: in a cold-start macrobenchmark on a fresh install, the median dropped from 369 ms to 224 ms
+- **Baseline Profile** (`:baselineprofile`, ProfileInstaller, Macrobenchmark + UiAutomator) precompiles the startup path: in a cold-start macrobenchmark on a fresh install, the median dropped from 369 ms to 224 ms
+- Every native library is **16 KB page-size aligned** for Android 15+ devices
+
+**Testing**
+
+- **JUnit 4**, **kotlinx-coroutines-test**, **Ktor MockEngine** for the network layer, and **Room testing** (bundled SQLite on the JVM) for the DAOs and migrations
+- **Koin test** checks that the dependency graphs are complete
+- **Compose UI test** on Compose Desktop renders every screen on the JVM (smoke test)
+- **Roborazzi** + **Robolectric** screenshot tests of each screen
+- **Maestro** UI flows on a real device for end-to-end regression checks
+- **GitHub Actions** runs the unit tests, a debug build and the KMP guard on every pull request
+
+**Build**
+
+- **Gradle** with a version catalog (`gradle/libs.versions.toml`)
+- **Android Gradle Plugin 9** with built-in Kotlin and the Android KMP library plugin
+- **KSP** for Room's code generation
+- **Compose compiler** Gradle plugin and **kotlinx.serialization** plugin
 
 ## Build from source
 
