@@ -8,16 +8,20 @@
 
 /* Begin PBXBuildFile section */
 		22EA1CB33A17DCC6FC82406D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F543015C899423D4B01CEB2E /* Assets.xcassets */; };
+		26523E3A99BADE2D426BEF28 /* PlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A9652440B7262CE94D44A30 /* PlayerViewController.swift */; };
 		2B739B3476D820E44B05863D /* ComposeRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F4A12A89D8658D0F9957BA /* ComposeRootView.swift */; };
 		6EBDD94EC970F5CB86CAB2A7 /* NoFlixApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228A16D0D661E58A57701E13 /* NoFlixApp.swift */; };
 		8F476B7303C5F13AA2382661 /* PlayerPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB8D60A16C18B0EEF4101620 /* PlayerPresenter.swift */; };
+		DD2C975607963E1FDD291765 /* BlockRules.json in Resources */ = {isa = PBXBuildFile; fileRef = 675603E9594186C99E6E25C6 /* BlockRules.json */; };
 		E2E333DE68D5E6CC88897A0C /* OrientationLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD75183D26561B15001F2694 /* OrientationLock.swift */; };
 		FDE52B8D57A097A60A4CF366 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6C1F485E0CF8BB70C9DDD2 /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1A9652440B7262CE94D44A30 /* PlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerViewController.swift; sourceTree = "<group>"; };
 		228A16D0D661E58A57701E13 /* NoFlixApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoFlixApp.swift; sourceTree = "<group>"; };
 		343488E477CB7C977BDDC8FF /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
+		675603E9594186C99E6E25C6 /* BlockRules.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = BlockRules.json; sourceTree = "<group>"; };
 		86038AE1032E284E79B32AD6 /* iosApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = iosApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8B6C1F485E0CF8BB70C9DDD2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C117AD187833E2513BD2F553 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -61,8 +65,10 @@
 		BC5DD6D994DAE511989AC092 /* Playback */ = {
 			isa = PBXGroup;
 			children = (
+				675603E9594186C99E6E25C6 /* BlockRules.json */,
 				FD75183D26561B15001F2694 /* OrientationLock.swift */,
 				CB8D60A16C18B0EEF4101620 /* PlayerPresenter.swift */,
+				1A9652440B7262CE94D44A30 /* PlayerViewController.swift */,
 			);
 			path = Playback;
 			sourceTree = "<group>";
@@ -134,6 +140,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				22EA1CB33A17DCC6FC82406D /* Assets.xcassets in Resources */,
+				DD2C975607963E1FDD291765 /* BlockRules.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -171,6 +178,7 @@
 				6EBDD94EC970F5CB86CAB2A7 /* NoFlixApp.swift in Sources */,
 				E2E333DE68D5E6CC88897A0C /* OrientationLock.swift in Sources */,
 				8F476B7303C5F13AA2382661 /* PlayerPresenter.swift in Sources */,
+				26523E3A99BADE2D426BEF28 /* PlayerViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
