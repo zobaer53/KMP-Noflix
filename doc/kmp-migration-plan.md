@@ -1,6 +1,6 @@
 # NoFlix: Kotlin Multiplatform migration plan
 
-_Audited 2026-10-14 against the code before the migration. Status (2026-11-19): the Android part (phases 0–4 and `AndroidSQLiteDriver`, work packages A1–A6/B1–B7) is merged into `dev` and `main`; the iOS port (Phase 9, I0–I4, PR #28) is merged into `dev`; Phase 5 (adaptive large-screen + focus UI) is implemented on `feat/a-adaptive-ui` and in review. Phases 6–8 (TV, desktop, web) haven't started. Follows JetBrains' guide [Migrating a Jetpack Compose app to Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform/migrate-from-android.html). Library versions are given as minimums or major lines only. Before each phase, check the latest stable release, and check items marked **verify** with a short spike._
+_Audited 2026-10-14 against the code before the migration. Status (2026-11-19): the Android part (phases 0–4 and `AndroidSQLiteDriver`, work packages A1–A6/B1–B7) is merged into `dev` and `main`; the iOS port (Phase 9, I0–I4, PR #28) is merged into `dev`; Phase 5 (adaptive UI), Phase 6 (Android TV), Phase 7a (Desktop) and Phase 8 (Web/Kotlin-Wasm) are implemented on their feature branches and in review. Only Phase 7b (embedded desktop player) remains unstarted. Follows JetBrains' guide [Migrating a Jetpack Compose app to Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform/migrate-from-android.html). Library versions are given as minimums or major lines only. Before each phase, check the latest stable release, and check items marked **verify** with a short spike._
 
 > **Android-only detail:** phases 0–4 for Android (plus a hardening phase) are expanded step by step, with code, gates and risks, in [kmp-android-plan.md](kmp-android-plan.md). That document is the working plan for the Android migration. This one covers all platforms.
 
@@ -377,6 +377,8 @@ Build this in `commonMain` once, test it on Android tablets and in a desktop win
 9. Tests: `:shared:wasmJsBrowserTest` for the common unit tests, plus a manual smoke checklist in Chrome, Firefox and Safari.
 
 **Done when:** the web app browses, searches and filters, keeps the wish list across reloads, plays trailers in the page, opens Play in a new tab, and deploys from CI.
+
+**Progress (2026-11-19, `feat/a-web-app`):** `:shared` gained a `wasmJs { browser() }` target with a `cachedMain` source set (Room/DataStore/RemoteMediators, Android+JVM+iOS) and a `webMain` source set (network-only repositories, browser `localStorage` for the wish list and content language). All platform `expect`/`actual` seams have web implementations. `:webApp` hosts the shared UI via `ComposeViewport` with `FormFactor.Web`, opens Play in a new tab, and inlines the API key from `local.properties`. `:webApp:wasmJsBrowserDistribution` produced a working static site; `web-checks.yml` builds and uploads it. Paging 3.5.3 and the other pinned libraries publish wasmJs variants, so no fallback pager was needed. Remaining: the TMDB CORS check with a real browser, a key-adding proxy for production (the key is currently visible in the bundle), browser-history/deep-link binding, deployment host, and copy about ad blocking.
 
 ### Phase 9: iOS (later)
 
