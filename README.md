@@ -104,9 +104,10 @@ NoFlix is a Kotlin Multiplatform project. It follows the [official Android archi
 - **`:app`** is a thin Android shell: the activity and application class, the WebView player, the trailer player, `AndroidMediaLauncher` (starts both players from the shared UI) and the TMDB API key from `local.properties`.
 - **`:ad-filter`** downloads and installs the filter lists (WorkManager) and blocks requests and page elements in the WebView.
 - **`:adblock-client`** wraps Brave's C++ ad-block engine through JNI.
+- **`:desktopApp`** is the Compose Desktop shell: it hosts the same shared UI in a window and opens Play in the system browser (v1, so ads are blocked by the browser, not by NoFlix). `desktop-checks.yml` builds `.dmg`, `.msi` and `.deb` installers.
 - **`:baselineprofile`** generates the app's Baseline Profile and measures cold start (Macrobenchmark). It is a test module and isn't shipped.
 
-The JVM target exists only to run tests on the host and to keep Android APIs out of `commonMain`. There is no desktop app.
+The JVM target runs host tests and keeps Android APIs out of `commonMain`; `:desktopApp` also uses it to ship desktop installers.
 
 ### Libraries
 

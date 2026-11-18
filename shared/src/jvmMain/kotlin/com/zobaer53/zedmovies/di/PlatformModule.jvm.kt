@@ -1,3 +1,4 @@
+
 package com.zobaer53.zedmovies.di
 
 import androidx.datastore.core.DataStore
@@ -10,22 +11,38 @@ import com.zobaer53.zedmovies.data.platform.DeviceLocaleProvider
 import com.zobaer53.zedmovies.data.platform.JvmDeviceLocaleProvider
 import com.zobaer53.zedmovies.data.platform.JvmRegionProvider
 import com.zobaer53.zedmovies.data.platform.RegionProvider
+import java.io.File
 import java.nio.file.Files
 import kotlinx.coroutines.Dispatchers
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
-// The JVM graph (host tests only): an in-memory database and a DataStore in a fresh temp folder.
+// The JVM target is used by host tests (in memory) and by the Compose Desktop app (persistent).
+// The desktop shell sets NOFLIX_DATA_DIR to the OS app-data folder; without it, tests keep the
+// old fresh-temp behaviour so they cannot leak state into each other.
+private fun dataDirectory(): File? = (System.getProperty("noflix.data.dir") ?: System.getenv("NOFLIX_DATA_DIR"))
+    ?.takeIf { it.isNotBlank() }
+    ?.let { File(it).apply { mkdirs() } }
+
 actual val platformModule: Module = module {
     single {
-        Room.inMemoryDatabaseBuilder<zedMoviesDatabase>()
+        val folder = dataDirectory()
+        if (folder == null) {
+            Room.inMemoryDatabaseBuilder<zedMoviesDatabase>()
+        } else {
+            Room.databaseBuilder<zedMoviesDatabase>(
+                name = File(folder, "zedMovies.db").absolutePath
+            )
+        }
             .setDriver(BundledSQLiteDriver())
             .setQueryCoroutineContext(Dispatchers.IO)
             .build()
     }
     single<DataStore<Preferences>> {
-        val folder = Files.createTempDirectory("zedmovies").toFile()
-        PreferenceDataStoreFactory.create(produceFile = { folder.resolve("preferences.preferences_pb") })
+        val folder = dataDirectory()
+        val dir = folder?.resolve("datastore")?.apply { mkdirs() }
+            ?: Files.createTempDirectory("zedmovies").toFile()
+        PreferenceDataStoreFactory.create(produceFile = { File(dir, "preferences.preferences_pb") })
     }
     single<DeviceLocaleProvider> { JvmDeviceLocaleProvider() }
     single<RegionProvider> { JvmRegionProvider() }
