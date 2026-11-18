@@ -1,10 +1,12 @@
 package com.zobaer53.zedmovies.ui.trailer
 
+import android.app.UiModeManager
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
 import android.view.Gravity
@@ -49,6 +51,10 @@ class TrailerActivity : ComponentActivity() {
 
     private var fullscreenView: View? = null
     private var exitFullscreen: (() -> Unit)? = null
+
+    private val isTv: Boolean
+        get() = getSystemService(UiModeManager::class.java)?.currentModeType ==
+                Configuration.UI_MODE_TYPE_TELEVISION
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge(
@@ -138,7 +144,7 @@ class TrailerActivity : ComponentActivity() {
             root.setPadding(0, 0, 0, 0)
             root.addView(fullscreenView, FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
             systemBars().hide(WindowInsetsCompat.Type.systemBars())
-            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+            if (!isTv) requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
         }
 
         override fun onExitFullscreen() {
@@ -148,7 +154,7 @@ class TrailerActivity : ComponentActivity() {
             playerView.isVisible = true
             closeButton.isVisible = true
             systemBars().show(WindowInsetsCompat.Type.systemBars())
-            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+            if (!isTv) requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
             ViewCompat.requestApplyInsets(root)
         }
     }

@@ -82,6 +82,9 @@ No. NoFlix works without sign-up or login.
 **Is NoFlix on the Google Play Store?**
 No. Download the APK from [GitHub Releases](https://github.com/zobaer53/NoFlix/releases/latest).
 
+**Does NoFlix work on Android TV / Google TV?**
+Yes, from the same APK. On a TV the app uses a D-pad-friendly navigation rail and a virtual cursor in the player: move with the arrow keys and press OK to click. Trailers open in the YouTube TV app when available. TV support is currently in the migration branch, not in the latest public release.
+
 **Does NoFlix host any videos?**
 No. See the [disclaimer](#disclaimer) below.
 

@@ -5,4 +5,6 @@
     <!-- trailer -->
     <string name="close_trailer">Close trailer</string>
     <string name="trailer_unavailable">Trailer unavailable</string>
+    <!-- android tv -->
+    <string name="webview_outdated">This device needs a newer Android System WebView to play video. Please update WebView in the Play Store.</string>
 </resources>
