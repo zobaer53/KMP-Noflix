@@ -1,6 +1,6 @@
 # NoFlix: Kotlin Multiplatform migration plan
 
-_Audited 2026-10-14 against the code before the migration. Status (2026-10-16): the Android part (phases 0–4 and the switch to `AndroidSQLiteDriver`) is merged into `dev`. The hardening clean-up (A6) is in progress. Phases 5–9 haven't started. Follows JetBrains' guide [Migrating a Jetpack Compose app to Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform/migrate-from-android.html). Library versions are given as minimums or major lines only. Before each phase, check the latest stable release, and check items marked **verify** with a short spike._
+_Audited 2026-10-14 against the code before the migration. Status (2026-11-19): the Android part (phases 0–4 and `AndroidSQLiteDriver`, work packages A1–A6/B1–B7) is merged into `dev` and `main`; the iOS port (Phase 9, I0–I4, PR #28) is merged into `dev`; Phase 5 (adaptive large-screen + focus UI) is implemented on `feat/a-adaptive-ui` and in review. Phases 6–8 (TV, desktop, web) haven't started. Follows JetBrains' guide [Migrating a Jetpack Compose app to Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform/migrate-from-android.html). Library versions are given as minimums or major lines only. Before each phase, check the latest stable release, and check items marked **verify** with a short spike._
 
 > **Android-only detail:** phases 0–4 for Android (plus a hardening phase) are expanded step by step, with code, gates and risks, in [kmp-android-plan.md](kmp-android-plan.md). That document is the working plan for the Android migration. This one covers all platforms.
 
@@ -304,6 +304,8 @@ Build this in `commonMain` once, test it on Android tablets and in a desktop win
 
 **Done when:** every screen can be used with only arrow keys + Enter + Esc in a desktop window and on an Android tablet with a keyboard, and the phone UI is unchanged.
 
+**Progress (2026-11-19, `feat/a-adaptive-ui`):** implemented `FormFactor`/`InputMode` locals with window-width detection and host overrides, `FocusableCard`, `ZedNavigationRail`, focus-restoring lazy lists/rows, a keyboard refresh action on Home, left/right pager keys, a multi-column grid for See all on wide screens, initial focus on the search field and Play, a side panel for filters on wide screens, and a two-pane details layout. `:shared:jvmTest`, `:shared:compileKotlinIosSimulatorArm64`, `scripts/kmp-guard.sh`, `:app:testDebugUnitTest` and `:app:verifyRoborazziDebug` are green — phone screenshots are byte-identical. Remaining: wire explicit TV/desktop/web host overrides (Phase 6–8), verify arrow keys on the filter sliders on a real desktop window, and refine the Play → Trailer → wish list → cast focus order.
+
 ### Phase 6: Android TV (same APK)
 
 1. **Manifest:**
@@ -325,6 +327,8 @@ Build this in `commonMain` once, test it on Android tablets and in a desktop win
 9. Update the README and `docs/` FAQ ("Does it work on Android TV?").
 
 **Done when:** the app shows in the TV launcher with its banner, everything works with the remote alone, playback starts and pauses with the remote, ads are blocked like on the phone, and phone Maestro still passes.
+
+**Progress (2026-11-19, `feat/a-android-tv`):** the manifest declares optional leanback/touch features, the `LEANBACK_LAUNCHER` entry and a 320×180 banner; portrait is locked at runtime on phones only, and `zedMoviesActivity` passes `FormFactor.Tv`/`InputMode.Directional` to the shared UI. The WebView skips orientation changes on TV and adds a D-pad virtual cursor (arrow keys move, OK taps), the trailer launcher prefers the YouTube TV app, `WebViewActivity` checks for an up-to-date WebView, and a TV Maestro smoke flow is in `.maestro/flows/tv/`. Phone unit tests and screenshots are green. Remaining: cap Coil's memory cache on 1–2 GB boxes, run the flow on a real TV device (Maestro `pressKey` support is untested here), and verify playback with a remote.
 
 ### Phase 7: Desktop (macOS, Windows, Linux)
 
@@ -350,6 +354,8 @@ Build this in `commonMain` once, test it on Android tablets and in a desktop win
 4. Note the extra download size: about 100–200 MB of Chromium on first run or bundled.
 
 **Done when (7a):** installers for all 3 OSes come out of CI, the app browses, searches and keeps the wish list across restarts, and Play opens the stream in the browser.
+
+**Progress (2026-11-19, `feat/a-desktop-app`):** `:desktopApp` is a Compose Desktop shell that supplies `FormFactor.Desktop`/`InputMode.Pointer`, provides the API key from a generated `DesktopSecrets.kt`, stores Room/DataStore under the OS app-data directory (`NOFLIX_DATA_DIR`/`noflix.data.dir`), and opens Play and trailers in the system browser with an in-UI notice that ads aren't blocked there. `desktop-checks.yml` packages `.dmg`/`.msi`/`.deb` on a 3-OS matrix. `./gradlew :desktopApp:packageDistributionForCurrentOS` produced a working `.dmg` locally. Remaining: installer signing (Gatekeeper/SmartScreen), icons, and a manual smoke test on Windows and Linux.
 
 ### Phase 8: Web (Kotlin/Wasm)
 

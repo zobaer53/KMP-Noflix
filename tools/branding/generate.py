@@ -8,6 +8,7 @@ DYLD_FALLBACK_LIBRARY_PATH=/opt/homebrew/lib).
 """
 import render
 import social
+import tv_banner
 
 ROOT = social.ROOT
 RES = f"{ROOT}/app/src/main/res"
@@ -22,6 +23,9 @@ render.masked(512, 0.5).save(f"{ROOT}/app/src/main/zed_movies_round-playstore.pn
 # README logo and the repository's social preview (GitHub settings). The website lives in another project.
 render.masked(256, 0.22).save(f"{IMAGES}/noflix-ad-free-movies-app-icon.png", optimize=True)
 social.social_preview().save(f"{IMAGES}/social-preview.png", optimize=True)
+
+# Android TV launcher banner (320x180), generated without external dependencies.
+tv_banner.write_png(f"{RES}/drawable/tv_banner.png")
 
 # iOS app icon (opaque and square: iOS applies its own mask) and launch logo (doc/kmp-ios-plan.md).
 IOS_ASSETS = f"{ROOT}/iosApp/iosApp/Assets.xcassets"

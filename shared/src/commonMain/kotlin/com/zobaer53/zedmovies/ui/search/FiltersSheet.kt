@@ -100,7 +100,8 @@ internal fun FiltersSheet(
     optionsError: Throwable?,
     onLoadOptions: () -> Unit,
     onApply: (SearchFilters) -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    useSidePanel: Boolean = false
 ) {
     var draft by rememberSaveable(stateSaver = SearchFiltersSaver) { mutableStateOf(filters) }
     var openCodeList by rememberSaveable { mutableStateOf<CodeList?>(null) }
@@ -109,12 +110,21 @@ internal fun FiltersSheet(
     val isSortEnabled = !isSearchTextEntered
     LaunchedEffect(Unit) { onLoadOptions() }
 
-    ModalBottomSheet(
-        onDismissRequest = onDismiss,
-        sheetState = sheetState,
-        containerColor = zedMoviesTheme.colors.primary,
-        contentColor = zedMoviesTheme.colors.textPrimary
-    ) {
+    // Wide screens get an end-aligned panel; phones keep the bottom sheet unchanged.
+    val sheetContainer: @Composable (@Composable () -> Unit) -> Unit =
+        if (useSidePanel) {
+            { content -> ZedMoviesSidePanel(onDismiss = onDismiss, content = content) }
+        } else {
+            { content ->
+                ModalBottomSheet(
+                    onDismissRequest = onDismiss,
+                    sheetState = sheetState,
+                    containerColor = zedMoviesTheme.colors.primary,
+                    contentColor = zedMoviesTheme.colors.textPrimary
+                ) { content() }
+            }
+        }
+    sheetContainer {
         // Exposes the sliders' test tags to Maestro as resource ids.
         Column(modifier = Modifier.testTagsAsResourceId()) {
             Row(
@@ -292,7 +302,11 @@ internal fun FiltersSheet(
                     ),
                 onClick = {
                     onApply(draft)
-                    coroutineScope.launch { sheetState.hide() }.invokeOnCompletion { onDismiss() }
+                    if (useSidePanel) {
+                        onDismiss()
+                    } else {
+                        coroutineScope.launch { sheetState.hide() }.invokeOnCompletion { onDismiss() }
+                    }
                 },
                 shape = zedMoviesTheme.shapes.medium,
                 colors = ButtonDefaults.buttonColors(

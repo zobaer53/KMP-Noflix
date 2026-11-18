@@ -1,8 +1,11 @@
 package com.zobaer53.zedmovies.ui.webview
 
+import android.app.UiModeManager
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,6 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.webkit.WebViewCompat
+import com.zobaer53.zedmovies.R
 import com.zobaer53.zedmovies.ui.playback.buildStreamUrl
 import io.github.edsuns.adfilter.AdFilter
 
@@ -29,6 +34,15 @@ class WebViewActivity : ComponentActivity()  {
                 hide(WindowInsetsCompat.Type.systemBars())
                 systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             }
+            // Cheap TV boxes often ship an old or missing WebView: fail with a clear message
+            // instead of a blank player.
+            val webViewPackage = WebViewCompat.getCurrentWebViewPackage(this)
+            val webViewMajor = webViewPackage?.versionName?.substringBefore('.')?.toIntOrNull() ?: 0
+            if (webViewMajor < 90) {
+                Toast.makeText(this, R.string.webview_outdated, Toast.LENGTH_LONG).show()
+            }
+            val isTv = getSystemService(UiModeManager::class.java)?.currentModeType ==
+                    Configuration.UI_MODE_TYPE_TELEVISION
             val filter = AdFilter.create(this)
             val type = intent.getStringExtra("type") ?: ""
             val tmdbId = intent.getIntExtra("tmdbId", 0)
@@ -42,7 +56,11 @@ class WebViewActivity : ComponentActivity()  {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    VideoWebView(url = buildStreamUrl(tmdbId, type), lifecycleOwner = this)
+                    VideoWebView(
+                        url = buildStreamUrl(tmdbId, type),
+                        lifecycleOwner = this,
+                        tvMode = isTv
+                    )
                 }
         }
     }

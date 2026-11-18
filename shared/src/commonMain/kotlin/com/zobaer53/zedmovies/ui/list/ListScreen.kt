@@ -23,6 +23,11 @@ import com.zobaer53.zedmovies.ui.smallcomponent.zedMoviesBackButton
 import com.zobaer53.zedmovies.ui.smallcomponent.MediaTabPager
 import com.zobaer53.zedmovies.ui.smallcomponent.MoviesContainer
 import com.zobaer53.zedmovies.ui.smallcomponent.TvShowsContainer
+import com.zobaer53.zedmovies.ui.smallcomponent.MoviesGrid
+import com.zobaer53.zedmovies.ui.smallcomponent.TvShowsGrid
+import com.zobaer53.zedmovies.ui.adaptive.FormFactor
+import com.zobaer53.zedmovies.ui.adaptive.LocalFormFactor
+import com.zobaer53.zedmovies.ui.adaptive.isWide
 import com.zobaer53.zedmovies.ui.list.util.asTitleResourceId
 
 @Composable
@@ -59,6 +64,9 @@ fun ListScreen(
     onTvShowClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val formFactor = LocalFormFactor.current
+    val useGrid = formFactor.isWide()
+    val columnCount = if (formFactor == FormFactor.Tablet) 2 else 3
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
@@ -73,13 +81,23 @@ fun ListScreen(
     ) { innerPadding ->
         when (uiState.mediaType) {
             Upcoming -> {
-                MoviesContainer(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .consumeWindowInsets(innerPadding),
-                    movies = movies,
-                    onClick = onMovieClick
-                )
+                val gridModifier = Modifier
+                    .padding(innerPadding)
+                    .consumeWindowInsets(innerPadding)
+                if (useGrid) {
+                    MoviesGrid(
+                        modifier = gridModifier,
+                        movies = movies,
+                        onClick = onMovieClick,
+                        columnCount = columnCount
+                    )
+                } else {
+                    MoviesContainer(
+                        modifier = gridModifier,
+                        movies = movies,
+                        onClick = onMovieClick
+                    )
+                }
             }
 
             else -> {
@@ -88,10 +106,18 @@ fun ListScreen(
                         .padding(innerPadding)
                         .consumeWindowInsets(innerPadding),
                     moviesTabContent = {
-                        MoviesContainer(movies = movies, onClick = onMovieClick)
+                        if (useGrid) {
+                            MoviesGrid(movies = movies, onClick = onMovieClick, columnCount = columnCount)
+                        } else {
+                            MoviesContainer(movies = movies, onClick = onMovieClick)
+                        }
                     },
                     tvShowsTabContent = {
-                        TvShowsContainer(tvShows = tvShows, onClick = onTvShowClick)
+                        if (useGrid) {
+                            TvShowsGrid(tvShows = tvShows, onClick = onTvShowClick, columnCount = columnCount)
+                        } else {
+                            TvShowsContainer(tvShows = tvShows, onClick = onTvShowClick)
+                        }
                     }
                 )
             }
