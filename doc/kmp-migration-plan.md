@@ -355,6 +355,8 @@ Build this in `commonMain` once, test it on Android tablets and in a desktop win
 
 **Done when (7a):** installers for all 3 OSes come out of CI, the app browses, searches and keeps the wish list across restarts, and Play opens the stream in the browser.
 
+**Progress (2026-11-19, `feat/a-desktop-app`):** `:desktopApp` is a Compose Desktop shell that supplies `FormFactor.Desktop`/`InputMode.Pointer`, provides the API key from a generated `DesktopSecrets.kt`, stores Room/DataStore under the OS app-data directory (`NOFLIX_DATA_DIR`/`noflix.data.dir`), and opens Play and trailers in the system browser with an in-UI notice that ads aren't blocked there. `desktop-checks.yml` packages `.dmg`/`.msi`/`.deb` on a 3-OS matrix. `./gradlew :desktopApp:packageDistributionForCurrentOS` produced a working `.dmg` locally. Remaining: installer signing (Gatekeeper/SmartScreen), icons, and a manual smoke test on Windows and Linux.
+
 ### Phase 8: Web (Kotlin/Wasm)
 
 1. Add the `wasmJs { browser() }` target and a `webApp` entry: `ComposeViewport(document.body!!) { zedMoviesApp(mediaLauncher = WebMediaLauncher) }`. Add `index.html` with a loading screen, because the first load downloads several MB of wasm and Skia.

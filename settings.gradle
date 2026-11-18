@@ -20,6 +20,7 @@ dependencyResolutionManagement {
 rootProject.name = "zeDMovies"
 include ':app'
 include ':baselineprofile'
+include ':desktopApp'
 include ':shared'
 include ':adblock-client'
 include ':ad-filter'
