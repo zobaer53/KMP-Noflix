@@ -30,7 +30,11 @@ kotlin {
         }
     }
     // Web (Phase 8): Room/DataStore live in cachedMain and are replaced by webMain repositories.
-    wasmJs { browser() }
+    wasmJs {
+        browser()
+        // Required by Compose's wasmJs UI-test check (the Skiko runtime needs an executable).
+        binaries.executable()
+    }
     jvmToolchain(17)
 
     // cachedMain = android + jvm + ios; webMain = wasmJs. Both hang off commonMain.
