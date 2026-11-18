@@ -19,6 +19,8 @@ scripts/kmp-guard.sh                # no Android/JVM APIs in shared/src/commonMa
 ./gradlew :app:recordRoborazziDebug   # re-record those reference images after an intended UI change
 ./gradlew :ad-filter:connectedDebugAndroidTest :adblock-client:connectedDebugAndroidTest   # the ad-block modules' instrumented tests (device required; :app has none)
 ./gradlew :ad-filter:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=io.github.edsuns.adfilter.RuleIteratorTest  # single test class
+./gradlew :desktopApp:packageDistributionForCurrentOS  # .dmg/.msi/.deb (Phase 7a)
+./gradlew :webApp:wasmJsBrowserDistribution            # Kotlin/Wasm static site (Phase 8)
 .maestro/run.sh [--no-build] [flow.yaml ...]   # Maestro UI suite on the connected device (see below)
 .maestro/upgrade.sh [--content-language] old.apk [new.apk]   # install-over test: data (and the content language) must survive an update
 .maestro/baseline.sh [--name NAME]            # sizes, cold start, screenshots, suite + upgrade into doc/local/; any NAME but baseline is compared with it
@@ -32,7 +34,7 @@ Requirements:
 - NDK r28c (`28.2.13676358`) + CMake 3.22.1 for `:adblock-client`'s native library. NDK r28+ is what makes the 64-bit `.so` 16 KB-page aligned. Every native library in the APK must stay 16 KB aligned (AndroidX ones too), or Android 15+ 16 KB devices run the app in compat mode with a warning.
 - AGP 9 no longer aligns compile and runtime classpath versions (`android.dependency.useConstraints=false`), so declare the versions you actually ship (for example the `androidx.navigation` pin in `app/build.gradle`, which lifts :shared's JetBrains navigation to androidx 2.10.2) rather than relying on a transitive bump.
 - `local.properties` must contain `API_KEY=<TMDB key>`; `app/build.gradle` reads it into `BuildConfig.API_KEY` and fails to configure without the file. Optional `RELEASE_STORE_FILE`, `RELEASE_STORE_PASSWORD`, `RELEASE_KEY_ALIAS`, `RELEASE_KEY_PASSWORD` enable release signing; without them the release build is unsigned.
-- Repositories are only `google()`, `mavenCentral()` and `gradlePluginPortal()`. JCenter, the Aliyun mirror and JitPack are gone (Anko, Mezzanine and Edsuns HttpRequest were removed).
+- Repositories are `google()`, `mavenCentral()` and `gradlePluginPortal()` (declared in `settings.gradle`) plus Kotlin/Wasm's Node.js distribution repository at project level; therefore `repositoriesMode` is `PREFER_PROJECT` rather than `FAIL_ON_PROJECT_REPOS`. JCenter, the Aliyun mirror and JitPack are gone (Anko, Mezzanine and Edsuns HttpRequest were removed).
 
 ### iOS (simulator only)
 
@@ -108,6 +110,8 @@ scripts/stream.sh status                                                # worktr
 ## Architecture
 
 Follows Google's recommended layered architecture (data → domain → ui) with Koin DI. Domain, data and the data DI modules live in the Kotlin Multiplatform module **`:shared`** (`shared/src/commonMain`, targets Android and a JVM target that is only used for host tests), under the same package names as before. Phase 4 (B5) also moved the UI models (`data/model`, which carry Compose `StringResource`s), the design system and `ui/smallcomponent` there, with the strings, icons and fonts in `shared/src/commonMain/composeResources` (`Res` in `com.zobaer53.zedmovies.resources`, internal to `:shared`). B6 moved the screens, ViewModels, navigation, the app shell (`zedMoviesApp`, `ZedMoviesAppState`) and `di/ViewModelModule.kt` too; their Android-only bits are `expect`/`actual` under `ui/` (`SystemBarsAppearance`, `ui/util/PlatformFormat.kt`, `ui/util/PlatformUi.kt`: `testTagsAsResourceId`, the system Cancel label; `ui/smallcomponent/mapper/ReleaseDateMapper.kt`: localized date format). `:app` keeps only the activities (`zedMoviesActivity`, `ui/webview`, `ui/trailer`), `zedMoviesApplication`, `playback/AndroidMediaLauncher.kt` and `di/AndroidAppModule.kt` (API key).
+
+The web port (Phase 8) adds a `wasmJs { browser() }` target to `:shared` and a `:webApp` shell. Room, DataStore and the RemoteMediators live in `shared/src/cachedMain` (Android, JVM, iOS); `shared/src/wasmJsMain` provides network-only repositories and `localStorage` for the wish list/content language, with platform `actual`s for every common `expect`. `:webApp` calls `zedMoviesApp(formFactor = FormFactor.Web, inputMode = InputMode.Pointer)` inside `ComposeViewport`, with `WebMediaLauncher` opening Play in a new tab. The API key is inlined at build time (a production proxy is still to be decided). Build with `./gradlew :webApp:wasmJsBrowserDistribution`; `.github/workflows/web-checks.yml` uploads the static site.
 
 The desktop port (Phase 7a) adds `:desktopApp`, a Compose Desktop shell that hosts the shared UI with `FormFactor.Desktop`/`InputMode.Pointer`. Room and DataStore use the persistent JVM platform module (set `noflix.data.dir` or `NOFLIX_DATA_DIR` to the app-data folder); the API key comes from a generated `DesktopSecrets.kt`. Play opens the system browser (no ad blocking there), with a notice in the UI. `.github/workflows/desktop-checks.yml` packages `.dmg`/`.msi`/`.deb`.
 

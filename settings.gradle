@@ -11,7 +11,10 @@ plugins {
     id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
 }
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    // Kotlin/Wasm adds a Node.js distribution repository at project level for its browser toolchain.
+    // PREFER_PROJECT lets that toolchain download work; all regular dependencies still come from
+    // google()/mavenCentral() declared here (no module declares its own Maven repository).
+    repositoriesMode.set(RepositoriesMode.PREFER_PROJECT)
     repositories {
         google()
         mavenCentral()
@@ -21,6 +24,7 @@ rootProject.name = "zeDMovies"
 include ':app'
 include ':baselineprofile'
 include ':desktopApp'
+include ':webApp'
 include ':shared'
 include ':adblock-client'
 include ':ad-filter'
