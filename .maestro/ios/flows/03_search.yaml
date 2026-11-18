@@ -13,14 +13,19 @@ name: 03_search
     visible: "Discover"
     timeout: 20000
 - tapOn: "search place holder"
+# A fresh simulator shows a one-time keyboard tip ("Speed up your typing ...") over the keyboard.
+- tapOn:
+    text: "Continue"
+    optional: true
 # Maestro's inputText occasionally doubles the first key ("BBatman"), so clear and retype on a miss.
 - retry:
     maxRetries: 2
     commands:
       - eraseText: 20
       - inputText: "Batman"
+      # TMDB's ranking changes; on iOS only the first rows fit above the keyboard. "The Batman" is the top hit.
       - extendedWaitUntil:
-          visible: "Batman Begins"
+          visible: "The Batman"
           timeout: 20000
 - takeScreenshot: search
 # Tab pager: tap a tab, then swipe back to the first one.
@@ -28,11 +33,12 @@ name: 03_search
 - extendedWaitUntil:
     visible: "Rating"
     timeout: 20000
+# With the keyboard up, the bottom bar sits at ~55-60% of the screen: swipe inside the result list.
 - swipe:
-    start: "20%, 60%"
-    end: "85%, 60%"
+    start: "20%, 35%"
+    end: "85%, 35%"
 - extendedWaitUntil:
-    visible: "Batman Begins"
+    visible: "The Batman"
     timeout: 20000
 # First result's poster (the search field also contains "Batman").
 - tapOn:

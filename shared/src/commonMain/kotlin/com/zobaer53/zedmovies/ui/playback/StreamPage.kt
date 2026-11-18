@@ -94,6 +94,11 @@ val STREAM_PAGE_SCRIPT = """
 
 private val streamHost: String = requireNotNull(parseUrl(STREAM_BASE_URL)).host.lowercase()
 
+// The site's name without its top-level domain. The site moves between TLDs and redirects the old one with a 301
+// (seen in 2026-11: the base URL answers with a permanent redirect to the same name on another TLD), so the same
+// name on any single-label TLD counts as the site. Ad and pop-under hosts don't share the name.
+private val streamSiteName: String = streamHost.substringBeforeLast('.')
+
 private val schemeRegex = Regex("^([A-Za-z][A-Za-z0-9+.-]*):")
 
 private fun schemeOf(url: String): String? = schemeRegex.find(url.trim())?.groupValues?.get(1)?.lowercase()
@@ -106,10 +111,17 @@ private fun parseWebUrl(url: String?): Url? {
     return parseUrl(url.trim())
 }
 
-/** True if [url] is on the stream site (its host or a subdomain, dot-bounded). */
+/**
+ * True if [url] is on the stream site: its host or a subdomain (dot-bounded), also on another single-label TLD
+ * (the site's own redirects to a new domain must not be cancelled).
+ */
 fun isStreamSitePage(url: String?): Boolean {
-    val host = parseWebUrl(url)?.host?.lowercase() ?: return false
-    return host == streamHost || host.endsWith(".$streamHost")
+    val host = parseWebUrl(url)?.host?.lowercase()?.trimEnd('.') ?: return false
+    if (host == streamHost || host.endsWith(".$streamHost")) return true
+    val withoutTld = host.substringBeforeLast('.', missingDelimiterValue = "")
+    val tld = host.substringAfterLast('.')
+    return tld.length >= 2 && tld.all { it in 'a'..'z' } &&
+        (withoutTld == streamSiteName || withoutTld.endsWith(".$streamSiteName"))
 }
 
 /** True if [url] is a stream-site page whose path starts with /watch/ (the landscape player page). */
