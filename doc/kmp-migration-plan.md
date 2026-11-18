@@ -328,6 +328,8 @@ Build this in `commonMain` once, test it on Android tablets and in a desktop win
 
 **Done when:** the app shows in the TV launcher with its banner, everything works with the remote alone, playback starts and pauses with the remote, ads are blocked like on the phone, and phone Maestro still passes.
 
+**Progress (2026-11-19, `feat/a-android-tv`):** the manifest declares optional leanback/touch features, the `LEANBACK_LAUNCHER` entry and a 320×180 banner; portrait is locked at runtime on phones only, and `zedMoviesActivity` passes `FormFactor.Tv`/`InputMode.Directional` to the shared UI. The WebView skips orientation changes on TV and adds a D-pad virtual cursor (arrow keys move, OK taps), the trailer launcher prefers the YouTube TV app, `WebViewActivity` checks for an up-to-date WebView, and a TV Maestro smoke flow is in `.maestro/flows/tv/`. Phone unit tests and screenshots are green. Remaining: cap Coil's memory cache on 1–2 GB boxes, run the flow on a real TV device (Maestro `pressKey` support is untested here), and verify playback with a remote.
+
 ### Phase 7: Desktop (macOS, Windows, Linux)
 
 **7a. Desktop app with browser playback**

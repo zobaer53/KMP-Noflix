@@ -1,0 +1,21 @@
+appId: com.zobaer53.zedmovies
+name: tv_01_home
+# Android TV smoke flow. Run explicitly on a TV/Google TV device:
+#   .maestro/run.sh .maestro/flows/tv/01_home.yaml
+# The default suite (flows/*) does not pick up this subfolder.
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Upcoming Movies"
+    timeout: 30000
+- takeScreenshot: tv_home
+# The rail is visible on TV and Home is the selected destination.
+- assertVisible: "Home"
+- assertVisible: "Search"
+- assertVisible: "Wish list"
+# Directional navigation must not crash and the bottom sheet layout must stay off TV.
+- pressKey: Remote Dpad Right
+- pressKey: Remote Dpad Down
+- pressKey: Remote Dpad Center
+- takeScreenshot: tv_after_dpad
+- pressKey: Remote Back
