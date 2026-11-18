@@ -35,6 +35,19 @@ class StreamPageTest {
     }
 
     @Test
+    fun `isStreamSitePage accepts the site name on another top level domain`() {
+        val name = host.substringBeforeLast('.')
+        assertTrue(isStreamSitePage("https://$name.cc/watch/1"))
+        assertTrue(isStreamSitePage("https://www.$name.cc/watch/1"))
+        assertTrue(isStreamWatchPage("https://$name.cc/watch/1"))
+        assertTrue(isStreamNavigationAllowed("https://$name.cc/watch/1", isMainFrame = true))
+        assertFalse(isStreamSitePage("https://evil$name.cc/watch/1"))
+        assertFalse(isStreamSitePage("https://$name.co.uk/watch/1"))
+        assertFalse(isStreamSitePage("https://$name.cc.evil.com/watch/1"))
+        assertFalse(isStreamSitePage("https://$name/watch/1"))
+    }
+
+    @Test
     fun `isStreamSitePage rejects look-alike hosts and other pages`() {
         assertFalse(isStreamSitePage("https://evil$host/watch/1"))
         assertFalse(isStreamSitePage("https://$host.evil.com/watch/1"))

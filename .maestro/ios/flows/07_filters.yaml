@@ -25,8 +25,9 @@ name: 07_filters
     element:
       id: "filters_rating_slider"
     direction: DOWN
-# The middle of the 0–10 slider.
-- tapOn:
+# The middle of the 0–10 slider. On iOS Maestro's XCTest tap is too short for a Compose slider inside the
+# scrollable sheet (the value doesn't change); a long press on the same point sets it.
+- longPressOn:
     id: "filters_rating_slider"
 - assertVisible: "5\\.0\\+ ★"
 - takeScreenshot: filters_sheet
@@ -92,8 +93,9 @@ name: 07_filters
     commands:
       - eraseText: 20
       - inputText: "Batman"
+      # On iOS only the first rows fit above the keyboard: wait for the top hit.
       - extendedWaitUntil:
-          visible: "Batman Begins"
+          visible: "The Batman"
           timeout: 20000
 - tapOn: "Filters"
 - extendedWaitUntil:
@@ -104,7 +106,7 @@ name: 07_filters
       id: "filters_year_slider"
     direction: DOWN
 # Moves the end thumb to about 2012 (a tap moves the closer thumb).
-- tapOn:
+- longPressOn:
     id: "filters_year_slider"
     point: "88%,50%"
 - assertVisible: "Until 20(0[6-9]|1[0-9]|2[01])"
@@ -129,5 +131,5 @@ name: 07_filters
 - takeScreenshot: filters_search_language
 - tapOn: "Clear all"
 - extendedWaitUntil:
-    visible: "Batman Begins"
+    visible: "The Batman"
     timeout: 20000

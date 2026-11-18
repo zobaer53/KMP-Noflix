@@ -17,6 +17,9 @@ final class PlayerViewController: UIViewController {
     private var webView: WKWebView!
     private var urlObservation: NSKeyValueObservation?
     private var requestedMask: UIInterfaceOrientationMask?
+    /// A geometry update during the presentation animation fails ("None of the requested orientations are
+    /// supported"), so the orientation is applied only once the player is on screen.
+    private var hasAppeared = false
 
     init(request: IosPlayerRequest) {
         self.request = request
@@ -88,7 +91,8 @@ final class PlayerViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        updateOrientation()
+        hasAppeared = true
+        updateOrientation(force: true)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -107,9 +111,9 @@ final class PlayerViewController: UIViewController {
     override var prefersHomeIndicatorAutoHidden: Bool { true }
 
     /// Landscape on the stream site's /watch/ pages, portrait everywhere else (the Android behavior).
-    private func updateOrientation() {
+    private func updateOrientation(force: Bool = false) {
         let mask: UIInterfaceOrientationMask = StreamPageKt.isStreamWatchPage(url: webView?.url?.absoluteString) ? .landscape : .portrait
-        guard mask != requestedMask else { return }
+        guard hasAppeared, force || mask != requestedMask else { return }
         requestedMask = mask
         NSLog("NoFlixPlayer: orientation %@", mask == .landscape ? "landscape" : "portrait")
         OrientationLock.apply(mask, from: self)
