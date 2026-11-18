@@ -29,6 +29,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.zobaer53.zedmovies.ui.adaptive.LocalFormFactor
+import com.zobaer53.zedmovies.ui.adaptive.isWide
 import com.zobaer53.zedmovies.ui.designsystem.component.ZedMoviesCardNetworkImage
 import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesImagePlaceholder
 import com.zobaer53.zedmovies.ui.designsystem.component.ZedMoviesNetworkImage
@@ -70,6 +72,26 @@ internal fun DetailsItem(
     ),
     isPlaceholder: Boolean = false
 ) {
+    if (LocalFormFactor.current.isWide() && !isPlaceholder) {
+        DetailsItemWide(
+            type = type,
+            title = title,
+            overview = overview,
+            posterPath = posterPath,
+            releaseDate = releaseDate,
+            runtime = runtime,
+            genres = genres,
+            voteAverage = voteAverage,
+            credits = credits,
+            trailerKey = trailerKey,
+            isWishlisted = isWishlisted,
+            onBackButtonClick = onBackButtonClick,
+            onWishlistButtonClick = onWishlistButtonClick,
+            id = id,
+            modifier = modifier
+        )
+        return
+    }
     Box(modifier = modifier) {
         Box(
             modifier = Modifier

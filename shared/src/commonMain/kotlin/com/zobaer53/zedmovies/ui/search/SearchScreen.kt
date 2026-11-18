@@ -24,13 +24,17 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -59,6 +63,10 @@ import com.zobaer53.zedmovies.ui.smallcomponent.MediaTabPager
 import com.zobaer53.zedmovies.ui.smallcomponent.MoviesAndTvShowsContainer
 import com.zobaer53.zedmovies.ui.smallcomponent.MoviesContainer
 import com.zobaer53.zedmovies.ui.smallcomponent.TvShowsContainer
+import com.zobaer53.zedmovies.ui.adaptive.InputMode
+import com.zobaer53.zedmovies.ui.adaptive.LocalFormFactor
+import com.zobaer53.zedmovies.ui.adaptive.LocalInputMode
+import com.zobaer53.zedmovies.ui.adaptive.isWide
 import com.zobaer53.zedmovies.ui.smallcomponent.mapper.asUserMessage
 import com.zobaer53.zedmovies.ui.smallcomponent.zedMoviesCenteredError
 import org.jetbrains.compose.resources.stringResource
@@ -116,6 +124,13 @@ fun SearchScreen(
 ) {
     var isFiltersSheetOpen by rememberSaveable { mutableStateOf(false) }
     val activeFilters = uiState.filters.activeFilters
+    val inputMode = LocalInputMode.current
+    val useSidePanel = LocalFormFactor.current.isWide()
+    val searchFieldFocusRequester = remember { FocusRequester() }
+    // On D-pad/keyboard hosts the search field takes focus so typing can start immediately.
+    LaunchedEffect(inputMode) {
+        if (inputMode != InputMode.Touch) searchFieldFocusRequester.requestFocus()
+    }
     if (isFiltersSheetOpen) {
         FiltersSheet(
             filters = uiState.filters,
@@ -125,7 +140,8 @@ fun SearchScreen(
             optionsError = uiState.filterOptionsError,
             onLoadOptions = onLoadFilterOptions,
             onApply = onApplyFilters,
-            onDismiss = { isFiltersSheetOpen = false }
+            onDismiss = { isFiltersSheetOpen = false },
+            useSidePanel = useSidePanel
         )
     }
     Column(
@@ -137,7 +153,8 @@ fun SearchScreen(
             query = uiState.query,
             onQueryChange = onQueryChange,
             activeFilterCount = activeFilters.size,
-            onFiltersClick = { isFiltersSheetOpen = true }
+            onFiltersClick = { isFiltersSheetOpen = true },
+            focusRequester = searchFieldFocusRequester
         )
         AnimatedVisibility(visible = activeFilters.isNotEmpty()) {
             Column(modifier = Modifier.padding(bottom = zedMoviesTheme.spacing.small)) {
@@ -240,10 +257,12 @@ private fun SearchTextField(
     activeFilterCount: Int,
     onFiltersClick: () -> Unit,
     modifier: Modifier = Modifier,
-    focusManager: FocusManager = LocalFocusManager.current
+    focusManager: FocusManager = LocalFocusManager.current,
+    focusRequester: FocusRequester? = null
 ) {
     zedMoviesTextField(
         modifier = modifier
+            .then(if (focusRequester != null) Modifier.focusRequester(focusRequester) else Modifier)
             .padding(
                 start = zedMoviesTheme.spacing.extraMedium,
                 top = zedMoviesTheme.spacing.small,

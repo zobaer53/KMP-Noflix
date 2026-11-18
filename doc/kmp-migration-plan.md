@@ -1,6 +1,6 @@
 # NoFlix: Kotlin Multiplatform migration plan
 
-_Audited 2026-10-14 against the code before the migration. Status (2026-10-16): the Android part (phases 0–4 and the switch to `AndroidSQLiteDriver`) is merged into `dev`. The hardening clean-up (A6) is in progress. Phases 5–9 haven't started. Follows JetBrains' guide [Migrating a Jetpack Compose app to Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform/migrate-from-android.html). Library versions are given as minimums or major lines only. Before each phase, check the latest stable release, and check items marked **verify** with a short spike._
+_Audited 2026-10-14 against the code before the migration. Status (2026-11-19): the Android part (phases 0–4 and `AndroidSQLiteDriver`, work packages A1–A6/B1–B7) is merged into `dev` and `main`; the iOS port (Phase 9, I0–I4, PR #28) is merged into `dev`; Phase 5 (adaptive large-screen + focus UI) is implemented on `feat/a-adaptive-ui` and in review. Phases 6–8 (TV, desktop, web) haven't started. Follows JetBrains' guide [Migrating a Jetpack Compose app to Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform/migrate-from-android.html). Library versions are given as minimums or major lines only. Before each phase, check the latest stable release, and check items marked **verify** with a short spike._
 
 > **Android-only detail:** phases 0–4 for Android (plus a hardening phase) are expanded step by step, with code, gates and risks, in [kmp-android-plan.md](kmp-android-plan.md). That document is the working plan for the Android migration. This one covers all platforms.
 
@@ -303,6 +303,8 @@ Build this in `commonMain` once, test it on Android tablets and in a desktop win
 7. Phones: no visual change. Maestro must still pass unchanged.
 
 **Done when:** every screen can be used with only arrow keys + Enter + Esc in a desktop window and on an Android tablet with a keyboard, and the phone UI is unchanged.
+
+**Progress (2026-11-19, `feat/a-adaptive-ui`):** implemented `FormFactor`/`InputMode` locals with window-width detection and host overrides, `FocusableCard`, `ZedNavigationRail`, focus-restoring lazy lists/rows, a keyboard refresh action on Home, left/right pager keys, a multi-column grid for See all on wide screens, initial focus on the search field and Play, a side panel for filters on wide screens, and a two-pane details layout. `:shared:jvmTest`, `:shared:compileKotlinIosSimulatorArm64`, `scripts/kmp-guard.sh`, `:app:testDebugUnitTest` and `:app:verifyRoborazziDebug` are green — phone screenshots are byte-identical. Remaining: wire explicit TV/desktop/web host overrides (Phase 6–8), verify arrow keys on the filter sliders on a real desktop window, and refine the Play → Trailer → wish list → cast focus order.
 
 ### Phase 6: Android TV (same APK)
 

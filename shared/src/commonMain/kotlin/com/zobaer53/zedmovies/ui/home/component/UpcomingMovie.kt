@@ -2,6 +2,7 @@
 package com.zobaer53.zedmovies.ui.home.component
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,8 +16,14 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.GraphicsLayerScope
 import androidx.compose.ui.graphics.Shape
@@ -33,6 +40,9 @@ import com.zobaer53.zedmovies.ui.designsystem.theme.zedMoviesTheme
 import com.zobaer53.zedmovies.data.model.Movie
 import com.zobaer53.zedmovies.data.model.ReleaseDate
 import com.zobaer53.zedmovies.ui.smallcomponent.MoviesContainer
+import com.zobaer53.zedmovies.ui.adaptive.InputMode
+import com.zobaer53.zedmovies.ui.adaptive.LocalInputMode
+import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 import org.jetbrains.compose.resources.stringResource
 
@@ -47,6 +57,8 @@ internal fun UpcomingMoviesContainer(
     val count = 10
     val pagerState = rememberPagerState(pageCount = { count })
     val shouldShowPlaceholder = movies.isEmpty()
+    val coroutineScope = rememberCoroutineScope()
+    val inputMode = LocalInputMode.current
 
     MoviesContainer(
         titleResourceId = Res.string.upcoming_movies,
@@ -55,6 +67,25 @@ internal fun UpcomingMoviesContainer(
     ) {
         HorizontalPager(
             state = pagerState,
+            modifier = Modifier
+                .focusable()
+                .onKeyEvent { event ->
+                    if (inputMode == InputMode.Touch || event.type != KeyEventType.KeyUp) {
+                        false
+                    } else {
+                        val nextPage = when (event.key) {
+                            Key.DirectionRight -> (pagerState.currentPage + 1).coerceAtMost(count - 1)
+                            Key.DirectionLeft -> (pagerState.currentPage - 1).coerceAtLeast(0)
+                            else -> null
+                        }
+                        if (nextPage == null) {
+                            false
+                        } else {
+                            coroutineScope.launch { pagerState.animateScrollToPage(nextPage) }
+                            true
+                        }
+                    }
+                },
             contentPadding = PaddingValues(horizontal = zedMoviesTheme.spacing.extraLarge)
         ) { page ->
             val pageOffset = pagerState.offsetForPage(page).absoluteValue

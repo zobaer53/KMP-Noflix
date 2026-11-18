@@ -13,6 +13,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.unit.dp
 import com.zobaer53.zedmovies.resources.Res
 import com.zobaer53.zedmovies.resources.ic_play
@@ -32,7 +34,8 @@ fun RatingItem(
     releaseDate: String,
     rating: Double,
     modifier: Modifier = Modifier,
-    tmdbId: Int = 0
+    tmdbId: Int = 0,
+    playFocusRequester: FocusRequester? = null
 ) {
     val mediaLauncher = LocalMediaLauncher.current
     Card(
@@ -59,7 +62,15 @@ fun RatingItem(
         ) {
             if(rating == 0.0){
                 zedMoviesIcon(
-                    modifier = Modifier.size(RatingIconSize)
+                    modifier = Modifier
+                        .size(RatingIconSize)
+                        .then(
+                            if (playFocusRequester != null) {
+                                Modifier.focusRequester(playFocusRequester)
+                            } else {
+                                Modifier
+                            }
+                        )
                         // Placeholders and feed cards have no TMDB id: the tap goes to the card instead.
                         .clickable(enabled = tmdbId > 0) {
                             mediaLauncher.play(
