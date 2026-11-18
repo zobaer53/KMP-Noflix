@@ -33,6 +33,7 @@ import com.zobaer53.zedmovies.resources.see_all
 import com.zobaer53.zedmovies.resources.tv_shows
 import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesCenteredBox
 import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesCircularProgressIndicator
+import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesFocusRestorer
 import com.zobaer53.zedmovies.ui.designsystem.component.zedMoviesMessage
 import com.zobaer53.zedmovies.ui.designsystem.theme.zedMoviesTheme
 import com.zobaer53.zedmovies.data.model.Movie
@@ -123,7 +124,7 @@ fun MoviesContainer(
         onRefresh = movies::refresh
     ) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().zedMoviesFocusRestorer(),
             verticalArrangement = Arrangement.spacedBy(zedMoviesTheme.spacing.medium),
             contentPadding = PaddingValues(zedMoviesTheme.spacing.extraMedium)
         ) {
@@ -202,7 +203,7 @@ fun TvShowsContainer(
         onRefresh = tvShows::refresh
     ) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().zedMoviesFocusRestorer(),
             verticalArrangement = Arrangement.spacedBy(zedMoviesTheme.spacing.medium),
             contentPadding = PaddingValues(zedMoviesTheme.spacing.extraMedium)
         ) {
@@ -292,7 +293,7 @@ private fun <T> ContainerContent(
     shouldShowPlaceholder: Boolean = items.isEmpty()
 ) {
     LazyRow(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth().zedMoviesFocusRestorer(),
         horizontalArrangement = Arrangement.spacedBy(zedMoviesTheme.spacing.smallMedium),
         contentPadding = PaddingValues(horizontal = zedMoviesTheme.spacing.smallMedium)
     ) {
