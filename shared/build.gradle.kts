@@ -1,6 +1,7 @@
 // Domain, data and the data DI modules, shared through Kotlin Multiplatform (doc/kmp-android-plan.md, Phase 3).
-// The jvm() target is never shipped: it makes the compiler reject Android APIs in commonMain and runs the
-// Room/DataStore tests on the host without a device.
+// The jvm() target is never shipped on Android: it makes the compiler reject Android APIs in commonMain and runs the
+// Room/DataStore tests on the host without a device. wasmJs() is added in Phase 8 with a network-only data layer.
+@OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
 plugins {
     id("org.jetbrains.kotlin.multiplatform") // no version: KGP is on the root buildscript classpath
     alias(libs.plugins.android.kotlin.multiplatform.library)
@@ -28,9 +29,28 @@ kotlin {
             isStatic = true
         }
     }
+    // Web (Phase 8): Room/DataStore live in cachedMain and are replaced by webMain repositories.
+    wasmJs { browser() }
     jvmToolchain(17)
 
+    // cachedMain = android + jvm + ios; webMain = wasmJs. Both hang off commonMain.
+    applyDefaultHierarchyTemplate {
+        common {
+            group("cached") {
+                withAndroidTarget()
+                withJvm()
+                withIosArm64()
+                withIosSimulatorArm64()
+            }
+            group("web") { withWasmJs() }
+        }
+    }
+
     sourceSets {
+        // AGP 9's Android target is not always matched by withAndroidTarget() in the hierarchy
+        // template; make the edge explicit so Android sees the cached data layer too.
+        named("androidMain") { dependsOn(named("cachedMain").get()) }
+        named("iosMain") { dependsOn(named("cachedMain").get()) }
         commonMain.dependencies {
             // In :shared's public API (domain models, use cases, the Koin modules), so :app sees them too.
             api(project.dependencies.platform(libs.koin.bom))
@@ -49,15 +69,10 @@ kotlin {
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
-            implementation(libs.androidx.room.runtime)
-            implementation(libs.androidx.room.paging)
-            implementation(libs.androidx.datastore.preferences.core)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.io.core)
             implementation(libs.jetbrains.compose.material.ripple) // RippleAlpha for the custom ripple
             implementation(libs.coil.compose)
-            // Coil's network fetcher; its Ktor engine is the OkHttp one already in androidMain/jvmMain.
-            implementation(libs.coil.network.ktor3)
             // Screens (B6): navigation, ViewModels with SavedStateHandle, Koin injection.
             implementation(libs.jetbrains.androidx.navigation.compose)
             implementation(libs.jetbrains.androidx.lifecycle.runtime.compose)
@@ -66,6 +81,23 @@ kotlin {
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.koin.core.viewmodel)
+        }
+        // Room, DataStore and the cache-backed repositories: Android, JVM and iOS only.
+        // Type-safe accessors are generated from the *default* hierarchy, so custom groups are
+        // referenced by name.
+        named("cachedMain") {
+            dependencies {
+                implementation(libs.androidx.room.runtime)
+                implementation(libs.androidx.room.paging)
+                implementation(libs.androidx.datastore.preferences.core)
+                implementation(libs.coil.network.ktor3)
+            }
+        }
+        named("webMain") {
+            dependencies {
+                implementation(libs.ktor.client.js)
+                implementation(libs.kotlinx.browser)
+            }
         }
         androidMain.dependencies {
             implementation(libs.androidx.core) // WindowCompat in SystemBarsAppearance's actual
